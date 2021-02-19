@@ -30,14 +30,16 @@
 #include "queue.h"
 #include "semphr.h"
 #include "string.h"
-#include "flowmeter.h"
 #include "utils.h"
+/*------------Motor Control-----------------*/
+#include "mc_bcd.h"
+
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 typedef StaticTask_t osStaticThreadDef_t;
 typedef StaticQueue_t osStaticMessageQDef_t;
-typedef StaticTimer_t osStaticTimerDef_t;
 typedef StaticSemaphore_t osStaticSemaphoreDef_t;
 /* USER CODE BEGIN PTD */
 extern void term_lol_sendQueue(osMessageQueueId_t myTxQueueHandle);
@@ -117,40 +119,16 @@ const osThreadAttr_t myLogUartTask_attributes = {
   .cb_size = sizeof(myLogUartTaskControlBlock),
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for myLogSdTask */
-osThreadId_t myLogSdTaskHandle;
-uint32_t myLogSdTaskBuffer[ 128 ];
-osStaticThreadDef_t myLogSdTaskControlBlock;
-const osThreadAttr_t myLogSdTask_attributes = {
-  .name = "myLogSdTask",
-  .stack_mem = &myLogSdTaskBuffer[0],
-  .stack_size = sizeof(myLogSdTaskBuffer),
-  .cb_mem = &myLogSdTaskControlBlock,
-  .cb_size = sizeof(myLogSdTaskControlBlock),
-  .priority = (osPriority_t) osPriorityLow,
-};
-/* Definitions for myFlowHotTask */
-osThreadId_t myFlowHotTaskHandle;
-uint32_t myFlowHotTaskBuffer[ 2048 ];
-osStaticThreadDef_t myFlowHotTaskControlBlock;
-const osThreadAttr_t myFlowHotTask_attributes = {
-  .name = "myFlowHotTask",
-  .stack_mem = &myFlowHotTaskBuffer[0],
-  .stack_size = sizeof(myFlowHotTaskBuffer),
-  .cb_mem = &myFlowHotTaskControlBlock,
-  .cb_size = sizeof(myFlowHotTaskControlBlock),
-  .priority = (osPriority_t) osPriorityLow,
-};
-/* Definitions for myFlowColdTask */
-osThreadId_t myFlowColdTaskHandle;
-uint32_t myFlowColdTaskBuffer[ 128 ];
-osStaticThreadDef_t myFlowColdTaskControlBlock;
-const osThreadAttr_t myFlowColdTask_attributes = {
-  .name = "myFlowColdTask",
-  .stack_mem = &myFlowColdTaskBuffer[0],
-  .stack_size = sizeof(myFlowColdTaskBuffer),
-  .cb_mem = &myFlowColdTaskControlBlock,
-  .cb_size = sizeof(myFlowColdTaskControlBlock),
+/* Definitions for myMcTask */
+osThreadId_t myMcTaskHandle;
+uint32_t myMcTaskBuffer[ 128 ];
+osStaticThreadDef_t myMcTaskControlBlock;
+const osThreadAttr_t myMcTask_attributes = {
+  .name = "myMcTask",
+  .stack_mem = &myMcTaskBuffer[0],
+  .stack_size = sizeof(myMcTaskBuffer),
+  .cb_mem = &myMcTaskControlBlock,
+  .cb_size = sizeof(myMcTaskControlBlock),
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myTxQueue */
@@ -219,14 +197,6 @@ const osMessageQueueAttr_t mySDwriteBufferLineObjQueue_attributes = {
   .mq_mem = &mySDwriteBufferLineObjQueueBuffer,
   .mq_size = sizeof(mySDwriteBufferLineObjQueueBuffer)
 };
-/* Definitions for myTimerFlowHot */
-osTimerId_t myTimerFlowHotHandle;
-osStaticTimerDef_t myTimerFlowHotControlBlock;
-const osTimerAttr_t myTimerFlowHot_attributes = {
-  .name = "myTimerFlowHot",
-  .cb_mem = &myTimerFlowHotControlBlock,
-  .cb_size = sizeof(myTimerFlowHotControlBlock),
-};
 /* Definitions for myFlagNewString */
 osSemaphoreId_t myFlagNewStringHandle;
 osStaticSemaphoreDef_t myFlagNewStringControlBlock;
@@ -234,14 +204,6 @@ const osSemaphoreAttr_t myFlagNewString_attributes = {
   .name = "myFlagNewString",
   .cb_mem = &myFlagNewStringControlBlock,
   .cb_size = sizeof(myFlagNewStringControlBlock),
-};
-/* Definitions for myFlagNewEdgeFlowHot */
-osSemaphoreId_t myFlagNewEdgeFlowHotHandle;
-osStaticSemaphoreDef_t myFlagNewEdgeFlowHotControlBlock;
-const osSemaphoreAttr_t myFlagNewEdgeFlowHot_attributes = {
-  .name = "myFlagNewEdgeFlowHot",
-  .cb_mem = &myFlagNewEdgeFlowHotControlBlock,
-  .cb_size = sizeof(myFlagNewEdgeFlowHotControlBlock),
 };
 /* Definitions for myCountNewString */
 osSemaphoreId_t myCountNewStringHandle;
@@ -280,10 +242,7 @@ void StartRxTask(void *argument);
 void StartTxTask(void *argument);
 void StartCmdTask(void *argument);
 void StartLogUartTask(void *argument);
-void StartLogSdTask(void *argument);
-void StartFlowHotTask(void *argument);
-void StartFlowColdTask(void *argument);
-void myCallbackFlowHot(void *argument);
+extern void StartMcTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -384,9 +343,6 @@ void MX_FREERTOS_Init(void) {
   /* creation of myFlagNewString */
   myFlagNewStringHandle = osSemaphoreNew(1, 1, &myFlagNewString_attributes);
 
-  /* creation of myFlagNewEdgeFlowHot */
-  myFlagNewEdgeFlowHotHandle = osSemaphoreNew(1, 1, &myFlagNewEdgeFlowHot_attributes);
-
   /* creation of myCountNewString */
   myCountNewStringHandle = osSemaphoreNew(16, 16, &myCountNewString_attributes);
 
@@ -396,10 +352,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_SEMAPHORES */
     /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
-
-  /* Create the timer(s) */
-  /* creation of myTimerFlowHot */
-  myTimerFlowHotHandle = osTimerNew(myCallbackFlowHot, osTimerOnce, NULL, &myTimerFlowHot_attributes);
 
   /* USER CODE BEGIN RTOS_TIMERS */
     /* start timers, add new ones, ... */
@@ -444,14 +396,8 @@ void MX_FREERTOS_Init(void) {
   /* creation of myLogUartTask */
   myLogUartTaskHandle = osThreadNew(StartLogUartTask, NULL, &myLogUartTask_attributes);
 
-  /* creation of myLogSdTask */
-  myLogSdTaskHandle = osThreadNew(StartLogSdTask, NULL, &myLogSdTask_attributes);
-
-  /* creation of myFlowHotTask */
-  myFlowHotTaskHandle = osThreadNew(StartFlowHotTask, NULL, &myFlowHotTask_attributes);
-
-  /* creation of myFlowColdTask */
-  myFlowColdTaskHandle = osThreadNew(StartFlowColdTask, NULL, &myFlowColdTask_attributes);
+  /* creation of myMcTask */
+  myMcTaskHandle = osThreadNew(StartMcTask, NULL, &myMcTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
@@ -647,126 +593,10 @@ void StartLogUartTask(void *argument)
        {
    case osOK:
        term_vprintLineObj(myTxQueueHandle, &line);
-       dbase_StoreSD( &line);
+       //dbase_StoreSD( &line);
        }
   }
   /* USER CODE END StartLogUartTask */
-}
-
-/* USER CODE BEGIN Header_StartLogSdTask */
-/**
-* @brief Function implementing the myLogSdTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartLogSdTask */
-void StartLogSdTask(void *argument)
-{
-  /* USER CODE BEGIN StartLogSdTask */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartLogSdTask */
-}
-
-/* USER CODE BEGIN Header_StartFlowHotTask */
-/**
-* @brief Function implementing the myFlowHotTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartFlowHotTask */
-void StartFlowHotTask(void *argument)
-{
-  /* USER CODE BEGIN StartFlowHotTask */
-  /* Infinite loop */
- 	   // myTimerFlowHotHandle = osTimerNew(myTimerFlowHotHandle, osTimerOnce, &flowhot.timeout, NULL);
-
- 	   // osTimerStart(myTimerFlowHotHandle, flowhot.TicksTimeout);
-
-  for(;;)
-  {
-      osStatus_t var;
-
-     if( xSemaphoreTake( myFlagNewEdgeFlowHotHandle, FLOW_TIMEOUT_FLOWMETER)==pdPASS)
-     	    {
-	    if (flowhot.RevsSession == 0)
-		{
-		modflag_timediff(&mf_systick, NULL);
-		}
-	    flowhot.RevsSession++;
-
-     	    }
-	 else if ( flowhot.RevsSession > 0)
- 	    {
-		modflag_timediff(&mf_systick, &flowhot.TimeWtf);
-
- 		TD_LINEOBJ line = {0};
- 		//volatile int tdsize = sizeof(line);
-
- 		//modflag_tickdiff(&mf_systick);
-
- 		line.value = (float)flowhot.RevsSession;
- 		dbase_Make(&line, strdup("flowhot"), 0, strdup("LAST"), strdup("Litr"), 0, 0);
- 		var = osMessageQueuePut(myLogLineObjQueueHandle, &line, 0, 200);
-
- 		memset(&line, 0, sizeof(line));
- 		line.value = (float)flowhot.RevsOdo;
- 		dbase_Make(&line, strdup("flowhot"), 0, strdup("TANK"), strdup("Litr"), 0, 0);
- 		var = osMessageQueuePut(mySDwriteBufferLineObjQueueHandle, &line, 0, 200);
-
- 		memset(&line, 0, sizeof(line));
- 		line.value = flowhot.TimeWtf;
- 		dbase_Make(&line, strdup("flowhot"), 0, strdup("FLOW"), strdup("Sek"), 0, 0);
- 		var = osMessageQueuePut(myLogLineObjQueueHandle, &line, 0, 200);
-
-/*
- 		line.value = (float)mf_systick.tickdiff;
- 		dbase_Make(&line, strdup("flowhot"), 0, strdup("lap"), strdup("ms"), 0, 0);
- 		var = osMessageQueuePut(myLogLineObjQueueHandle, &line, 0, 200);
-*/
- 		flowhot.RevsOdo += flowhot.RevsSession;
-
- 		flowhot.RevsSession = 0;
-
-
- 	    }
-    	  //
-
-    	  //  dbase_LoadQueue(myCmdLineObjQueueHandle, &line);
-    	  //  term_qPrintf(myTxQueueHandle, "\r<%s\parse:> %s]", line.filename, line.string);
-
-  }
-  /* USER CODE END StartFlowHotTask */
-}
-
-/* USER CODE BEGIN Header_StartFlowColdTask */
-/**
-* @brief Function implementing the myFlowColdTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartFlowColdTask */
-void StartFlowColdTask(void *argument)
-{
-  /* USER CODE BEGIN StartFlowColdTask */
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
-  }
-  /* USER CODE END StartFlowColdTask */
-}
-
-/* myCallbackFlowHot function */
-void myCallbackFlowHot(void *argument)
-{
-  /* USER CODE BEGIN myCallbackFlowHot */
-    //timeoutflag is set
-   argument = (int*)1;
-  /* USER CODE END myCallbackFlowHot */
 }
 
 /* Private application code --------------------------------------------------*/

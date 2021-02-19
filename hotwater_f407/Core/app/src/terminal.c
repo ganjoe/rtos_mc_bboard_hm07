@@ -174,7 +174,6 @@ void dbase_Make(TD_LINEOBJ *line,const char *filename, const char *string,
 	line->linenr = *linenr;
 
     }
-
 /*-----------------------------------------------------------*/
 void term_vprintLineObj(osMessageQueueId_t QueueHandle, TD_LINEOBJ *line)
     {
@@ -185,6 +184,7 @@ void term_vprintLineObj(osMessageQueueId_t QueueHandle, TD_LINEOBJ *line)
 			    line->string,
 			    line->postfix);
     }
+/*-----------------------------------------------------------*/
 void dbase_StoreSD(TD_LINEOBJ *line)
     {
     //osMessageQueuePut(mySDwriteBufferLineObjQueueHandle, line, 0, osWaitForever);
