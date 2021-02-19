@@ -3,11 +3,13 @@
  *
  *  Created on: 17.02.2021
  *      Author: pymd02
+ *      fork von texas motorware für iq-math
  */
 
 #ifndef INC_MC_RAMP_H_
 #define INC_MC_RAMP_H_
-#include "math.h"
+
+#include "main.h"
 
 
 typedef struct
@@ -25,53 +27,10 @@ typedef struct
 	} RMPCNTL;
 
 
-/*-----------------------------------------------------------------------------
-Default initalizer for the RMPCNTL object.
------------------------------------------------------------------------------*/
-#define RMPCNTL_DEFAULTS {  0, 		 \
-                            5,		 \
-                           float(-1),\
-                           float(1), \
-                            0,       \
-                          	0,       \
-                          	0,       \
-                          	0,       \
-							0.0001   \		//minInc
-                   		  }
-
-/*------------------------------------------------------------------------------
- 	RAMP Controller Function Definition
-------------------------------------------------------------------------------*/
+#define RMPCNTL_DEFAULTS {  0,5,float(-1),float(1),0,0,0,0,0.0001,}
 
 
-void mc_ramp(RMPCNTL ramp)
-{
-	/* TargetValue ist bei Ti der Ausgang, Setpoint der Eingang */
-	ramp.Tmp = ramp.TargetValue - ramp.SetpointValue;
-	/* minimale Auflösung des Datentypes oder das Rampeninkrement*/
-	if (fabs(ramp.Tmp) > ramp.minInc)
-		{
-		ramp.RampDelayCount++ ;
-		if (ramp.RampDelayCount >= ramp.RampDelayMax)
-			{
-			if(ramp.TargetValue >= ramp.SetpointValue)
-				{
-				ramp.SetpointValue += ramp.minInc;
-				}
-			else
-				{
-				ramp.SetpointValue -= ramp.minInc;
-				}
-			utils_truncate_number(&ramp.SetpointValue, ramp.RampLowLimit, ramp.RampHighLimit);
-			ramp.RampDelayCount = 0;
-		}
+void mc_ramp(RMPCNTL ramp);
 
-		}
-	/* das nächste inkrement wäre ein überschießen, bzw. rampe fertig*/
-	else
-	{
-		/* Led-Flag setzen */
-	}
-}
 
 #endif /* INC_MC_RAMP_H_ */

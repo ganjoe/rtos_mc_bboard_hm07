@@ -37,7 +37,9 @@ void mc_pwm_6step_5				(uint32_t setpoint);
 void mc_pwm_6step_6				(uint32_t setpoint);
 
 
-void mc_bcd6x_init(TD_MC_BCD blower);
+
+
+// setter  für frequenz in hz bzw umrechnung ist dann Architurekturell in mc_datatypes
 void mc_set_mcTimerTop(uint32_t period);
 
 

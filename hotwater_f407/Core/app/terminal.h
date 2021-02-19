@@ -33,8 +33,9 @@ void dbase_StoreSD(TD_LINEOBJ *line);
 
 void dbase_LoadQueue ( osMessageQueueId_t QueueHandle, TD_LINEOBJ *line);
 
-//wrapper for vsnprintf. prints to queue
 void term_qPrintf(osMessageQueueId_t QueueHandle, char *fmt, ...);
+
+void term_vprintLineObj(osMessageQueueId_t QueueHandle, TD_LINEOBJ *line);
 
 BaseType_t dBase_StoreQueue(osMessageQueueId_t QueueHandle, TD_LINEOBJ *line);
 

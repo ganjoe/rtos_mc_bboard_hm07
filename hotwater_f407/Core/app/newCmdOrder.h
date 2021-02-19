@@ -12,7 +12,7 @@
 
 /*------------api----------------------------
 */
-void 	term_lol_parse(TD_LINEOBJ *line);
+void 	cmd_parse_lobj(TD_LINEOBJ *line);
 
 /*------------propelli commands--------------*/
 

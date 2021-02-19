@@ -2,7 +2,17 @@
  * newCmdOrder.c
  *
  *  Created on: 07.01.2021
- *      Author: danie
+ *      Author: ganjoe
+ *
+ *      fork aus vredder bldc firmware
+ *
+ *      funktionen für "CmdTask". Dort werden
+ *
+ *      terminierte strings als lineobject aus einer queue gelesen,
+ *
+ *      der parser ruft die callbacks auf
+ *
+ *
  */
 
 #include "../newCmdOrder.h"
@@ -13,7 +23,9 @@
 #include "string.h"
 #include "../datatypes.h"
 #include "rtc.h"
+#include "../utils.h"
 
+/* muss in diesen scope stehen */
     RTC_TimeTypeDef time;
     RTC_DateTypeDef date;
 
@@ -23,6 +35,7 @@ static TD_TERMINAL_CALLBACKS callbacks[CALLBACK_LEN];
 
 static int callback_write = 0;
 
+/*------------propelli commands-------------------*/
 void term_lol_setCallback(const char *command, const char *help,
 	const char *arg_names, void (*cbf)(int argc, const char **argv))
     {
@@ -62,15 +75,15 @@ void term_lol_setCallback(const char *command, const char *help,
 	    }
 	}
     }
-/*--------------------------*/
+/*------------------------------------------------*/
 void cmd_init_callbacks()
     {
     term_lol_setCallback("reset", "mcu reset", "countdown", reset);
     term_lol_setCallback("settime", "mcu reset", "countdown", settime);
     term_lol_setCallback("setdate", "mcu reset", "countdown", setdate);
     }
-/*--------------------------*/
-void term_lol_parse(TD_LINEOBJ *line)
+/*------------------------------------------------*/
+void cmd_parse_lobj(TD_LINEOBJ *line)
     {
 
     char strbuffer[TD_LINEOBJ_MAX_SSIZE];
@@ -120,7 +133,7 @@ void term_lol_parse(TD_LINEOBJ *line)
 	    }
 	}    //
     }
-/*--------------------------*/
+/*------------------------------------------------*/
 void reset(int argc, const char **argv)
     {
     float f = -1;
@@ -132,7 +145,7 @@ void reset(int argc, const char **argv)
 	HAL_NVIC_SystemReset();
 	}
     }
-/*--------------------------*/
+/*------------------------------------------------*/
 void settime(int argc, const char **argv)
     {
 
@@ -171,7 +184,7 @@ void settime(int argc, const char **argv)
 	    }
 
     }
-/*--------------------------*/
+/*------------------------------------------------*/
 void setdate(int argc, const char **argv)
     {
     int d = -1;	//
@@ -206,3 +219,22 @@ void setdate(int argc, const char **argv)
 	term_qPrintf(&myTxQueueHandle, "\r3 argumente DD MM YY\r");
 	}
     }
+
+/*------------motor control commands--------------*/
+
+
+void	pwm		(int argc, const char **argv)
+{
+float f = -1;
+    if (argc == 2)
+		{
+		sscanf(argv[1], "%f", &f);
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] pwm: %5fs ok", f);
+
+		}
+}
+void	ramp	(int argc, const char **argv);
+void	speed	(int argc, const char **argv);
+void	mspd	(int argc, const char **argv);
+void	dir		(int argc, const char **argv);
+void	init	(int argc, const char **argv);
