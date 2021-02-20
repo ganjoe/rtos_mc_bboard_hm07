@@ -8,4 +8,15 @@
 
 #include "../mc_datatypes.h"
 
-TD_MC_PARAMS blower;
+
+
+void mc_init_bboard_hm07_boardLedPwm(TD_MC_PARAMS* mcbench)
+{
+
+}
+void mc_init_bboard_hm07_boatblower(TD_MC_PARAMS* mcbench)
+{
+
+}
+
+TD_MC_PARAMS mcbench;

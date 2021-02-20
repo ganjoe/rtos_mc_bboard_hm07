@@ -6,6 +6,7 @@
  */
 
 #include "datatypes.h"
+#include "mc_datatypes.h"
 
 #ifndef APP_NEWCMDORDER_H_
 #define APP_NEWCMDORDER_H_
@@ -28,6 +29,7 @@ void    setdate(int argc, const char **argv);
  *
  *
  */
+void	init	(int argc, const char **argv);
 
 void	pwm		(int argc, const char **argv);
 void	ramp	(int argc, const char **argv);

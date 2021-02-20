@@ -16,6 +16,14 @@
 
 typedef enum
 {
+	bb_hm7_blower,
+	bb_boardled,
+
+}
+	EN_MC_WORKBENCH;
+
+typedef enum
+{
 	ccw,		//linkslauf
 	cw,
 	stall,		//leerlauf
@@ -52,11 +60,11 @@ typedef struct
 	TD_MC_PWM_PARAMS pwm;
 	EN_MC_STATES	 states;
 	EN_MC_MODE		 pwmmode;
+	EN_MC_WORKBENCH	 benchsetup;
 
 }TD_MC_PARAMS;
 
-//TODO:: sizeof() nach _init_x starttext
-extern TD_MC_PARAMS mcbench;
+
 
 /*-------api für motor workbench----------
  * Allgemeine und MCU sowie Motorunabhängige Funktionen
@@ -80,5 +88,6 @@ void mc_init_bboard_hm07_boatblower(TD_MC_PARAMS* mcbench);
  * Alle pwm-channel sind von einen 16bit-Timer abgeleitet*/
 void mc_setfreq(float freq, uint32_t max);
 
-
+//TODO:: sizeof() nach _init_x starttext
+extern TD_MC_PARAMS mcbench;
 #endif /* INC_MC_DATATYPES_H_ */

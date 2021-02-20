@@ -31,6 +31,7 @@
 
 extern osMessageQueueId_t myTxQueueHandle;
 
+
 static TD_TERMINAL_CALLBACKS callbacks[CALLBACK_LEN];
 
 static int callback_write = 0;
@@ -81,6 +82,7 @@ void cmd_init_callbacks()
     term_lol_setCallback("reset", "mcu reset", "countdown", reset);
     term_lol_setCallback("settime", "mcu reset", "countdown", settime);
     term_lol_setCallback("setdate", "mcu reset", "countdown", setdate);
+    term_lol_setCallback("init", "workbench setup", "setup enum", init);
     }
 /*------------------------------------------------*/
 void cmd_parse_lobj(TD_LINEOBJ *line)
@@ -222,6 +224,31 @@ void setdate(int argc, const char **argv)
 
 /*------------motor control commands--------------*/
 
+void	init	(int argc, const char **argv)
+{
+	int select;
+	if (argc == 2)
+		{
+	    sscanf(argv[1], "%d", &select);
+	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] select: %d ok", select);
+
+	    switch (select)
+	    	{
+			case bb_boardled:
+				{
+				term_qPrintf(myTxQueueHandle, "\r[parseCmd] arg: bb_boardled", select);
+				mc_init_bboard_hm07_boardLedPwm( &mcbench);
+				}break;
+			case bb_hm7_blower:
+				{
+				term_qPrintf(myTxQueueHandle, "\r[parseCmd] arg: bb_hm7_blower", select);
+				mc_init_bboard_hm07_boatblower( &mcbench);
+				}break;
+
+	    	}
+
+		}
+}
 
 void	pwm		(int argc, const char **argv)
 {
