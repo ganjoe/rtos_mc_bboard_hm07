@@ -564,7 +564,7 @@ void StartCmdTask(void *argument)
 
 	    dbase_LoadQueue(myCmdLineObjQueueHandle, &line);
 
-	    term_qPrintf(myTxQueueHandle, "\r<%s/parse:> %s]", line.filename, line.string);
+	   // term_qPrintf(myTxQueueHandle, "\r<%s/parse:> %s]", line.filename, line.string);
 	   // term_qPrintf(myTxQueueHandle, "\r<%s/%s> %s [%s]", line.filename, line.header, line.string, line.postfix);
 	    cmd_parse_lobj(&line);
 

@@ -233,23 +233,24 @@ void setdate(int argc, const char **argv)
 void	init	(int argc, const char **argv)
 {
 	int select;
-	if (argc == 1)
+	if (argc == 2)
 		{
 	    sscanf(argv[1], "%d", &select);
-	    term_qPrintf(myTxQueueHandle, "\r[parseCmd][select]: %d", select);
+	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] init: %d", select);
 
 	    switch (select)
 	    	{
 			case bb_boardled:
 				{
-				term_qPrintf(myTxQueueHandle, "\r[parseCmd]: bb_boardled", select);
+				term_qPrintf(myTxQueueHandle, "\r[init]: bb_boardled", select);
 				mc_init_bboard_hm07_boardLedPwm( &mcbench);
+				term_qPrintf(myTxQueueHandle, "\r[init]: done", select);
 				}break;
 			case bb_hm7_blower:
 				{
-				term_qPrintf(myTxQueueHandle, "\r[parseCmd]: bb_hm7_blower", select);
-
+				term_qPrintf(myTxQueueHandle, "\r[init]: bb_hm7_blower", select);
 				mc_init_bboard_hm07_boatblower( &mcbench);
+				term_qPrintf(myTxQueueHandle, "\r[init]: done", select);
 				}break;
 
 	    	}

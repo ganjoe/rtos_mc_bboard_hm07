@@ -107,10 +107,16 @@ int main(void)
   MX_ADC1_Init();
   MX_I2C2_Init();
   MX_FATFS_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   cmd_init_callbacks();
-  //schnellen tasktimer starten
+
+  //schnellen tasktimer starten für zeitmessung
   HAL_TIM_Base_Start_IT(&htim6);
+
+  //pwm timer starten für board-led TODO:: spezielles init
+  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Init scheduler */

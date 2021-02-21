@@ -18,22 +18,33 @@
  * jede funktion hat hartverdrahtete gpio - namen
  * die implementierung braucht dafür eine MCU und CubeMX config.*/
 
+/* Pwm dimming für die Led
+ *	Blackboard:
+ *	Timer3 Channel 2, 3
+ *
+ */
+void mc_pwm_bboard_init			();						//
 void mc_pwm_bboard_led_1		(uint32_t setpoint);	//blackboard led pwm. zeigt drehrichtung von sim. motor
 void mc_pwm_bboard_led_2		(uint32_t setpoint);
 
+void mc_pwm_bcd6x_init			();
 void mc_pwm_bcd6x_setduty_u		(uint32_t setpoint);	//Normalbetrieb H-Brücke mit 6-fach pwm
 void mc_pwm_bcd6x_setduty_v		(uint32_t setpoint);
 
+void mc_pwm_bcd1x_init			();
 void mc_pwm_bcd1x_setduty_u		(uint32_t setpoint);	//Einzelmotor zwischen Vdd und Phase
 void mc_pwm_bcd1x_setduty_v		(uint32_t setpoint);
 
+void mc_pwm_bcd3x_init			();
 void mc_pwm_bcd3x_setduty_u		(uint32_t setpoint);	//Für Integrierte Halbbrücken-IC mit Enable, bzw. High-Z Signal
 void mc_pwm_bcd3x_setduty_v		(uint32_t setpoint);
 
+void mc_pwm_svn3x_init			();
 void mc_pwm_svn3x_setduty_u		(uint32_t setpoint);	//Drehstromlast für 3-fach pwm
 void mc_pwm_svn3x_setduty_v		(uint32_t setpoint);
 void mc_pwm_svn3x_setduty_w		(uint32_t setpoint);
 
+void mc_pwm_6step_init			();
 void mc_pwm_6step_1				(uint32_t setpoint);
 void mc_pwm_6step_2				(uint32_t setpoint);
 void mc_pwm_6step_3				(uint32_t setpoint);
@@ -45,7 +56,7 @@ void mc_pwm_6step_6				(uint32_t setpoint);
 
 
 // setter  für frequenz in hz bzw umrechnung ist dann Architurekturell in mc_datatypes
-void mc_set_mcTimerTop(uint32_t period);
+void mc_set_mcTimerTop(uint32_t period, uint32_t prescaler);
 
 
 #endif /* INC_MC_PWM_IF_H_ */

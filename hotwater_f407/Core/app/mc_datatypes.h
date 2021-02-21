@@ -71,6 +71,7 @@ typedef struct
 	EN_MC_STATES	 states;
 	EN_MC_MODE		 pwmmode;
 	EN_MC_WORKBENCH	 benchsetup;
+	int flag_init_wb;
 
 }
 	TD_MC_PARAMS;
