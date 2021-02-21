@@ -8,6 +8,7 @@
 /* Includes für FreeRtos - Tasks und so */
 
 #include "../mc_task.h"
+#include "../mc_datatypes.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
@@ -30,7 +31,12 @@ FAST-RAMP - "Safty-Rampe", ggf. der innere Regler
 
 void StartMcTask(void *argument)
 {
-    for (;;)
-	{}
+	mc_init_default(&mcbench);
+	mc_init_bboard_hm07_boardLedPwm(&mcbench);
+
+    while (1)
+	{
+
+	}
 }
 

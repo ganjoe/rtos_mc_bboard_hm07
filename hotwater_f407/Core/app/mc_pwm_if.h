@@ -14,7 +14,12 @@
 #include "mc_datatypes.h"
 
 
-/* Low-Level-Setter und init. die implementierung ist abhängig von MCU und CubeMX config.*/
+/* Low-Level-Setter für pwm
+ * jede funktion hat hartverdrahtete gpio - namen
+ * die implementierung braucht dafür eine MCU und CubeMX config.*/
+
+void mc_pwm_bboard_led_1		(uint32_t setpoint);	//blackboard led pwm. zeigt drehrichtung von sim. motor
+void mc_pwm_bboard_led_2		(uint32_t setpoint);
 
 void mc_pwm_bcd6x_setduty_u		(uint32_t setpoint);	//Normalbetrieb H-Brücke mit 6-fach pwm
 void mc_pwm_bcd6x_setduty_v		(uint32_t setpoint);

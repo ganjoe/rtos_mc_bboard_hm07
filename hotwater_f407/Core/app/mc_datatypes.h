@@ -16,6 +16,15 @@
 
 typedef enum
 {
+	u_low, u_high,
+	v_low, v_high,
+	w_low, w_high,
+
+}
+	EN_MC_CHANNEL;
+
+typedef enum
+{
 	bb_hm7_blower,
 	bb_boardled,
 
@@ -44,7 +53,8 @@ typedef enum
 
 typedef struct
 {
-	uint32_t pwm_timer_top;						//Timervalue
+	uint32_t pwm_timer_speed, pwm_timer_bits;	//timereigenschaften Hz, 1
+	uint32_t pwm_timer_top;						//Timervalue, live
 	uint16_t pwm_freq_max, pwm_freq_min;		//Hz
 	float	pwm_duty_max, pwm_duty_min;			//pu(1)
 }
@@ -62,32 +72,37 @@ typedef struct
 	EN_MC_MODE		 pwmmode;
 	EN_MC_WORKBENCH	 benchsetup;
 
-}TD_MC_PARAMS;
+}
+	TD_MC_PARAMS;
 
-
-
-/*-------api für motor workbench----------
+/*-------allgemeine api für motor workbench----------
  * Allgemeine und MCU sowie Motorunabhängige Funktionen
+ * die nicht von der control-loop aufgerufen werden
+ * sondern diese Aufrufen oder parametrieren
  */
-// init nach reset
+/* Init nach Reset
+ *
+ */
 void mc_init_default(TD_MC_PARAMS* mcbench);
 
 /* spezielle inits.
+ * nach den speziellen Inits funktionieren die allgemeinen mc commands
 TODO::wird durch init-commands speichernd gewählt,
 oder neu ausgeführt
 ohne auswahl-> terminalmelung
 */
-
 void mc_init_bboard_hm07_boardLedPwm(TD_MC_PARAMS* mcbench);
 void mc_init_bboard_hm07_boatblower(TD_MC_PARAMS* mcbench);
 
 
-
-
 /*setzt ein neues top-value für den mc-timer (Hz)
  * Alle pwm-channel sind von einen 16bit-Timer abgeleitet*/
-void mc_setfreq(float freq, uint32_t max);
+void mc_setfreq(uint32_t freq, TD_MC_PARAMS* mcbench);
 
+/*verändert das duty-cycle
+ * kontextabhängig auch pu - eingabewert für regelung
+ */
+void mc_setduty(float duty, TD_MC_PARAMS* mcbench);
 //TODO:: sizeof() nach _init_x starttext
 extern TD_MC_PARAMS mcbench;
 #endif /* INC_MC_DATATYPES_H_ */

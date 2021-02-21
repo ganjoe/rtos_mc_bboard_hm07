@@ -24,6 +24,7 @@
 #include "../datatypes.h"
 #include "rtc.h"
 #include "../utils.h"
+#include "stdio.h"
 
 /* muss in diesen scope stehen */
     RTC_TimeTypeDef time;
@@ -36,7 +37,9 @@ static TD_TERMINAL_CALLBACKS callbacks[CALLBACK_LEN];
 
 static int callback_write = 0;
 
-/*------------propelli commands-------------------*/
+/*------------commands init-------------------
+ * im orginal können die callbacks auch live (un)registriert werden
+ * */
 void term_lol_setCallback(const char *command, const char *help,
 	const char *arg_names, void (*cbf)(int argc, const char **argv))
     {
@@ -76,15 +79,18 @@ void term_lol_setCallback(const char *command, const char *help,
 	    }
 	}
     }
-/*------------------------------------------------*/
 void cmd_init_callbacks()
     {
-    term_lol_setCallback("reset", "mcu reset", "countdown", reset);
-    term_lol_setCallback("settime", "mcu reset", "countdown", settime);
-    term_lol_setCallback("setdate", "mcu reset", "countdown", setdate);
-    term_lol_setCallback("init", "workbench setup", "setup enum", init);
+    term_lol_setCallback("reset", "mcu reset", "1,0 uint", reset);
+    term_lol_setCallback("settime", "mcu reset", "3 uint", settime);
+    term_lol_setCallback("setdate", "mcu reset", "3 uint", setdate);
+
+    term_lol_setCallback("init", "workbench setup", "1 uint", init);
+    term_lol_setCallback("duty", "pwm duty-cycle (-)ccw", "float", duty);
+    term_lol_setCallback("freq", "pwm freq hz", "uint16", freq);
     }
-/*------------------------------------------------*/
+
+/*------------propelli commands-------------------*/
 void cmd_parse_lobj(TD_LINEOBJ *line)
     {
 
@@ -135,7 +141,7 @@ void cmd_parse_lobj(TD_LINEOBJ *line)
 	    }
 	}    //
     }
-/*------------------------------------------------*/
+
 void reset(int argc, const char **argv)
     {
     float f = -1;
@@ -147,7 +153,7 @@ void reset(int argc, const char **argv)
 	HAL_NVIC_SystemReset();
 	}
     }
-/*------------------------------------------------*/
+
 void settime(int argc, const char **argv)
     {
 
@@ -186,7 +192,7 @@ void settime(int argc, const char **argv)
 	    }
 
     }
-/*------------------------------------------------*/
+
 void setdate(int argc, const char **argv)
     {
     int d = -1;	//
@@ -227,21 +233,22 @@ void setdate(int argc, const char **argv)
 void	init	(int argc, const char **argv)
 {
 	int select;
-	if (argc == 2)
+	if (argc == 1)
 		{
 	    sscanf(argv[1], "%d", &select);
-	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] select: %d ok", select);
+	    term_qPrintf(myTxQueueHandle, "\r[parseCmd][select]: %d", select);
 
 	    switch (select)
 	    	{
 			case bb_boardled:
 				{
-				term_qPrintf(myTxQueueHandle, "\r[parseCmd] arg: bb_boardled", select);
+				term_qPrintf(myTxQueueHandle, "\r[parseCmd]: bb_boardled", select);
 				mc_init_bboard_hm07_boardLedPwm( &mcbench);
 				}break;
 			case bb_hm7_blower:
 				{
-				term_qPrintf(myTxQueueHandle, "\r[parseCmd] arg: bb_hm7_blower", select);
+				term_qPrintf(myTxQueueHandle, "\r[parseCmd]: bb_hm7_blower", select);
+
 				mc_init_bboard_hm07_boatblower( &mcbench);
 				}break;
 
@@ -250,16 +257,28 @@ void	init	(int argc, const char **argv)
 		}
 }
 
-void	pwm		(int argc, const char **argv)
+void	duty	(int argc, const char **argv)
 {
 float f = -1;
     if (argc == 2)
 		{
 		sscanf(argv[1], "%f", &f);
-		term_qPrintf(myTxQueueHandle, "\r[parseCmd] pwm: %5fs ok", f);
-
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] duty: ok", f);
+		mc_setduty(f, &mcbench);
 		}
 }
+
+void	freq	(int argc, const char **argv)
+	{
+	int d = -1;
+		if (argc == 2)
+			{
+			sscanf(argv[1], "%d", &d);
+			term_qPrintf(myTxQueueHandle, "\r[parseCmd] freq: ok", d);
+			mc_setfreq(d, &mcbench);
+			}
+	}
+
 void	ramp	(int argc, const char **argv);
 void	speed	(int argc, const char **argv);
 void	mspd	(int argc, const char **argv);

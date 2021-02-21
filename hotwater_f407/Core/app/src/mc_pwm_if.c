@@ -17,3 +17,17 @@ void mc_set_mcTimerTop(uint32_t period)
 {
 
 }
+
+/* Anzahl takte für eine Ton - Periode des Timers
+ * Der einzige Timer hat mehrere channel bzw.
+ * compares
+ *
+ */
+void mc_pwm_bboard_led_1		(uint32_t setpoint)
+{
+
+}
+void mc_pwm_bboard_led_2		(uint32_t setpoint)
+{
+
+}

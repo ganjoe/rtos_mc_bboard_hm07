@@ -31,7 +31,8 @@ void    setdate(int argc, const char **argv);
  */
 void	init	(int argc, const char **argv);
 
-void	pwm		(int argc, const char **argv);
+void	duty	(int argc, const char **argv);
+void	freq	(int argc, const char **argv);
 void	ramp	(int argc, const char **argv);
 void	speed	(int argc, const char **argv);
 void	mspd	(int argc, const char **argv);

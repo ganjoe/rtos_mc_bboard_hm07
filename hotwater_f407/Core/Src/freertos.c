@@ -75,7 +75,7 @@ const osThreadAttr_t defaultTask_attributes = {
 };
 /* Definitions for myRxTask */
 osThreadId_t myRxTaskHandle;
-uint32_t myRxTaskBuffer[ 128 ];
+uint32_t myRxTaskBuffer[ 512 ];
 osStaticThreadDef_t myRxTaskControlBlock;
 const osThreadAttr_t myRxTask_attributes = {
   .name = "myRxTask",
@@ -87,7 +87,7 @@ const osThreadAttr_t myRxTask_attributes = {
 };
 /* Definitions for myTxTask */
 osThreadId_t myTxTaskHandle;
-uint32_t myTxTaskBuffer[ 128 ];
+uint32_t myTxTaskBuffer[ 512 ];
 osStaticThreadDef_t myTxTaskControlBlock;
 const osThreadAttr_t myTxTask_attributes = {
   .name = "myTxTask",
@@ -99,7 +99,7 @@ const osThreadAttr_t myTxTask_attributes = {
 };
 /* Definitions for myCmdTask */
 osThreadId_t myCmdTaskHandle;
-uint32_t myCmdTaskBuffer[ 512 ];
+uint32_t myCmdTaskBuffer[ 1024 ];
 osStaticThreadDef_t myCmdTaskControlBlock;
 const osThreadAttr_t myCmdTask_attributes = {
   .name = "myCmdTask",
@@ -111,7 +111,7 @@ const osThreadAttr_t myCmdTask_attributes = {
 };
 /* Definitions for myLogUartTask */
 osThreadId_t myLogUartTaskHandle;
-uint32_t myLogUartTaskBuffer[ 128 ];
+uint32_t myLogUartTaskBuffer[ 512 ];
 osStaticThreadDef_t myLogUartTaskControlBlock;
 const osThreadAttr_t myLogUartTask_attributes = {
   .name = "myLogUartTask",
@@ -123,7 +123,7 @@ const osThreadAttr_t myLogUartTask_attributes = {
 };
 /* Definitions for myMcTask */
 osThreadId_t myMcTaskHandle;
-uint32_t myMcTaskBuffer[ 128 ];
+uint32_t myMcTaskBuffer[ 512 ];
 osStaticThreadDef_t myMcTaskControlBlock;
 const osThreadAttr_t myMcTask_attributes = {
   .name = "myMcTask",
