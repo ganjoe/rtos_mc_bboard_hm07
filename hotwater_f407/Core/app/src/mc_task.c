@@ -13,8 +13,11 @@
 #include "task.h"
 #include "cmsis_os.h"
 
-/* Includes für Propelli	 */
+/* 	Includes für Propelli	 */
 /* Includes für Motorcontrol */
+
+#include "../mc_ramp.h"
+
 
 /* -----Motor Control Loop---------
  muss beider codegenerierung als "weak" angegeben werden, ansonsten doppelt definiert
@@ -33,10 +36,13 @@ void StartMcTask(void *argument)
 {
 	mc_init_default(&mcbench);
 	mc_init_bboard_hm07_boardLedPwm(&mcbench);
+	mc_ramp_init(&mcbench.potiramp, 5000);
 
+	osDelay(1000);
     while (1)
 	{
-
+    mc_ramp		(&mcbench.potiramp);
+    mc_setduty	(mcbench.potiramp.SetpointValue/1000, &mcbench);
 	}
 }
 

@@ -31,16 +31,14 @@
 #ifndef INC_MC_TASK_H_
 #define INC_MC_TASK_H_
 
-void mc_setup()
-{
-	/* muss als reset für die mc_loop dienen können*/
-}
+#include "mc_ramp.h"
 
-void mc_loop()
-{
+void mc_setup();
 
-}
+void mc_loop();
+
 
 void StartDefaultTask(void *argument);
 
+extern RMPCNTL potiramp;
 #endif /* INC_MC_TASK_H_ */

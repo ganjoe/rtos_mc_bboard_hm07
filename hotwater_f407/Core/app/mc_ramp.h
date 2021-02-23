@@ -15,7 +15,7 @@
 typedef struct
 	{
 	float    TargetValue; 	// Input: Target input (pu)
-	uint32_t RampDelayMax;	// Parameter: Maximum delay rate (Q0) - independently with global Q
+	uint32_t RampDelayMax;	// Parameter: Maximum delay rate
 	float    RampLowLimit;	// Parameter: Minimum limit (pu)
 	float    RampHighLimit;	// Parameter: Maximum limit (pu)
 	uint32_t RampDelayCount; // Variable: Incremental delay (Q0) - independently with global Q
@@ -27,10 +27,11 @@ typedef struct
 	} RMPCNTL;
 
 
-#define RMPCNTL_DEFAULTS {  0,5,float(-1),float(1),0,0,0,0,0.0001,}
 
 
-void mc_ramp(RMPCNTL ramp);
+void mc_ramp		(RMPCNTL* ramp);
+void mc_ramp_init	(RMPCNTL* ramp, int maxtime_ms);
+
 
 
 #endif /* INC_MC_RAMP_H_ */

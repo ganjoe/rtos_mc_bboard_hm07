@@ -71,6 +71,7 @@ typedef struct
 	EN_MC_STATES	 states;
 	EN_MC_MODE		 pwmmode;
 	EN_MC_WORKBENCH	 benchsetup;
+	RMPCNTL 		 potiramp;
 	int flag_init_wb;
 
 }
@@ -94,7 +95,7 @@ ohne auswahl-> terminalmelung
 */
 void mc_init_bboard_hm07_boardLedPwm(TD_MC_PARAMS* mcbench);
 void mc_init_bboard_hm07_boatblower(TD_MC_PARAMS* mcbench);
-
+void mc_init_ramp(TD_MC_PARAMS* mcbench);
 
 /*setzt ein neues top-value für den mc-timer (Hz)
  * Alle pwm-channel sind von einen 16bit-Timer abgeleitet*/

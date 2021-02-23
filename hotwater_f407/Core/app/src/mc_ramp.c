@@ -7,40 +7,52 @@
 
 #include "../mc_ramp.h"
 #include "../utils.h"
+#include "../mc_datatypes.h"
 
-void mc_ramp(RMPCNTL ramp)
+void mc_ramp(RMPCNTL* ramp)
 {
 	/* TargetValue ist bei Ti der EINGANG, Setpoint der AUSGANG
 	 * Normalerweise meint beides das gleiche, aber wenn mehrere
 	 * blöcke hintereinander hängen, braucht man zwei namen 8) */
-	ramp.Tmp = ramp.TargetValue - ramp.SetpointValue;
+	ramp->Tmp = ramp->TargetValue - ramp->SetpointValue;
 
 	/* minimale Auflösung des Datentypes oder das Rampeninkrement
-	 * der code war ein macro für die iq-math lib von texas.
+	 * der code war ein macro für die iq-math lib von texas->
 	 * dort lässt sich die auflösung der pseudo-floats global einstellen
 	 * */
-	if (fabs(ramp.Tmp) > ramp.minInc)
+	if (fabs(ramp->Tmp) > ramp->minInc)
 		{
-		ramp.RampDelayCount++ ;
-		if (ramp.RampDelayCount >= ramp.RampDelayMax)
+		ramp->RampDelayCount++ ;
+		if (ramp->RampDelayCount >= ramp->RampDelayMax)
 			{
-			if(ramp.TargetValue >= ramp.SetpointValue)
+			if(ramp->TargetValue >= ramp->SetpointValue)
 				{
-				ramp.SetpointValue += ramp.minInc;
+				ramp->SetpointValue += ramp->minInc;
 				}
 			else
 				{
-				ramp.SetpointValue -= ramp.minInc;
+				ramp->SetpointValue -= ramp->minInc;
 				}
-			utils_truncate_number(&ramp.SetpointValue, ramp.RampLowLimit, ramp.RampHighLimit);
-			ramp.RampDelayCount = 0;
+			//utils_truncate_number(&ramp->SetpointValue, ramp->RampLowLimit, ramp->RampHighLimit);
+			ramp->RampDelayCount = 0;
 		}
 
 		}
-	/* das nächste inkrement wäre ein überschießen, bzw. rampe fertig*/
+	/* das nächste inkrement wäre ein überschießen, bzw-> rampe fertig*/
 	else
 	{
 		/* Led-Flag setzen */
 		//mc_state_fi
 	}
+}
+
+/*Init für Texas CC - Rampe
+ * Berechnen der Initwerte.
+ */
+void mc_ramp_init	(RMPCNTL* ramp, int maxtime_ms)
+{
+	ramp->RampHighLimit = 0;
+	ramp->RampLowLimit = 0;
+	ramp->minInc = (float)maxtime_ms / (float)1000;
+
 }

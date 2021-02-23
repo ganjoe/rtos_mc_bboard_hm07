@@ -24,6 +24,7 @@
 #include "../datatypes.h"
 #include "rtc.h"
 #include "../utils.h"
+#include "../mc_task.h"
 #include "stdio.h"
 
 /* muss in diesen scope stehen */
@@ -88,6 +89,8 @@ void cmd_init_callbacks()
     term_lol_setCallback("init", "workbench setup", "1 uint", init);
     term_lol_setCallback("duty", "pwm duty-cycle (-)ccw", "float", duty);
     term_lol_setCallback("freq", "pwm freq hz", "uint16", freq);
+
+    term_lol_setCallback("ramp", "poti rampe 0..1", "float", ramp);
     }
 
 /*------------propelli commands-------------------*/
@@ -275,12 +278,22 @@ void	freq	(int argc, const char **argv)
 		if (argc == 2)
 			{
 			sscanf(argv[1], "%d", &d);
-			term_qPrintf(myTxQueueHandle, "\r[parseCmd] freq: ok", d);
+			term_qPrintf(myTxQueueHandle, "\r[parseCmd] freq: ok");
 			mc_setfreq(d, &mcbench);
 			}
 	}
 
-void	ramp	(int argc, const char **argv);
+void	ramp	(int argc, const char **argv)
+{
+float f = -1;
+	if (argc == 2)
+		{
+		sscanf(argv[1], "%f", &f);
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] ramp: ok");
+		mcbench.potiramp.TargetValue = (f *1000);
+		}
+}
+
 void	speed	(int argc, const char **argv);
 void	mspd	(int argc, const char **argv);
 void	dir		(int argc, const char **argv);
