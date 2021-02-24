@@ -14,45 +14,34 @@ void mc_ramp(RMPCNTL* ramp)
 	/* TargetValue ist bei Ti der EINGANG, Setpoint der AUSGANG
 	 * Normalerweise meint beides das gleiche, aber wenn mehrere
 	 * blöcke hintereinander hängen, braucht man zwei namen 8) */
-	ramp->Tmp = ramp->TargetValue - ramp->SetpointValue;
+	ramp->delta = ramp->TargetValue - ramp->SetpointValue;
 
-	/* minimale Auflösung des Datentypes oder das Rampeninkrement
-	 * der code war ein macro für die iq-math lib von texas->
-	 * dort lässt sich die auflösung der pseudo-floats global einstellen
-	 * */
-	if (fabs(ramp->Tmp) > ramp->minInc)
+	/* mindestdifferenz, damit bei ausgleich cpu - zeit gespart wird */
+	if (fabs(ramp->delta) > ramp->minInc)
 		{
-		ramp->RampDelayCount++ ;
-		if (ramp->RampDelayCount >= ramp->RampDelayMax)
-			{
-			if(ramp->TargetValue >= ramp->SetpointValue)
-				{
-				ramp->SetpointValue += ramp->minInc;
-				}
-			else
-				{
-				ramp->SetpointValue -= ramp->minInc;
-				}
-			//utils_truncate_number(&ramp->SetpointValue, ramp->RampLowLimit, ramp->RampHighLimit);
-			ramp->RampDelayCount = 0;
-		}
 
+		/* RampGain stellt den Bezug zur Zeit her,
+	 	 * für timestep wird die letzte systick - periode eingesetzt */
+		ramp->nextInc =  ramp->RampTimestep / ramp->RampGain;
+
+		utils_truncate_number(&ramp->nextInc, 0, ramp->RampStepLimit);
+
+		if(ramp->TargetValue >= ramp->SetpointValue)
+			{
+			ramp->SetpointValue += ramp->nextInc;
+			}
+		else
+			{
+			ramp->SetpointValue -= ramp->nextInc;
+			}
 		}
-	/* das nächste inkrement wäre ein überschießen, bzw-> rampe fertig*/
-	else
-	{
-		/* Led-Flag setzen */
-		//mc_state_fi
-	}
 }
 
-/*Init für Texas CC - Rampe
- * Berechnen der Initwerte.
- */
-void mc_ramp_init	(RMPCNTL* ramp, int maxtime_ms)
+
+void mc_ramp_init	(RMPCNTL* ramp)
 {
-	ramp->RampHighLimit = 0;
-	ramp->RampLowLimit = 0;
-	ramp->minInc = (float)maxtime_ms / (float)1000;
+	ramp->minInc = 0.001;
+	ramp->RampStepLimit = 0.1;
+	ramp->RampGain = 1;
 
 }

@@ -16,7 +16,7 @@ extern osMessageQueueId_t myTxQueueHandle;
 
 void mc_init_default(TD_MC_PARAMS* mcbench)
 {
-	mcbench->pwm.pwm_timer_speed = 64000000;
+	mcbench->pwm.pwm_timer_speed = 84000000;
 	mcbench->pwm.pwm_timer_bits = 16;
 }
 

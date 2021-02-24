@@ -14,10 +14,10 @@ void modflag_ovf_callback()
     ++mf_systick.ovf;
     }
 
-//TD_MODFLAG_TIMERSPEED
+//Stm32F40n Timer 6 ist max 84Mhz, Timer 10/11 max 168Mhz
 
 
-uint64_t modflag_tickdiff(TD_MODFLAG *cnt)
+void mc_tickdiff(TD_MODFLAG *cnt)
     {
     uint64_t counter = TIM6->CNT;
     cnt->ovf = mf_systick.ovf;
@@ -26,23 +26,17 @@ uint64_t modflag_tickdiff(TD_MODFLAG *cnt)
     cnt->newtick = cnt->systick;
     cnt->tickdiff = cnt->newtick - cnt->oldtick;
     cnt->oldtick = cnt->newtick;
-    return cnt->tickdiff;
+
     }
 
-void modflag_timediff(TD_MODFLAG *cnt, double* timesec)
+void mc_timediff(TD_MODFLAG *cnt, float* timesec)
     {
-    uint64_t counter = TIM6->CNT;
-    cnt->ovf = mf_systick.ovf;
-
-    cnt->systick = counter + (cnt->ovf * TIM6->ARR);
-    cnt->newtick = cnt->systick;
-    cnt->tickdiff = cnt->newtick - cnt->oldtick;
-    cnt->oldtick = cnt->newtick;
+	mc_tickdiff(cnt);
 
     if(timesec !=NULL)
 	{
-	*timesec =  (double)TD_MODFLAG_TIMERSPEED / TIM6->PSC;
-	*timesec = (double)cnt->tickdiff / (*timesec);
+	*timesec = (float) cnt->timerspeed / TIM6->PSC;
+	*timesec = (float)cnt->tickdiff / (*timesec);
 	}
     }
 

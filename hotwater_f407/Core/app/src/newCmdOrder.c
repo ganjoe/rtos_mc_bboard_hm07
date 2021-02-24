@@ -290,7 +290,7 @@ float f = -1;
 		{
 		sscanf(argv[1], "%f", &f);
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] ramp: ok");
-		mcbench.potiramp.TargetValue = (f *1000);
+		mcbench.potiramp.TargetValue = (f);
 		}
 }
 

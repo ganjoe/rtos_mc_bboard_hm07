@@ -33,8 +33,6 @@
 
 #include "mc_ramp.h"
 
-void mc_setup();
-
 void mc_loop();
 
 

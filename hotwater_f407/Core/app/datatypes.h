@@ -27,10 +27,11 @@ typedef struct
     {
     int divisor;
 
-    uint64_t rampcounter, callcount;
-    uint64_t counter, ovf;
-    uint64_t oldtick, systick, newtick, tickdiff;
-    uint64_t duration, repeat;
+    uint32_t rampcounter, callcount;
+    uint32_t counter, ovf;
+    uint64_t oldtick, systick, newtick;
+    uint32_t duration, repeat, tickdiff;
+    uint32_t timerspeed;	// für timediff berechnung, VOR prescaler
     float freq, duty_sp;
 
     int flag, flag_delay, flag_reset, init_done;
@@ -82,8 +83,8 @@ typedef struct
 
 void 	 modflag_ovf_callback();
 
-uint64_t modflag_tickdiff(TD_MODFLAG *cnt);
-void modflag_timediff(TD_MODFLAG *cnt, double* timesec);
+void 		mc_tickdiff(TD_MODFLAG *cnt);
+void 	 mc_timediff(TD_MODFLAG *cnt, float* timesec);
 
 extern TD_MODFLAG mf_systick;
 

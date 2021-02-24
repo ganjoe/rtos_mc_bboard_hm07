@@ -15,14 +15,16 @@
 typedef struct
 	{
 	float    TargetValue; 	// Input: Target input (pu)
-	uint32_t RampDelayMax;	// Parameter: Maximum delay rate
-	float    RampLowLimit;	// Parameter: Minimum limit (pu)
-	float    RampHighLimit;	// Parameter: Maximum limit (pu)
-	uint32_t RampDelayCount; // Variable: Incremental delay (Q0) - independently with global Q
-	float    SetpointValue;	// Output: Target output (pu)
-	uint32_t EqualFlag;		// Output: Flag output (Q0) - independently with global Q
-	float	Tmp;			// Variable: Temp variable
-	float		minInc;			//ersatz def in iqmath
+	float    SetpointValue;	// Output: Target output (pu)	benennung ist texas motorware -style
+	float	 nextInc;		// nächstes y für letztes x (pu)
+	float    RampStepLimit;	// Limiter für nextInc (praktisch eine mindestrampe um arge pwm sprünge zu vermeiden
+	float 	 RampGain;			// Bezug für pu, verhältnis zwischen timestep und nextInc
+	float 	 RampTimestep; // ms zeitschritt kann dynamisch sein, in timerticks
+
+
+	float	 delta;			// diff ein und ausgang
+	float	 minInc;			//minimale abweichung für berechnung, bzw skip wenn fast gleich um strom zu sparen
+
 
 	} RMPCNTL;
 
@@ -30,7 +32,7 @@ typedef struct
 
 
 void mc_ramp		(RMPCNTL* ramp);
-void mc_ramp_init	(RMPCNTL* ramp, int maxtime_ms);
+void mc_ramp_init	(RMPCNTL* ramp);
 
 
 

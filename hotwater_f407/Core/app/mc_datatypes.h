@@ -13,6 +13,7 @@
 
 #include "main.h"
 #include "mc_ramp.h"
+#include "datatypes.h"
 
 typedef enum
 {

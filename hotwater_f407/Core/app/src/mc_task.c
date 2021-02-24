@@ -22,27 +22,35 @@
 /* -----Motor Control Loop---------
  muss beider codegenerierung als "weak" angegeben werden, ansonsten doppelt definiert
 
-Die Loop ist nicht pwm-synchron, aber die ADC-Messung.
-Während jedes Durchlaufes werden die ADC-Daten durch
-ein ISR-Callback gebuffert und bei Beginn gemittelt.
+ mc_timediff :
+ dynamische schrittweite als basis, dh. jewails die Zeit seit letzten aufruf der mc - loop
+ es wird ein unendlich - zähler auf hardwarebasis verwendet
+ (overflow - zähler in der isr) um eine zeitmessung zu realisieren.
+ Einheit sind timer - ticks, die ggf. in zeit umgerechnet werden
 
-abfrage von TD_MC_IF Variablen (durch einen anderen Task geupdated)
-ADC-FILTER - update von den adc-queues
-USER-RAMP - "Poti-Rampe", ggf. der äußere Regle
-FAST-RAMP - "Safty-Rampe", ggf. der innere Regler
- PWM & FREQ - für PWM Timer setzen */
+Die Loop ist nicht pwm-synchron, aber die ADC-Messung.
+Bei jeden mc - loop aufruf steht ein buffer mit unverarbeiteten adc-werten bereit
+*/
 
 void StartMcTask(void *argument)
 {
 	mc_init_default(&mcbench);
 	mc_init_bboard_hm07_boardLedPwm(&mcbench);
-	mc_ramp_init(&mcbench.potiramp, 5000);
+	mc_ramp_init(&mcbench.potiramp);
+	mf_systick.timerspeed = mcbench.pwm.pwm_timer_speed;
 
-	osDelay(1000);
+	float timestep;
+
     while (1)
-	{
-    mc_ramp		(&mcbench.potiramp);
-    mc_setduty	(mcbench.potiramp.SetpointValue/1000, &mcbench);
-	}
+    	{
+    	mc_timediff(&mf_systick, &timestep);
+
+    	mcbench.potiramp.RampTimestep = timestep;
+
+    	mc_ramp		(&mcbench.potiramp);
+
+		mc_setduty	(mcbench.potiramp.SetpointValue, &mcbench);
+    	}
+
 }
 
