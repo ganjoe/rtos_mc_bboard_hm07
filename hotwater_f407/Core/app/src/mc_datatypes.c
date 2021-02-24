@@ -62,16 +62,11 @@ void mc_setfreq(uint32_t freq, TD_MC_PARAMS* mcbench)
 	term_qPrintf(myTxQueueHandle, "\r[mc_set_mcTimerTop] <new|max>: %.0f | %.0f", (float)mcbench->pwm.pwm_timer_top, (float)powl(2, mcbench->pwm.pwm_timer_bits));
 	}
 
-void mc_setduty(float duty, TD_MC_PARAMS* mcbench)
+void mc_setduty(TD_MC_PARAMS* mcbench)
 	{
+	utils_truncate_number(&mcbench->pwm.pwm_duty, -1, 1);
 
-
-	if(utils_truncate_number(&duty, -1, 1))
-		{
-		//term_qPrintf(myTxQueueHandle, "\r[mc_setduty] duty truncated ! %f", duty);
-		}
 	/* das ist die wahre kraft des typedef enum */
-
 	switch (mcbench->benchsetup)
 		{
 		case bb_boardled:
@@ -83,20 +78,20 @@ void mc_setduty(float duty, TD_MC_PARAMS* mcbench)
 				//term_qPrintf(myTxQueueHandle, "\r[mc_setduty] set freq first ! ");
 				break;
 				}
-			setpoint = (duty) * (float)mcbench->pwm.pwm_timer_top;
+			setpoint = (mcbench->pwm.pwm_duty) * (float)mcbench->pwm.pwm_timer_top;
 			//term_qPrintf(myTxQueueHandle, "\r[mc_setduty][mc_pwm_bboard_led_n] <duty|pulse|pe1riod>: %.0f",  setpoint);
 
-			if (duty > 0)
+			if (mcbench->pwm.pwm_duty > 0)
 				{
-				utils_truncate_number(&duty, mcbench->pwm.pwm_duty_min, mcbench->pwm.pwm_duty_max);
+				utils_truncate_number(&mcbench->pwm.pwm_duty, mcbench->pwm.pwm_duty_min, mcbench->pwm.pwm_duty_max);
 				mc_pwm_bboard_led_1((uint32_t)setpoint);
 				mc_pwm_bboard_led_2((uint32_t)0);
 
 				}
 
-			if (duty < 0)
+			if (mcbench->pwm.pwm_duty < 0)
 				{
-				utils_truncate_number(&duty, mcbench->pwm.pwm_duty_min * -1, mcbench->pwm.pwm_duty_max * -1);
+				utils_truncate_number(&mcbench->pwm.pwm_duty, mcbench->pwm.pwm_duty_min * -1, mcbench->pwm.pwm_duty_max * -1);
 				setpoint *=-1;
 				mc_pwm_bboard_led_1((uint32_t)0);
 				mc_pwm_bboard_led_2((uint32_t)setpoint);

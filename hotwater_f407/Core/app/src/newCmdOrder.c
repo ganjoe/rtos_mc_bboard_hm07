@@ -268,7 +268,9 @@ float f = -1;
 		{
 		sscanf(argv[1], "%f", &f);
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] duty: ok", f);
-		mc_setduty(f, &mcbench);
+		mcbench.potiramp.RampStepLimit = 1;
+		mcbench.potiramp.TargetValue = (f);
+
 		}
 }
 

@@ -57,7 +57,7 @@ typedef struct
 	uint32_t pwm_timer_speed, pwm_timer_bits;	//timereigenschaften Hz, 1
 	uint32_t pwm_timer_top;						//Timervalue, live
 	uint16_t pwm_freq_max, pwm_freq_min;		//Hz
-	float	pwm_duty_max, pwm_duty_min;			//pu(1)
+	float	pwm_duty, pwm_duty_max, pwm_duty_min;			//pu(1)
 }
 	TD_MC_PWM_PARAMS;
 
@@ -105,7 +105,7 @@ void mc_setfreq(uint32_t freq, TD_MC_PARAMS* mcbench);
 /*verändert das duty-cycle
  * kontextabhängig auch pu - eingabewert für regelung
  */
-void mc_setduty(float duty, TD_MC_PARAMS* mcbench);
+void mc_setduty(TD_MC_PARAMS* mcbench);
 //TODO:: sizeof() nach _init_x starttext
 extern TD_MC_PARAMS mcbench;
 #endif /* INC_MC_DATATYPES_H_ */

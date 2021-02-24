@@ -49,7 +49,9 @@ void StartMcTask(void *argument)
 
     	mc_ramp		(&mcbench.potiramp);
 
-		mc_setduty	(mcbench.potiramp.SetpointValue, &mcbench);
+    	mcbench.pwm.pwm_duty = mcbench.potiramp.SetpointValue;
+
+		mc_setduty	(&mcbench);
     	}
 
 }

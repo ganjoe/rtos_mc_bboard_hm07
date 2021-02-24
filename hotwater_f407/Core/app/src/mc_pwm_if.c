@@ -17,16 +17,18 @@
 
 void mc_set_mcTimerTop(uint32_t period, uint32_t prescaler)
 	{
-	htim3.Instance = TIM3;
-	  htim3.Init.Prescaler = 0;
-	  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-	  htim3.Init.Period = period;
-	  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-	  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-	  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
+
+		  htim3.Instance = TIM3;
+		  htim3.Init.Prescaler = 0;
+		  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+		  htim3.Init.Period = period;
+		  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+		  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+		  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+		  {
+			Error_Handler();
+		  }
+
 	}
 
 /* Anzahl takte für eine Ton - Periode des Timers
@@ -34,19 +36,24 @@ void mc_set_mcTimerTop(uint32_t period, uint32_t prescaler)
  * compares
  *
  */
+static TIM_OC_InitTypeDef sConfigOC = {0};
+
 void mc_pwm_bboard_led_1		(uint32_t setpoint)
 	{
+	if(! (sConfigOC.Pulse == setpoint ))
+		{
 
-	TIM_OC_InitTypeDef sConfigOC = {0};
-	  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	  sConfigOC.Pulse = setpoint;
-	  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
-	  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-	  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-	  {
-	    Error_Handler();
-	  }
-	  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_2);
+		  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+		  sConfigOC.Pulse = setpoint;
+		  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
+		  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+		  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+		  {
+			Error_Handler();
+		  }
+		  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_2);
+		}
+
 		//
 	}
 
