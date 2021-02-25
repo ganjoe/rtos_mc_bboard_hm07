@@ -60,7 +60,8 @@ void mc_pwm_bboard_led_1		(uint32_t setpoint)
 void mc_pwm_bboard_led_2		(uint32_t setpoint)
 	{
 	//init flag abfragen
-	TIM_OC_InitTypeDef sConfigOC = {0};
+	if(! (sConfigOC.Pulse == setpoint ))
+		{
 	  sConfigOC.OCMode = TIM_OCMODE_PWM1;
 	  sConfigOC.Pulse = setpoint;
 	  sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
@@ -70,5 +71,6 @@ void mc_pwm_bboard_led_2		(uint32_t setpoint)
 	    Error_Handler();
 	  }
 	  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
+		}
 		//
 	}

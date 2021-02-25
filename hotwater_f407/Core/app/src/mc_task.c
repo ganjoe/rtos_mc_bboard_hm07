@@ -12,11 +12,13 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "cmsis_os.h"
+#include "adc.h"
 
 /* 	Includes für Propelli	 */
 /* Includes für Motorcontrol */
 
 #include "../mc_ramp.h"
+#include "../newCmdOrder.h"
 
 
 /* -----Motor Control Loop---------
@@ -39,17 +41,24 @@ void StartMcTask(void *argument)
 	mc_ramp_init(&mcbench.potiramp);
 	mf_systick.timerspeed = mcbench.pwm.pwm_timer_speed;
 
+	uint32_t buff1[3];
+
+	HAL_ADC_Start_DMA(&hadc1, buff1 , 3);
+
+
+
 	float timestep;
 
     while (1)
     	{
+
     	mc_timediff(&mf_systick, &timestep);
 
-    	mcbench.potiramp.RampTimestep = timestep;
+    		mcbench.potiramp.RampTimestep = timestep;
 
     	mc_ramp		(&mcbench.potiramp);
 
-    	mcbench.pwm.pwm_duty = mcbench.potiramp.SetpointValue;
+    		mcbench.pwm.pwm_duty = mcbench.potiramp.SetpointValue;
 
 		mc_setduty	(&mcbench);
     	}

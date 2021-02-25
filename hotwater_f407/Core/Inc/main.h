@@ -59,13 +59,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define flow_hot_Pin GPIO_PIN_2
-#define flow_hot_GPIO_Port GPIOE
-#define flow_hot_EXTI_IRQn EXTI2_IRQn
-#define onewire_Pin GPIO_PIN_8
-#define onewire_GPIO_Port GPIOD
-#define onewire_hot_Pin GPIO_PIN_10
-#define onewire_hot_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

@@ -40,6 +40,7 @@ static int callback_write = 0;
 
 /*------------commands init-------------------
  * im orginal können die callbacks auch live (un)registriert werden
+ * TODO: anzeige der hilfestrings
  * */
 void term_lol_setCallback(const char *command, const char *help,
 	const char *arg_names, void (*cbf)(int argc, const char **argv))
@@ -90,7 +91,7 @@ void cmd_init_callbacks()
     term_lol_setCallback("duty", "pwm duty-cycle (-)ccw", "float", duty);
     term_lol_setCallback("freq", "pwm freq hz", "uint16", freq);
 
-    term_lol_setCallback("ramp", "poti rampe 0..1", "float", ramp);
+    term_lol_setCallback("ramp", "zielwert 0..1, bezug(s)", "2 floats", ramp);
     }
 
 /*------------propelli commands-------------------*/
@@ -288,15 +289,24 @@ void	freq	(int argc, const char **argv)
 void	ramp	(int argc, const char **argv)
 {
 float f = -1;
-	if (argc == 2)
+float g = -1;
+	if (argc == 3)
 		{
 		sscanf(argv[1], "%f", &f);
+		sscanf(argv[2], "%f", &g);
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] ramp: ok");
 		mcbench.potiramp.TargetValue = (f);
+		mcbench.potiramp.RampGain = g;
 		}
+	else
+		{
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] Fehler Anzahl Argumente");
+		}
+
 }
 
 void	speed	(int argc, const char **argv);
+
 void	mspd	(int argc, const char **argv);
 void	dir		(int argc, const char **argv);
 void	init	(int argc, const char **argv);

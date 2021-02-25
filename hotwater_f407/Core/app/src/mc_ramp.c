@@ -22,6 +22,8 @@ void mc_ramp(RMPCNTL* ramp)
 
 		/* RampGain stellt den Bezug zur Zeit her,
 	 	 * für timestep wird die letzte systick - periode eingesetzt */
+		utils_truncate_number(&ramp->RampGain, 1E-6, 1E6);
+
 		ramp->nextInc =  ramp->RampTimestep / ramp->RampGain;
 
 		utils_truncate_number(&ramp->nextInc, 0, ramp->RampStepLimit);

@@ -91,7 +91,7 @@ void mc_setduty(TD_MC_PARAMS* mcbench)
 
 			if (mcbench->pwm.pwm_duty < 0)
 				{
-				utils_truncate_number(&mcbench->pwm.pwm_duty, mcbench->pwm.pwm_duty_min * -1, mcbench->pwm.pwm_duty_max * -1);
+				utils_truncate_number(&mcbench->pwm.pwm_duty, mcbench->pwm.pwm_duty_min, mcbench->pwm.pwm_duty_max);
 				setpoint *=-1;
 				mc_pwm_bboard_led_1((uint32_t)0);
 				mc_pwm_bboard_led_2((uint32_t)setpoint);
