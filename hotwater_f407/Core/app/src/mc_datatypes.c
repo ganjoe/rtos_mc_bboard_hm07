@@ -25,7 +25,7 @@ void mc_init_bboard_hm07_boardLedPwm(TD_MC_PARAMS* mcbench)
 
 	mcbench->benchsetup = bb_boardled;	// debug mit leds für drehrichtung auf f407 blackboard
 	mcbench->pwmmode = bcd6x;			//ein signal pro fet, u.a. für fettreiber
-	mcbench->states = standby;			//u.a. für leuchtdioden
+	mcbench->states = standby;			//
 
 	mcbench->pwm.pwm_duty_max = 0.9999;
 	mcbench->pwm.pwm_duty_min = 0.00001;
@@ -37,7 +37,15 @@ void mc_init_bboard_hm07_boardLedPwm(TD_MC_PARAMS* mcbench)
 
 void mc_init_bboard_hm07_boatblower(TD_MC_PARAMS* mcbench)
 {
+	mcbench->benchsetup =  bb_hm7_blower;	// debug mit leds für drehrichtung auf f407 blackboard
+	mcbench->pwmmode = bcd3x;				//ein signal pro halbbrücke, mit inv-enable für high-z
+	mcbench->states = standby;			//
 
+	mcbench->pwm.pwm_duty_max = 0.9999;
+	mcbench->pwm.pwm_duty_min = 0.00001;
+	mcbench->pwm.pwm_freq_max = 0xFFFF;	//TODO: abfrage ob es um min-bits kleiner ist als timer_speed
+	mcbench->pwm.pwm_freq_min = 0xF;
+	mcbench->flag_init_wb = 1;
 }
 
 void mc_setfreq(uint32_t freq, TD_MC_PARAMS* mcbench)

@@ -23,7 +23,7 @@
  *	Timer3 Channel 2, 3
  *
  */
-void mc_pwm_bboard_init			();						//
+void mc_pwm_bboard_MXinit			();						//
 void mc_pwm_bboard_led_1		(uint32_t setpoint);	//blackboard led pwm. zeigt drehrichtung von sim. motor
 void mc_pwm_bboard_led_2		(uint32_t setpoint);
 
