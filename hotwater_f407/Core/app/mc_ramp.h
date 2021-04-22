@@ -14,26 +14,23 @@
 
 typedef struct
 	{
-	float    TargetValue; 	// Input: Target input (pu)
-	float    SetpointValue;	// Output: Target output (pu)	benennung ist texas motorware -style
+	float   Target; 		// Input: Target input (pu)
+	float   Setpoint;		// Output: Target output (pu)
 	float	 nextInc;		// nächstes y für letztes x (pu)
-	float    RampStepLimit;	// Limiter für nextInc (praktisch eine mindestrampe um arge pwm sprünge zu vermeiden
-	float 	 RampGain;			// Bezug für pu, verhältnis zwischen timestep und nextInc
-	float 	 RampTimestep; // ms zeitschritt kann dynamisch sein, in timerticks
-
-
+	float   RampStepLimit;	// Limiter für nextInc (praktisch eine mindestrampe um arge pwm sprünge zu vermeiden
+	float 	 gain;			// Bezug für pu, verhältnis zwischen timestep und nextInc
+	float	 highlimit, lowlimit;	// Bezug für Gain. die rampe wird flacher, nicht nur geclippt
+	float 	 timestep; // ms zeitschritt kann dynamisch sein, in timerticks
 	float	 delta;			// diff ein und ausgang
 	float	 minInc;			//minimale abweichung für berechnung, bzw skip wenn fast gleich um strom zu sparen
-
 
 	} RMPCNTL;
 
 
 
-
 void mc_ramp		(RMPCNTL* ramp);
-void mc_ramp_init	(RMPCNTL* ramp);
 
-
+extern RMPCNTL potiramp;
 
 #endif /* INC_MC_RAMP_H_ */
+

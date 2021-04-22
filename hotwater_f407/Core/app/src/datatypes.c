@@ -4,10 +4,25 @@
  *  Created on: Jan 15, 2021
  *      Author: danie
  */
-
 #include "../datatypes.h"
-#include "main.h"
 
+
+void modflag_init()
+{
+	  TIM_HandleTypeDef htim11;
+	  htim11.Instance = TIM11;
+	  htim11.Init.Prescaler = 0;
+	  htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
+	  htim11.Init.Period = 65535;
+	  htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+	  htim11.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+	  if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
+	  {
+	    Error_Handler();
+	  }
+
+	  mf_systick.timerspeed = 168E6;
+}
 
 void modflag_ovf_callback()
     {
@@ -19,25 +34,23 @@ void modflag_ovf_callback()
 
 void mc_tickdiff(TD_MODFLAG *cnt)
     {
-    uint64_t counter = TIM6->CNT;
-    cnt->ovf = mf_systick.ovf;
-
-    cnt->systick = counter + (cnt->ovf * TIM6->ARR);
+    cnt->systick = TIM11->CNT;
+    cnt->ovf = cnt->ovf;
+    cnt->systick = cnt->systick + (cnt->ovf * TIM11->ARR);
     cnt->newtick = cnt->systick;
     cnt->tickdiff = cnt->newtick - cnt->oldtick;
     cnt->oldtick = cnt->newtick;
-
     }
 
-void mc_timediff(TD_MODFLAG *cnt, float* timesec)
+void mc_timediff(TD_MODFLAG *cnt)
     {
 	mc_tickdiff(cnt);
-
-    if(timesec !=NULL)
-	{
-	*timesec = (float) cnt->timerspeed / TIM6->PSC;
-	*timesec = (float)cnt->tickdiff / (*timesec);
-	}
+	cnt->timestep = (float) (cnt->tickdiff) / (float) (cnt->timerspeed / (TIM11->PSC + 1));
     }
+/*
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
 
+}
+*/
 TD_MODFLAG mf_systick;

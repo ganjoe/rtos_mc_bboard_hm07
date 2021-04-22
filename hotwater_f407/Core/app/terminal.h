@@ -9,11 +9,32 @@
 #define INC_TERMINAL_H_
 #include "stdio.h"
 #include "stdarg.h"
-#include "main.h"
 #include "usart.h"
 #include "datatypes.h"
+#include "cmsis_os2.h"
 #include "queue.h"
 #include "semphr.h"
+
+
+
+    typedef struct
+        {
+        //TODO: replace with freeRTOS datatypes
+        char byte_received;
+        char* string_rx;
+        unsigned int newString;
+
+        /*
+        //char* sep;
+        //char* eoc;
+
+        //char* string_tx;
+        //int uart_buffer_tx_len;
+         */
+
+        int flag_newString, flag_newTransmission;
+        }
+        TD_TERMINAL;
 
 /*-----------------------------------------------------------*/
 //size for static td - do not change

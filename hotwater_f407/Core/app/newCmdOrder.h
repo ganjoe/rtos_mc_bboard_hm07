@@ -11,6 +11,14 @@
 #ifndef APP_NEWCMDORDER_H_
 #define APP_NEWCMDORDER_H_
 
+typedef struct
+	{
+	const char *command;
+	const char *help;
+	const char *arg_names;
+	void (*cbf)(int argc, const char **argv);
+	}
+    TD_TERMINAL_CALLBACKS;
 /*------------api----------------------------
 */
 void 	cmd_parse_lobj(TD_LINEOBJ *line);

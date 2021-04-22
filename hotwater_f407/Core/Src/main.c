@@ -104,18 +104,17 @@ int main(void)
   MX_TIM2_Init();
   MX_ADC1_Init();
   MX_FATFS_Init();
-  MX_TIM3_Init();
   MX_ADC2_Init();
   MX_ADC3_Init();
+  MX_TIM14_Init();
+  MX_TIM11_Init();
   /* USER CODE BEGIN 2 */
   cmd_init_callbacks();
 
   //schnellen tasktimer starten für zeitmessung
   HAL_TIM_Base_Start_IT(&htim6);
 
-  //pwm timer starten für board-led TODO:: spezielles init
-  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_2);
-  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -193,7 +192,7 @@ void SystemClock_Config(void)
 
  /**
   * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM1 interrupt took place, inside
+  * @note   This function is called  when TIM12 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
   * a global variable "uwTick" used as application time base.
   * @param  htim : TIM handle
@@ -204,10 +203,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM1) {
+  if (htim->Instance == TIM12) {
     HAL_IncTick();
   }
-  /* USER CODE BEGIN Callback 1 */
+  if (htim->Instance ==TIM11)
+
+  {/* USER CODE BEGIN Callback 1 */
+	  modflag_ovf_callback();
+  }
 
   /* USER CODE END Callback 1 */
 }

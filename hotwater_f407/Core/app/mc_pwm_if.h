@@ -4,59 +4,103 @@
  *  Created on: 18.02.2021
  *      Author: pymd02
  *
- *       allgemeines Low-Level-Interface
- *       mit MCU- und Hardwareabhängiger Implementierung
+ *       spezielles Low-Level-Interface
+ *       stm-hal handles von hand anpassen
+ *
  */
 
 #ifndef INC_MC_PWM_IF_H_
 #define INC_MC_PWM_IF_H_
 
-#include "mc_datatypes.h"
+#include "main.h"
 
+typedef enum
+{
+	mc_pwm_single = 1,
+	mc_pwm_hbridge,
+	mc_pwm_threephase,
 
-/* Low-Level-Setter für pwm
- * jede funktion hat hartverdrahtete gpio - namen
- * die implementierung braucht dafür eine MCU und CubeMX config.*/
+}EN_MC_TIMERCHAN;
 
-/* Pwm dimming für die Led
- *	Blackboard:
- *	Timer3 Channel 2, 3
- *
+typedef struct
+{
+	/**
+	 * @brief Timerhandle für mc-pwm
+	 * @note das handle ist in tim.h initialisiert
+	 */
+	TIM_HandleTypeDef htim;
+	/**
+	 * @brief Compare-Channel für den Timer
+	 * @note betrifft den setter"mc_pwm_update"
+	 */
+	EN_MC_TIMERCHAN channelcount;
+
+	/**
+	 * @brief takte pro sekunde
+	 * @note offline
+	 */
+	uint32_t speed;
+
+	/**
+	 * @brief zählertiefe (z.B. 12bit)
+	 */
+	uint32_t bits;
+
+	/**
+	 * @brief timer overflow und compare event
+	 * @note livewert für pwm-freq steuerung
+	 */
+	uint32_t top, prescaler, comp_u, comp_v, comp_w;
+
+	/**
+	 * @brief vorgaben für hw-limits
+	 * @note 1/s
+	 */
+	uint32_t freq_max, freq_min;
+	uint32_t duty_max, duty_min;
+
+	/**
+	 * @brief user - vorgaben für limiter
+	 * @note dimensionslos, per unit
+	 * @note mit vorzeichen für drehrichtung
+	 */
+	float pwm_duty_max, pwm_duty_min;
+
+	/**
+	 * @brief mc-loop dutycycle und pwm-frequenz
+	 * @note normiert mit vorzeichen für drehrichtung
+	 */
+	float duty, freq;
+}
+	TD_MC_PWM_PARAMS;
+
+/**
+ * @brief pwm-setup für endstufe
+ * @note legt fest worauf sich "pwm_set_duty" usw bezieht.
+ * @note schreibt werte in das pwm - typedef
  */
-void mc_pwm_bboard_MXinit			();						//
-void mc_pwm_bboard_led_1		(uint32_t setpoint);	//blackboard led pwm. zeigt drehrichtung von sim. motor
-void mc_pwm_bboard_led_2		(uint32_t setpoint);
-
+void mc_pwm_bboard_led1_init		(TD_MC_PWM_PARAMS* pwm);
+void mc_pwm_bboard_led2_init		(TD_MC_PWM_PARAMS* pwm);
+/*
 void mc_pwm_bcd6x_init			();
 void mc_pwm_bcd6x_setduty_u		(uint32_t setpoint);	//Normalbetrieb H-Brücke mit 6-fach pwm
 void mc_pwm_bcd6x_setduty_v		(uint32_t setpoint);
-
-void mc_pwm_bcd1x_init			();
-void mc_pwm_bcd1x_setduty_u		(uint32_t setpoint);	//Einzelmotor zwischen Vdd und Phase
-void mc_pwm_bcd1x_setduty_v		(uint32_t setpoint);
+void mc_pwm_bcd6x_setduty_w		(uint32_t setpoint);
 
 void mc_pwm_bcd3x_init			();
 void mc_pwm_bcd3x_setduty_u		(uint32_t setpoint);	//Für Integrierte Halbbrücken-IC mit Enable, bzw. High-Z Signal
 void mc_pwm_bcd3x_setduty_v		(uint32_t setpoint);
+void mc_pwm_bcd3x_setduty_w		(uint32_t setpoint);
 
 void mc_pwm_svn3x_init			();
 void mc_pwm_svn3x_setduty_u		(uint32_t setpoint);	//Drehstromlast für 3-fach pwm
 void mc_pwm_svn3x_setduty_v		(uint32_t setpoint);
 void mc_pwm_svn3x_setduty_w		(uint32_t setpoint);
+*/
 
-void mc_pwm_6step_init			();
-void mc_pwm_6step_1				(uint32_t setpoint);
-void mc_pwm_6step_2				(uint32_t setpoint);
-void mc_pwm_6step_3				(uint32_t setpoint);
-void mc_pwm_6step_4				(uint32_t setpoint);
-void mc_pwm_6step_5				(uint32_t setpoint);
-void mc_pwm_6step_6				(uint32_t setpoint);
+void mc_pwm_update					(TD_MC_PWM_PARAMS* pwm);
 
 
-
-
-// setter  für frequenz in hz bzw umrechnung ist dann Architurekturell in mc_datatypes
-void mc_set_mcTimerTop(uint32_t period, uint32_t prescaler);
-
+extern TD_MC_PWM_PARAMS led1pwm;
 
 #endif /* INC_MC_PWM_IF_H_ */

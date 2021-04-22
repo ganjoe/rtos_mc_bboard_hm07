@@ -36,12 +36,10 @@ extern osMessageQueueId_t myTxQueueHandle;
 
 static TD_TERMINAL_CALLBACKS callbacks[CALLBACK_LEN];
 
+
+
 static int callback_write = 0;
 
-/*------------commands init-------------------
- * im orginal können die callbacks auch live (un)registriert werden
- * TODO: anzeige der hilfestrings
- * */
 void term_lol_setCallback(const char *command, const char *help,
 	const char *arg_names, void (*cbf)(int argc, const char **argv))
     {
@@ -87,10 +85,8 @@ void cmd_init_callbacks()
     term_lol_setCallback("settime", "mcu reset", "3 uint", settime);
     term_lol_setCallback("setdate", "mcu reset", "3 uint", setdate);
 
-    term_lol_setCallback("init", "workbench setup", "1 uint", init);
     term_lol_setCallback("duty", "pwm duty-cycle (-)ccw", "float", duty);
     term_lol_setCallback("freq", "pwm freq hz", "uint16", freq);
-
     term_lol_setCallback("ramp", "zielwert 0..1, bezug(s)", "2 floats", ramp);
     }
 
@@ -234,33 +230,6 @@ void setdate(int argc, const char **argv)
 
 /*------------motor control commands--------------*/
 
-void	init	(int argc, const char **argv)
-{
-	int select;
-	if (argc == 2)
-		{
-	    sscanf(argv[1], "%d", &select);
-	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] init: %d", select);
-
-	    switch (select)
-	    	{
-			case bb_boardled:
-				{
-				term_qPrintf(myTxQueueHandle, "\r[init]: bb_boardled", select);
-				mc_init_bboard_hm07_boardLedPwm( &mcbench);
-				term_qPrintf(myTxQueueHandle, "\r[init]: done", select);
-				}break;
-			case bb_hm7_blower:
-				{
-				term_qPrintf(myTxQueueHandle, "\r[init]: bb_hm7_blower", select);
-				mc_init_bboard_hm07_boatblower( &mcbench);
-				term_qPrintf(myTxQueueHandle, "\r[init]: done", select);
-				}break;
-
-	    	}
-
-		}
-}
 
 void	duty	(int argc, const char **argv)
 {
@@ -269,8 +238,8 @@ float f = -1;
 		{
 		sscanf(argv[1], "%f", &f);
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] duty: ok", f);
-		mcbench.potiramp.RampStepLimit = 1;
-		mcbench.potiramp.TargetValue = (f);
+		mcbench.potiramp->RampStepLimit = 1;
+		mcbench.potiramp->Target = (f);
 
 		}
 }
@@ -282,7 +251,7 @@ void	freq	(int argc, const char **argv)
 			{
 			sscanf(argv[1], "%d", &d);
 			term_qPrintf(myTxQueueHandle, "\r[parseCmd] freq: ok");
-			mc_setfreq(d, &mcbench);
+			//mc_setfreq(d, &mcbench);
 			}
 	}
 
@@ -295,8 +264,8 @@ float g = -1;
 		sscanf(argv[1], "%f", &f);
 		sscanf(argv[2], "%f", &g);
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] ramp: ok");
-		mcbench.potiramp.TargetValue = (f);
-		mcbench.potiramp.RampGain = g;
+		mcbench.potiramp->Target = (f);
+		mcbench.potiramp->gain = g;
 		}
 	else
 		{
@@ -305,8 +274,3 @@ float g = -1;
 
 }
 
-void	speed	(int argc, const char **argv);
-
-void	mspd	(int argc, const char **argv);
-void	dir		(int argc, const char **argv);
-void	init	(int argc, const char **argv);

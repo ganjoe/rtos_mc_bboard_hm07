@@ -67,10 +67,10 @@ uint32_t defaultTaskBuffer[ 512 ];
 osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_mem = &defaultTaskBuffer[0],
-  .stack_size = sizeof(defaultTaskBuffer),
   .cb_mem = &defaultTaskControlBlock,
   .cb_size = sizeof(defaultTaskControlBlock),
+  .stack_mem = &defaultTaskBuffer[0],
+  .stack_size = sizeof(defaultTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for myRxTask */
@@ -79,10 +79,10 @@ uint32_t myRxTaskBuffer[ 512 ];
 osStaticThreadDef_t myRxTaskControlBlock;
 const osThreadAttr_t myRxTask_attributes = {
   .name = "myRxTask",
-  .stack_mem = &myRxTaskBuffer[0],
-  .stack_size = sizeof(myRxTaskBuffer),
   .cb_mem = &myRxTaskControlBlock,
   .cb_size = sizeof(myRxTaskControlBlock),
+  .stack_mem = &myRxTaskBuffer[0],
+  .stack_size = sizeof(myRxTaskBuffer),
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myTxTask */
@@ -91,10 +91,10 @@ uint32_t myTxTaskBuffer[ 512 ];
 osStaticThreadDef_t myTxTaskControlBlock;
 const osThreadAttr_t myTxTask_attributes = {
   .name = "myTxTask",
-  .stack_mem = &myTxTaskBuffer[0],
-  .stack_size = sizeof(myTxTaskBuffer),
   .cb_mem = &myTxTaskControlBlock,
   .cb_size = sizeof(myTxTaskControlBlock),
+  .stack_mem = &myTxTaskBuffer[0],
+  .stack_size = sizeof(myTxTaskBuffer),
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myCmdTask */
@@ -103,10 +103,10 @@ uint32_t myCmdTaskBuffer[ 1024 ];
 osStaticThreadDef_t myCmdTaskControlBlock;
 const osThreadAttr_t myCmdTask_attributes = {
   .name = "myCmdTask",
-  .stack_mem = &myCmdTaskBuffer[0],
-  .stack_size = sizeof(myCmdTaskBuffer),
   .cb_mem = &myCmdTaskControlBlock,
   .cb_size = sizeof(myCmdTaskControlBlock),
+  .stack_mem = &myCmdTaskBuffer[0],
+  .stack_size = sizeof(myCmdTaskBuffer),
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myLogUartTask */
@@ -115,10 +115,10 @@ uint32_t myLogUartTaskBuffer[ 512 ];
 osStaticThreadDef_t myLogUartTaskControlBlock;
 const osThreadAttr_t myLogUartTask_attributes = {
   .name = "myLogUartTask",
-  .stack_mem = &myLogUartTaskBuffer[0],
-  .stack_size = sizeof(myLogUartTaskBuffer),
   .cb_mem = &myLogUartTaskControlBlock,
   .cb_size = sizeof(myLogUartTaskControlBlock),
+  .stack_mem = &myLogUartTaskBuffer[0],
+  .stack_size = sizeof(myLogUartTaskBuffer),
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myMcTask */
@@ -127,10 +127,10 @@ uint32_t myMcTaskBuffer[ 512 ];
 osStaticThreadDef_t myMcTaskControlBlock;
 const osThreadAttr_t myMcTask_attributes = {
   .name = "myMcTask",
-  .stack_mem = &myMcTaskBuffer[0],
-  .stack_size = sizeof(myMcTaskBuffer),
   .cb_mem = &myMcTaskControlBlock,
   .cb_size = sizeof(myMcTaskControlBlock),
+  .stack_mem = &myMcTaskBuffer[0],
+  .stack_size = sizeof(myMcTaskBuffer),
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myTxQueue */

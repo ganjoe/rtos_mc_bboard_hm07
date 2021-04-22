@@ -2,48 +2,39 @@
  * mc_ramp.c
  *
  *  Created on: 19.02.2021
- *      Author: danie
+ *      Author: daniel
  */
 
 #include "../mc_ramp.h"
 #include "../utils.h"
-#include "../mc_datatypes.h"
 
-void mc_ramp(RMPCNTL* ramp)
-{
-	/* TargetValue ist bei Ti der EINGANG, Setpoint der AUSGANG
-	 * Normalerweise meint beides das gleiche, aber wenn mehrere
-	 * blöcke hintereinander hängen, braucht man zwei namen 8) */
-	ramp->delta = ramp->TargetValue - ramp->SetpointValue;
 
-	/* mindestdifferenz, damit bei ausgleich cpu - zeit gespart wird */
-	if (fabs(ramp->delta) > ramp->minInc)
+void mc_ramp(RMPCNTL *ramp)
+    {
+    /*  Ti - Style: TargetValue ist bei der EINGANG, Setpoint der AUSGANG
+     * Normalerweise meint beides das gleiche, aber wenn mehrere
+     * blöcke hintereinander hängen, braucht man zwei namen 8) */
+
+
+	ramp->nextInc =  ramp->timestep * ramp->gain;
+
+	utils_truncate_number(&ramp->nextInc, 1E-9, ramp->RampStepLimit);
+	utils_truncate_number(&ramp->Target, ramp->lowlimit, ramp->highlimit);
+
+	if(ramp->Target >= ramp->Setpoint)
 		{
-
-		/* RampGain stellt den Bezug zur Zeit her,
-	 	 * für timestep wird die letzte systick - periode eingesetzt */
-		utils_truncate_number(&ramp->RampGain, 1E-6, 1E6);
-
-		ramp->nextInc =  ramp->RampTimestep / ramp->RampGain;
-
-		utils_truncate_number(&ramp->nextInc, 0, ramp->RampStepLimit);
-
-		if(ramp->TargetValue >= ramp->SetpointValue)
-			{
-			ramp->SetpointValue += ramp->nextInc;
-			}
-		else
-			{
-			ramp->SetpointValue -= ramp->nextInc;
-			}
+		ramp->Setpoint += ramp->nextInc;
+		if (ramp->Setpoint > ramp->Target )
+		    ramp->Setpoint = ramp->Target;
 		}
-}
+	else
+		{
+		ramp->Setpoint -= ramp->nextInc;
+		if (ramp->Setpoint < ramp->Target )
+		    ramp->Setpoint = ramp->Target;
+		}
+    }
+
+RMPCNTL potiramp;
 
 
-void mc_ramp_init	(RMPCNTL* ramp)
-{
-	ramp->minInc = 0.001;
-	ramp->RampStepLimit = 0.1;
-	ramp->RampGain = 1;
-
-}

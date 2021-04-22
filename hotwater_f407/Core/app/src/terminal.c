@@ -1,5 +1,5 @@
 /*
- * terminal.c
+* terminal.c
  *
  *  Created on: Jan 2, 2021
  *      Author: danie
@@ -228,7 +228,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
     xQueueSendToBackFromISR(myRxQueueHandle, &byte_received, 0);
 
     if (byte_received == (uint8_t) 13)
-	xSemaphoreGiveFromISR(myFlagNewStringHandle, 0);
+    	xSemaphoreGiveFromISR(myFlagNewStringHandle, 0);
 
     HAL_UART_Receive_DMA(&huart1, (uint8_t*) &readbyte, 1);
     }
