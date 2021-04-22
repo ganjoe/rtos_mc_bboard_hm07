@@ -4,9 +4,7 @@
  *  Created on: 18.02.2021
  *      Author: pymd02
  *
- *      Motor - Control - App
- *      systick wird über CubeMx - FreeRtos festgelegt
- *      abhängig von den headern für jeden Control - Block
+
  */
 
 /*
@@ -31,12 +29,5 @@
 #ifndef INC_MC_TASK_H_
 #define INC_MC_TASK_H_
 
-#include "mc_ramp.h"
 
-void mc_loop();
-
-
-void StartDefaultTask(void *argument);
-
-extern RMPCNTL potiramp;
 #endif /* INC_MC_TASK_H_ */

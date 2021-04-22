@@ -21,7 +21,9 @@ typedef struct
     TD_TERMINAL_CALLBACKS;
 /*------------api----------------------------
 */
+
 void 	cmd_parse_lobj(TD_LINEOBJ *line);
+void 	cmd_parse(char* string);
 
 /*------------propelli commands--------------*/
 

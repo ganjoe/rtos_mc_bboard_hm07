@@ -9,19 +9,6 @@
 
 #include "../mc_task.h"
 #include "../mc_datatypes.h"
-#include "../mc_pwm_if.h"
-#include "FreeRTOS.h"
-#include "task.h"
-#include "cmsis_os.h"
-#include "adc.h"
-
-/* 	Includes für Propelli	 */
-/* Includes für Motorcontrol */
-
-#include "../mc_ramp.h"
-#include "../newCmdOrder.h"
-
-
 
 void StartMcTask(void *argument)
 {

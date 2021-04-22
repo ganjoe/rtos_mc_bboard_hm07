@@ -27,7 +27,7 @@ typedef struct
 {
 	TD_MC_PWM_PARAMS* pwm;
 	EN_MC_WORKBENCH	 benchsetup;
-	RMPCNTL* 		 potiramp;
+	RMPCNTL* 		 ramp;
 
 }
 	TD_MC_PARAMS;

@@ -23,12 +23,12 @@ void mc_init_boardLedPwm(TD_MC_PARAMS* mcbench,TD_MC_PWM_PARAMS *pwm)
 
 void mc_init_boardLedRamp(TD_MC_PARAMS* mcbench,RMPCNTL *ramp)
 {
-	mcbench->potiramp = ramp;
-	mcbench->potiramp->gain = 1;
-	mcbench->potiramp->highlimit = 1;
-	mcbench->potiramp->lowlimit = -1.0;
-	mcbench->potiramp->timestep = 0.001;
-	mcbench->potiramp->RampStepLimit = 0.01;
+	mcbench->ramp = ramp;
+	mcbench->ramp->gain = 1;
+	mcbench->ramp->highlimit = 1;
+	mcbench->ramp->lowlimit = -1.0;
+	mcbench->ramp->timestep = 0.001;
+	mcbench->ramp->RampStepLimit = 0.01;
 }
 
 TD_MC_PARAMS mcbench;

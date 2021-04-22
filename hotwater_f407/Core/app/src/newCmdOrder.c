@@ -238,8 +238,8 @@ float f = -1;
 		{
 		sscanf(argv[1], "%f", &f);
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] duty: ok", f);
-		mcbench.potiramp->RampStepLimit = 1;
-		mcbench.potiramp->Target = (f);
+		mcbench.ramp->RampStepLimit = 1;
+		mcbench.ramp->Target = (f);
 
 		}
 }
@@ -251,7 +251,7 @@ void	freq	(int argc, const char **argv)
 			{
 			sscanf(argv[1], "%d", &d);
 			term_qPrintf(myTxQueueHandle, "\r[parseCmd] freq: ok");
-			//mc_setfreq(d, &mcbench);
+			mcbench.pwm->freq = (d);
 			}
 	}
 
@@ -264,8 +264,8 @@ float g = -1;
 		sscanf(argv[1], "%f", &f);
 		sscanf(argv[2], "%f", &g);
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] ramp: ok");
-		mcbench.potiramp->Target = (f);
-		mcbench.potiramp->gain = g;
+		mcbench.ramp->Target = (f);
+		mcbench.ramp->gain = g;
 		}
 	else
 		{
