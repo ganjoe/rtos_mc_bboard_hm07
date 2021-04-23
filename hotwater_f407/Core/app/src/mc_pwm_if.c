@@ -35,7 +35,7 @@ void mc_pwm_update(TD_MC_PWM_PARAMS *pwm) {
 	}
 }
 
-void mc_pwm_bboard_led1_init(TD_MC_PWM_PARAMS *pwm) {
+void pwm_init_bboard_led1(TD_MC_PWM_PARAMS *pwm) {
 
 	__HAL_RCC_TIM13_CLK_ENABLE();
 
@@ -75,9 +75,9 @@ void mc_pwm_bboard_led1_init(TD_MC_PWM_PARAMS *pwm) {
 
 }
 
-void mc_pwm_bboard_led2_init(TD_MC_PWM_PARAMS *pwm) {
+void pwm_init_bboard_led2(TD_MC_PWM_PARAMS *pwm) {
 	HAL_TIM_PWM_Start_IT(&pwm->htim, TIM_CHANNEL_1);
 }
 
 
-TD_MC_PWM_PARAMS led1pwm;
+TD_MC_PWM_PARAMS pwm;

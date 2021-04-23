@@ -35,6 +35,7 @@ void mc_ramp(RMPCNTL *ramp)
 		}
     }
 
-RMPCNTL potiramp;
+
+RMPCNTL rampe;
 
 

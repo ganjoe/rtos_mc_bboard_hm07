@@ -27,10 +27,9 @@ typedef struct
 	} RMPCNTL;
 
 
-
 void mc_ramp		(RMPCNTL* ramp);
 
-extern RMPCNTL potiramp;
+extern RMPCNTL rampe;
 
 #endif /* INC_MC_RAMP_H_ */
 

@@ -79,8 +79,8 @@ typedef struct
  * @note legt fest worauf sich "pwm_set_duty" usw bezieht.
  * @note schreibt werte in das pwm - typedef
  */
-void mc_pwm_bboard_led1_init		(TD_MC_PWM_PARAMS* pwm);
-void mc_pwm_bboard_led2_init		(TD_MC_PWM_PARAMS* pwm);
+void pwm_init_bboard_led1		(TD_MC_PWM_PARAMS* pwm);
+void pwm_init_bboard_led2		(TD_MC_PWM_PARAMS* pwm);
 /*
 void mc_pwm_bcd6x_init			();
 void mc_pwm_bcd6x_setduty_u		(uint32_t setpoint);	//Normalbetrieb H-Brücke mit 6-fach pwm
@@ -101,6 +101,6 @@ void mc_pwm_svn3x_setduty_w		(uint32_t setpoint);
 void mc_pwm_update					(TD_MC_PWM_PARAMS* pwm);
 
 
-extern TD_MC_PWM_PARAMS led1pwm;
+extern TD_MC_PWM_PARAMS pwm, pwmled1, pwmled2;
 
 #endif /* INC_MC_PWM_IF_H_ */

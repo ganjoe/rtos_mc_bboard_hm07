@@ -36,6 +36,7 @@
 /*------------Propelli Base-----------------*/
 #include "newCmdOrder.h"
 #include "terminal.h"
+#include "dbase.h"
 
 /* USER CODE END Includes */
 
@@ -59,45 +60,30 @@ extern void term_lol_sendQueue(osMessageQueueId_t myTxQueueHandle);
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-uint8_t lReceivedValue[1];
+//uint8_t lReceivedValue[1];
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
-uint32_t defaultTaskBuffer[ 512 ];
-osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .cb_mem = &defaultTaskControlBlock,
-  .cb_size = sizeof(defaultTaskControlBlock),
-  .stack_mem = &defaultTaskBuffer[0],
-  .stack_size = sizeof(defaultTaskBuffer),
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for myRxTask */
 osThreadId_t myRxTaskHandle;
-uint32_t myRxTaskBuffer[ 512 ];
-osStaticThreadDef_t myRxTaskControlBlock;
 const osThreadAttr_t myRxTask_attributes = {
   .name = "myRxTask",
-  .cb_mem = &myRxTaskControlBlock,
-  .cb_size = sizeof(myRxTaskControlBlock),
-  .stack_mem = &myRxTaskBuffer[0],
-  .stack_size = sizeof(myRxTaskBuffer),
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myTxTask */
 osThreadId_t myTxTaskHandle;
-uint32_t myTxTaskBuffer[ 512 ];
-osStaticThreadDef_t myTxTaskControlBlock;
 const osThreadAttr_t myTxTask_attributes = {
   .name = "myTxTask",
-  .cb_mem = &myTxTaskControlBlock,
-  .cb_size = sizeof(myTxTaskControlBlock),
-  .stack_mem = &myTxTaskBuffer[0],
-  .stack_size = sizeof(myTxTaskBuffer),
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for myCmdTask*/
+/* Definitions for myCmdTask */
 osThreadId_t myCmdTaskHandle;
 const osThreadAttr_t myCmdTask_attributes = {
   .name = "myCmdTask",
@@ -106,7 +92,7 @@ const osThreadAttr_t myCmdTask_attributes = {
 };
 /* Definitions for myLogUartTask */
 osThreadId_t myLogUartTaskHandle;
-uint32_t myLogUartTaskBuffer[ 512 ];
+uint32_t myLogUartTaskBuffer[ 128 ];
 osStaticThreadDef_t myLogUartTaskControlBlock;
 const osThreadAttr_t myLogUartTask_attributes = {
   .name = "myLogUartTask",
@@ -118,7 +104,7 @@ const osThreadAttr_t myLogUartTask_attributes = {
 };
 /* Definitions for myMcTask */
 osThreadId_t myMcTaskHandle;
-uint32_t myMcTaskBuffer[ 512 ];
+uint32_t myMcTaskBuffer[ 128 ];
 osStaticThreadDef_t myMcTaskControlBlock;
 const osThreadAttr_t myMcTask_attributes = {
   .name = "myMcTask",
@@ -130,7 +116,7 @@ const osThreadAttr_t myMcTask_attributes = {
 };
 /* Definitions for myTxQueue */
 osMessageQueueId_t myTxQueueHandle;
-uint8_t myTxQueueBuffer[ 1024 * sizeof( uint8_t ) ];
+uint8_t myTxQueueBuffer[ 128 * sizeof( uint8_t ) ];
 osStaticMessageQDef_t myTxQueueControlBlock;
 const osMessageQueueAttr_t myTxQueue_attributes = {
   .name = "myTxQueue",
@@ -141,7 +127,7 @@ const osMessageQueueAttr_t myTxQueue_attributes = {
 };
 /* Definitions for myRxQueue */
 osMessageQueueId_t myRxQueueHandle;
-uint8_t myRxQueueBuffer[ 1024 * sizeof( uint8_t ) ];
+uint8_t myRxQueueBuffer[ 64 * sizeof( uint8_t ) ];
 osStaticMessageQDef_t myRxQueueControlBlock;
 const osMessageQueueAttr_t myRxQueue_attributes = {
   .name = "myRxQueue",
@@ -152,7 +138,7 @@ const osMessageQueueAttr_t myRxQueue_attributes = {
 };
 /* Definitions for myLineObjQueue */
 osMessageQueueId_t myLineObjQueueHandle;
-uint8_t myLineObjQueueBuffer[ 16 * 64 ];
+uint8_t myLineObjQueueBuffer[ 1 * 64 ];
 osStaticMessageQDef_t myLineObjQueueControlBlock;
 const osMessageQueueAttr_t myLineObjQueue_attributes = {
   .name = "myLineObjQueue",
@@ -163,7 +149,7 @@ const osMessageQueueAttr_t myLineObjQueue_attributes = {
 };
 /* Definitions for myCmdLineObjQueue */
 osMessageQueueId_t myCmdLineObjQueueHandle;
-uint8_t myCmdLineObjQueueBuffer[ 16 * 64 ];
+uint8_t myCmdLineObjQueueBuffer[ 1 * 64 ];
 osStaticMessageQDef_t myCmdLineObjQueueControlBlock;
 const osMessageQueueAttr_t myCmdLineObjQueue_attributes = {
   .name = "myCmdLineObjQueue",
@@ -218,16 +204,6 @@ const osSemaphoreAttr_t myCountNewCmd_attributes = {
   .cb_mem = &myCountNewCmdControlBlock,
   .cb_size = sizeof(myCountNewCmdControlBlock),
 };
-/* Definitions for wtfHot */
-osEventFlagsId_t wtfHotHandle;
-const osEventFlagsAttr_t wtfHot_attributes = {
-  .name = "wtfHot"
-};
-/* Definitions for wtfCold */
-osEventFlagsId_t wtfColdHandle;
-const osEventFlagsAttr_t wtfCold_attributes = {
-  .name = "wtfCold"
-};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -235,8 +211,8 @@ const osEventFlagsAttr_t wtfCold_attributes = {
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
-void StartRxTask(void *argument);
-void StartTxTask(void *argument);
+extern void StartRxTask(void *argument);
+extern void StartTxTask(void *argument);
 extern void StartCmdTask(void *argument);
 void StartLogUartTask(void *argument);
 extern void StartMcTask(void *argument);
@@ -356,16 +332,16 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* creation of myTxQueue */
-  myTxQueueHandle = osMessageQueueNew (1024, sizeof(uint8_t), &myTxQueue_attributes);
+  myTxQueueHandle = osMessageQueueNew (128, sizeof(uint8_t), &myTxQueue_attributes);
 
   /* creation of myRxQueue */
-  myRxQueueHandle = osMessageQueueNew (1024, sizeof(uint8_t), &myRxQueue_attributes);
+  myRxQueueHandle = osMessageQueueNew (64, sizeof(uint8_t), &myRxQueue_attributes);
 
   /* creation of myLineObjQueue */
-  myLineObjQueueHandle = osMessageQueueNew (16, 64, &myLineObjQueue_attributes);
+  myLineObjQueueHandle = osMessageQueueNew (1, 64, &myLineObjQueue_attributes);
 
   /* creation of myCmdLineObjQueue */
-  myCmdLineObjQueueHandle = osMessageQueueNew (16, 64, &myCmdLineObjQueue_attributes);
+  myCmdLineObjQueueHandle = osMessageQueueNew (1, 64, &myCmdLineObjQueue_attributes);
 
   /* creation of myLogLineObjQueue */
   myLogLineObjQueueHandle = osMessageQueueNew (16, 64, &myLogLineObjQueue_attributes);
@@ -387,7 +363,7 @@ void MX_FREERTOS_Init(void) {
   /* creation of myTxTask */
   myTxTaskHandle = osThreadNew(StartTxTask, NULL, &myTxTask_attributes);
 
-  /* creation of myCmdTask*/
+  /* creation of myCmdTask */
   myCmdTaskHandle = osThreadNew(StartCmdTask, NULL, &myCmdTask_attributes);
 
   /* creation of myLogUartTask */
@@ -399,13 +375,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
-
-  /* Create the event(s) */
-  /* creation of wtfHot */
-  wtfHotHandle = osEventFlagsNew(&wtfHot_attributes);
-
-  /* creation of wtfCold */
-  wtfColdHandle = osEventFlagsNew(&wtfCold_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
     /* add events, ... */
@@ -450,93 +419,6 @@ void StartDefaultTask(void *argument)
 
 	}
   /* USER CODE END StartDefaultTask */
-}
-
-/* USER CODE BEGIN Header_StartRxTask */
-/**
- * @brief Function implementing the myRxTask thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartRxTask */
-void StartRxTask(void *argument)
-{
-  /* USER CODE BEGIN StartRxTask */
-
-    BaseType_t xStatus;
-    /* Infinite loop */
-    for (;;)
-	{
-	if( xSemaphoreTake( myFlagNewStringHandle, 0)==pdPASS)
-	     {
-	    int ItemsLeft = uxQueueMessagesWaiting( myRxQueueHandle);
-
-	    if (ItemsLeft)
-		{
-		TD_LINEOBJ lobj;
-		char rxbuff[ ItemsLeft];
-
-		memset(rxbuff,'\0',ItemsLeft);
-
-		for (int var = 0; var < ItemsLeft; ++var)
-		    {
-		    uint8_t pvBuffer=0;
-
-		    xQueueReceive( myRxQueueHandle, &pvBuffer, 0);
-
-		    rxbuff[ var ] = pvBuffer;
-
-		    }
-		rxbuff[ ItemsLeft-1 ] = '\0';
-
-
-		dbase_Make( &lobj, strdup("cmd"), strdup(rxbuff), 0, 0, 0, 0);
-
-		xStatus = dBase_StoreQueue( myCmdLineObjQueueHandle, &lobj );
-
-		xSemaphoreGive(myCountNewCmdHandle);
-
-		}
-	    }
-
-	osDelay(1);
-	}
-    //
-  /* USER CODE END StartRxTask */
-}
-
-/* USER CODE BEGIN Header_StartTxTask */
-/**
- * @brief Function implementing the myTxTask thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartTxTask */
-void StartTxTask(void *argument)
-{
-  /* USER CODE BEGIN StartTxTask */
-
-    /* Infinite loop */
-    for (;;)
-
-	{
-	//term_lol_sendQueue(myTxQueueHandle);
-	osStatus val;
-
-	//uint8_t lReceivedValue=0;
-
-	val = osMessageQueueGet(myTxQueueHandle, &lReceivedValue, 0, 0);
-
-	switch (val)
-	    {
-	    case osOK:	HAL_UART_Transmit(&huart1, lReceivedValue, 1, 199);
-	    }
-
-	//xQueueReceive(myTxQueueHandle, &lReceivedValue, 0);
-
-	}
-
-  /* USER CODE END StartTxTask */
 }
 
 /* USER CODE BEGIN Header_StartLogUartTask */

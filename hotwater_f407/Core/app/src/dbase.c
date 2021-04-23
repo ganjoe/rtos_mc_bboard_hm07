@@ -2,21 +2,12 @@
  * dbase.c
  *
  *  Created on: 22.04.2021
- *      Author: danie
+ *      Author: daniel
  */
 
 #include "../dbase.h"
 
-
-extern osMessageQueueId_t myRxQueueHandle;
-
-extern osMessageQueueId_t myTxQueueHandle;
-
-extern osSemaphoreId_t myFlagNewStringHandle;
-
-extern osMessageQueueId_t mySDwriteBufferLineObjQueueHandle;
-
-/*----------private local code----------------*/
+/*___________________________________________________________*/
 BaseType_t dBase_StoreQueue(osMessageQueueId_t QueueHandle, TD_LINEOBJ *line)
     {
     return xQueueSend(QueueHandle, line, 2000);
@@ -44,7 +35,7 @@ void dbase_LoadQueue(osMessageQueueId_t QueueHandle, TD_LINEOBJ *line)
     {
     xQueueReceive(QueueHandle, line, ( portTickType ) 10);
     }
-/*-----------------------------------------------------------*/
+/*___________________________________________________________*/
 void dbase_Make(TD_LINEOBJ *line,const char *filename, const char *string,
 	const char *header, const char *postfix, uint16_t *linenr, const char *fmt, ...)
     {
@@ -133,7 +124,7 @@ void dbase_Make(TD_LINEOBJ *line,const char *filename, const char *string,
 	line->linenr = *linenr;
 
     }
-/*-----------------------------------------------------------*/
+/*___________________________________________________________*/
 void dbase_StoreSD(TD_LINEOBJ *line)
     {
     //osMessageQueuePut(mySDwriteBufferLineObjQueueHandle, line, 0, osWaitForever);

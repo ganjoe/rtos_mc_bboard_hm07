@@ -4,8 +4,12 @@
  *  Created on: 22.04.2021
  *      Author: danie
  *
- *	4/22 - eigene .c/.h
+ *	22.4.21 - eigene .c/.h
  */
+
+#include "main.h"
+#include "datatypes.h"
+
 
 #ifndef APP_DBASE_H_
 #define APP_DBASE_H_
@@ -15,6 +19,8 @@
 #define TD_LINEOBJ_MAX_POSTFIXSIZE 5
 #define TD_LINEOBJ_MAX_TIMESTRINGSIZE 18
 #define TD_LINEOBJ_MAX_FILENAMESIZE 8
+//array size for snprintf
+#define UART_PRINTBUFFER 	64
 
 typedef struct
 {

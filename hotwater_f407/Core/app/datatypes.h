@@ -8,16 +8,24 @@
 #ifndef APP_DATATYPES_H_
 #define APP_DATATYPES_H_
 
-
+/*--stm hal--*/
 #include "main.h"
+#include "rtc.h"
 
+/*--freertos--*/
 #include "FreeRTOS.h"
 #include "queue.h"
+#include "semphr.h"
 #include "cmsis_os2.h"
+#include "cmsis_os.h"
+
+/*--c library--*/
 #include "string.h"
 #include "stdio.h"
+#include "stdarg.h"
 
 #include "utils.h"
+
 
 
 /*-------------params----------------*/
@@ -45,18 +53,7 @@ typedef struct
     }
     TD_MODFLAG;
 
-typedef struct
-{
-    char	timestring[TD_LINEOBJ_MAX_TIMESTRINGSIZE];
-    char	filename[TD_LINEOBJ_MAX_FILENAMESIZE];	//rom l999 cmd
-    char	string[TD_LINEOBJ_MAX_SSIZE];	//setdate 10 10 10
-    char	header[TD_LINEOBJ_MAX_HEADERSIZE];	//tmcu, thot, tcld, fhot, fcld, lvlh, lvlc
-    char	postfix[TD_LINEOBJ_MAX_POSTFIXSIZE];	// "%4.3f"
-    uint16_t	linenr;
-    double 	value;
 
-}
-    TD_LINEOBJ;
 
 /*----------export----------------*/
 

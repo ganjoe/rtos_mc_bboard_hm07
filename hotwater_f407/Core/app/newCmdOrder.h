@@ -7,6 +7,7 @@
 
 #include "datatypes.h"
 #include "mc_datatypes.h"
+#include "dbase.h"
 
 #ifndef APP_NEWCMDORDER_H_
 #define APP_NEWCMDORDER_H_
