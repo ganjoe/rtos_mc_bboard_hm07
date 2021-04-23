@@ -11,6 +11,15 @@
 
 #include "main.h"
 
+#include "FreeRTOS.h"
+#include "queue.h"
+#include "cmsis_os2.h"
+#include "string.h"
+#include "stdio.h"
+
+#include "utils.h"
+
+
 /*-------------params----------------*/
 
 #define TD_LINEOBJ_MAX_SSIZE 16

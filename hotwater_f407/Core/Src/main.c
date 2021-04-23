@@ -109,7 +109,7 @@ int main(void)
   MX_TIM14_Init();
   MX_TIM11_Init();
   /* USER CODE BEGIN 2 */
-  cmd_init_callbacks();
+  cmd_init_callbacks(&newcmd);
 
   //schnellen tasktimer starten für zeitmessung
   HAL_TIM_Base_Start_IT(&htim6);
@@ -206,11 +206,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if (htim->Instance == TIM12) {
     HAL_IncTick();
   }
-  if (htim->Instance ==TIM11)
-
-  {/* USER CODE BEGIN Callback 1 */
+  /* USER CODE BEGIN Callback 1 */
 	  modflag_ovf_callback();
-  }
+
 
   /* USER CODE END Callback 1 */
 }

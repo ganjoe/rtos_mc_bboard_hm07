@@ -97,16 +97,11 @@ const osThreadAttr_t myTxTask_attributes = {
   .stack_size = sizeof(myTxTaskBuffer),
   .priority = (osPriority_t) osPriorityLow,
 };
-/* Definitions for myCmdTask */
+/* Definitions for myCmdTask*/
 osThreadId_t myCmdTaskHandle;
-uint32_t myCmdTaskBuffer[ 1024 ];
-osStaticThreadDef_t myCmdTaskControlBlock;
 const osThreadAttr_t myCmdTask_attributes = {
   .name = "myCmdTask",
-  .cb_mem = &myCmdTaskControlBlock,
-  .cb_size = sizeof(myCmdTaskControlBlock),
-  .stack_mem = &myCmdTaskBuffer[0],
-  .stack_size = sizeof(myCmdTaskBuffer),
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myLogUartTask */
@@ -242,7 +237,7 @@ const osEventFlagsAttr_t wtfCold_attributes = {
 void StartDefaultTask(void *argument);
 void StartRxTask(void *argument);
 void StartTxTask(void *argument);
-void StartCmdTask(void *argument);
+extern void StartCmdTask(void *argument);
 void StartLogUartTask(void *argument);
 extern void StartMcTask(void *argument);
 
@@ -392,7 +387,7 @@ void MX_FREERTOS_Init(void) {
   /* creation of myTxTask */
   myTxTaskHandle = osThreadNew(StartTxTask, NULL, &myTxTask_attributes);
 
-  /* creation of myCmdTask */
+  /* creation of myCmdTask*/
   myCmdTaskHandle = osThreadNew(StartCmdTask, NULL, &myCmdTask_attributes);
 
   /* creation of myLogUartTask */
@@ -542,35 +537,6 @@ void StartTxTask(void *argument)
 	}
 
   /* USER CODE END StartTxTask */
-}
-
-/* USER CODE BEGIN Header_StartCmdTask */
-/**
- * @brief Function implementing the myCmdTask thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_StartCmdTask */
-void StartCmdTask(void *argument)
-{
-  /* USER CODE BEGIN StartCmdTask */
-
-    /* Infinite loop */
-    for (;;)
-	{
-	if( xSemaphoreTake( myCountNewCmdHandle, osWaitForever)==pdPASS)
-	    {
-	    TD_LINEOBJ line;
-
-	    dbase_LoadQueue(myCmdLineObjQueueHandle, &line);
-
-	   // term_qPrintf(myTxQueueHandle, "\r<%s/parse:> %s]", line.filename, line.string);
-	   // term_qPrintf(myTxQueueHandle, "\r<%s/%s> %s [%s]", line.filename, line.header, line.string, line.postfix);
-	    cmd_parse_lobj(&line);
-
-	    }
-	}
-  /* USER CODE END StartCmdTask */
 }
 
 /* USER CODE BEGIN Header_StartLogUartTask */

@@ -25,18 +25,25 @@ typedef struct
     TD_TERMINAL_CALLBACKS callbacks[40];
     int callback_write;
     int callback_len;
+    int argument_nbr;
 }
     TD_CMD;
 /*------------api----------------------------
 */
+void term_lol_setCallback(
+ 		TD_CMD*	newcmd,		\
+    		const char *command,	\
+    		const char *help,	\
+    		const char *arg_names,	\
+    		void (*cbf)(int argc, const char **argv));
 
-void 	cmd_parse_lobj(TD_LINEOBJ *line);
-void	cmd_parse_string(char* string);
+void 	cmd_parse_lobj(TD_CMD* newcmd,TD_LINEOBJ *line);
+void	cmd_parse_string(TD_CMD* newcmd,char* string);
 
 
 /*------------propelli commands--------------*/
 
-void 	cmd_init_callbacks();
+void 	cmd_init_callbacks(TD_CMD *newcmd);
 void    reset(int argc, const char **argv);
 void    settime(int argc, const char **argv);
 void    setdate(int argc, const char **argv);
