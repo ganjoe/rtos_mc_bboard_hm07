@@ -19,11 +19,20 @@ typedef struct
 	void (*cbf)(int argc, const char **argv);
 	}
     TD_TERMINAL_CALLBACKS;
+
+typedef struct
+{
+    TD_TERMINAL_CALLBACKS callbacks[40];
+    int callback_write;
+    int callback_len;
+}
+    TD_CMD;
 /*------------api----------------------------
 */
 
 void 	cmd_parse_lobj(TD_LINEOBJ *line);
-void 	cmd_parse(char* string);
+void	cmd_parse_string(char* string);
+
 
 /*------------propelli commands--------------*/
 
@@ -39,16 +48,10 @@ void    setdate(int argc, const char **argv);
  *
  *
  */
-void	init	(int argc, const char **argv);
 
 void	duty	(int argc, const char **argv);
 void	freq	(int argc, const char **argv);
 void	ramp	(int argc, const char **argv);
-void	speed	(int argc, const char **argv);
-void	mspd	(int argc, const char **argv);
-void	dir		(int argc, const char **argv);
-void	init	(int argc, const char **argv);
 
-
-
+extern TD_CMD newcmd;
 #endif /* APP_NEWCMDORDER_H_ */

@@ -4,13 +4,7 @@
  *  Created on: 07.01.2021
  *      Author: ganjoe
  *
- *      fork aus vredder bldc firmware
- *
- *      funktionen für "CmdTask". Dort werden
- *
- *      terminierte strings als lineobject aus einer queue gelesen,
- *
- *      der parser ruft die callbacks auf
+ *      rewrite aus vredder bldc firmware
  *
  *
  */
@@ -36,6 +30,8 @@ extern osMessageQueueId_t myTxQueueHandle;
 
 static TD_TERMINAL_CALLBACKS callbacks[CALLBACK_LEN];
 
+
+TD_CMD newcmd = {.callback_len = 40};	//nicht nach 18 uhr ändern
 
 
 static int callback_write = 0;
@@ -93,8 +89,8 @@ void cmd_init_callbacks()
 /*------------propelli commands-------------------*/
 void cmd_parse_lobj(TD_LINEOBJ *line)
     {
-
-    char strbuffer[TD_LINEOBJ_MAX_SSIZE];
+    cmd_parse_string(line->string);
+/*    char strbuffer[TD_LINEOBJ_MAX_SSIZE];
 
     char *strbufferptr = &strbuffer;
 
@@ -113,7 +109,7 @@ void cmd_parse_lobj(TD_LINEOBJ *line)
 	strbufferptr = strtok(0,strdup(" "));
 	}
 
-/*
+
     if (argc == 0)
 	{
 	term_qPrintf(myTxQueueHandle, "No command received\n");
@@ -131,7 +127,7 @@ void cmd_parse_lobj(TD_LINEOBJ *line)
 	    term_qPrintf(myTxQueueHandle, "\r");
 	    }
 	}
-*/
+
     for (int i = 0; i < callback_write; i++)
 	{
 	if (callbacks[i].cbf != 0 && strcmp(ptrArgBuffer[0], callbacks[i].command) == 0)
@@ -139,7 +135,57 @@ void cmd_parse_lobj(TD_LINEOBJ *line)
 	    callbacks[i].cbf(ArgCount, (const char**) ptrArgBuffer);
 	    return;
 	    }
-	}    //
+	}  */
+    }
+
+void	cmd_parse_string(char* string)
+    {
+	char strbuffer[TD_LINEOBJ_MAX_SSIZE];
+
+        char *strbufferptr = &strbuffer;
+
+        int ArgCount = 0;
+
+        char *ptrArgBuffer[4]; //max arguemtns
+
+        //cmd ist der erste stringabschnitt von links
+        strbufferptr = strtok(string, strdup(" "));
+
+        //argumente separieren, und in ptr-array speichern
+        while (strbufferptr && ArgCount < 4)
+    	{
+    	ptrArgBuffer[ArgCount++] = strbufferptr;
+
+    	strbufferptr = strtok(0,strdup(" "));
+    	}
+
+    /*
+        if (argc == 0)
+    	{
+    	term_qPrintf(myTxQueueHandle, "No command received\n");
+    	return;
+    	}
+        if (strcmp(argv[0], "help") == 0)
+    	{
+    	term_qPrintf(myTxQueueHandle, "registered commands:\n");
+
+    	for (int i = 0; i < callback_write; i++)
+    	    {
+    	    term_qPrintf(myTxQueueHandle, callbacks[i].command);
+    	    term_qPrintf(myTxQueueHandle, "\rhelp: ");
+    	    term_qPrintf(myTxQueueHandle, callbacks[i].help);
+    	    term_qPrintf(myTxQueueHandle, "\r");
+    	    }
+    	}
+    */
+        for (int i = 0; i < callback_write; i++)
+    	{
+    	if (callbacks[i].cbf != 0 && strcmp(ptrArgBuffer[0], callbacks[i].command) == 0)
+    	    {
+    	    callbacks[i].cbf(ArgCount, (const char**) ptrArgBuffer);
+    	    return;
+    	    }
+    	}    //
     }
 
 void reset(int argc, const char **argv)

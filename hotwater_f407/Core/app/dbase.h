@@ -3,6 +3,8 @@
  *
  *  Created on: 22.04.2021
  *      Author: danie
+ *
+ *	4/22 - eigene .c/.h
  */
 
 #ifndef APP_DBASE_H_
