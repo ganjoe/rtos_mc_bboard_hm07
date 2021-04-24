@@ -20,7 +20,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-#include "adc.h"
 #include "dac.h"
 #include "dma.h"
 #include "fatfs.h"
@@ -98,21 +97,13 @@ int main(void)
   MX_DMA_Init();
   MX_RTC_Init();
   MX_SDIO_SD_Init();
-  MX_TIM6_Init();
   MX_USART1_UART_Init();
   MX_DAC_Init();
   MX_TIM2_Init();
-  MX_ADC1_Init();
   MX_FATFS_Init();
-  MX_ADC2_Init();
-  MX_ADC3_Init();
   MX_TIM11_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-  cmd_init_callbacks(&newcmd);
-
-  //schnellen tasktimer starten für zeitmessung
-  HAL_TIM_Base_Start_IT(&htim6);
-
 
 
   /* USER CODE END 2 */
@@ -203,11 +194,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM12) {
+  if (htim->Instance == TIM12)
+  {
     HAL_IncTick();
+
   }
   /* USER CODE BEGIN Callback 1 */
-	  modflag_ovf_callback();
+
 
 
   /* USER CODE END Callback 1 */

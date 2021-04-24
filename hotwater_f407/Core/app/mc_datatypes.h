@@ -33,9 +33,10 @@ typedef struct
 
 void mc_init_default(TD_MC_PARAMS* mcbench);
 
-void mc_init_boardLedPwm(TD_MC_PARAMS* mcbench);
-void mc_init_BlowerPwm(TD_MC_PARAMS* mcbench);
-void mc_init_boardLedRamp(TD_MC_PARAMS* mcbench);
+void mc_init_boardLedPwm(TD_MC_PWM_PARAMS *pwm);
+void mc_init_BlowerPwm(TD_MC_PWM_PARAMS *pwm);
+void mc_init_boardLedRamp(RMPCNTL* ramp);
+void mc_init_BlowerRamp(RMPCNTL* ramp);
 
 extern TD_MC_PARAMS mcbench;
 

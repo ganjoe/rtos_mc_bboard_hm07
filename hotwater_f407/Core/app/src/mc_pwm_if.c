@@ -16,32 +16,26 @@ void mc_pwm_update(TD_MC_PWM_PARAMS *pwm) {
 	 * @note entspricht den macro __HAL_TIM_SET_AUTORELOAD usw.
 	 * @note nicht verwendet um compilerwarnungen zu vermeiden
 	 */
-	pwm_setfreq(pwm);
-	pwm_setduty(pwm);
+
+	/* pu -> si */
+	pwm_calcfreq(pwm);
+	pwm_calcduty(pwm);
 
 	pwm->htim.Instance->ARR = pwm->top;
 	pwm->htim.Instance->PSC = pwm->prescaler;
 
-	switch (pwm->mcmode) {
-		case en_mode_led:
-			pwm->htim.Instance->CCR1 = pwm->comp_u; break;
+	/**
+	 * @brief low level pwm setter
+	 * @note center-aligned ist nur möglich wenn die setter den output status pollen
+	 * @note das hardware preload kann dies nicht, da nur bei overflow geupdated wird
+	 */
+	pwm->htim.Instance->CCR1 = pwm->comp_u;
+//	pwm->htim.Instance->CCR2 = pwm->comp_v;
+	//pwm->htim.Instance->CCR3 = pwm->comp_w;
 
-		case mc_pwm_hbridge:
-			pwm->htim.Instance->CCR1 = pwm->comp_u; break;
-			pwm->htim.Instance->CCR2 = pwm->comp_v; break;
-
-		case mc_pwm_threephase:
-			pwm->htim.Instance->CCR1 = pwm->comp_u; break;
-			pwm->htim.Instance->CCR2 = pwm->comp_v; break;
-			pwm->htim.Instance->CCR3 = pwm->comp_w; break;
-
-		default:			break;
-	}
 }
 
-
-
-void  pwm_setfreq(TD_MC_PWM_PARAMS *pwm)
+void  pwm_calcfreq(TD_MC_PWM_PARAMS *pwm)
 {
 	while (1)
 		{
@@ -54,7 +48,7 @@ void  pwm_setfreq(TD_MC_PWM_PARAMS *pwm)
 		}
 }
 
-void  pwm_setduty(TD_MC_PWM_PARAMS *pwm)
+void  pwm_calcduty(TD_MC_PWM_PARAMS *pwm)
 {
 	pwm->comp_u = pwm->duty * (float)pwm->top;
 }
@@ -79,7 +73,7 @@ void pwm_init_bboard_led1(TD_MC_PWM_PARAMS *pwm) {
 	}
 	sConfigOC.OCMode = TIM_OCMODE_PWM1;
 	sConfigOC.Pulse = 33333;
-	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_LOW;
 	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
 	if (HAL_TIM_PWM_ConfigChannel(&pwm->htim, &sConfigOC, TIM_CHANNEL_1)
 			!= HAL_OK) {
@@ -101,7 +95,8 @@ void pwm_init_bboard_led1(TD_MC_PWM_PARAMS *pwm) {
 
 }
 
-void pwm_init_bboard_led2(TD_MC_PWM_PARAMS *pwm) {
+void pwm_init_bboard_led2(TD_MC_PWM_PARAMS *pwm)
+{
 	HAL_TIM_PWM_Start_IT(&pwm->htim, TIM_CHANNEL_1);
 }
 

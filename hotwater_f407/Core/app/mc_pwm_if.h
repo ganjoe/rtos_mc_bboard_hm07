@@ -70,7 +70,7 @@ typedef struct
 	 * @brief mc-loop dutycycle und pwm-frequenz
 	 * @note normiert mit vorzeichen für drehrichtung
 	 */
-	float duty, freq;
+	float duty, duty_u, duty_v, duty_w, freq;
 }
 	TD_MC_PWM_PARAMS;
 
@@ -99,9 +99,9 @@ void mc_pwm_svn3x_setduty_w		(uint32_t setpoint);
 */
 
 void mc_pwm_update					(TD_MC_PWM_PARAMS* pwm);
-void  pwm_setfreq(TD_MC_PWM_PARAMS *pwm);
+void  pwm_calcfreq(TD_MC_PWM_PARAMS *pwm);
 
-void  pwm_setduty(TD_MC_PWM_PARAMS *pwm);
+void  pwm_calcduty(TD_MC_PWM_PARAMS *pwm);
 
 extern TD_MC_PWM_PARAMS pwm, pwmled1, pwmled2;
 
