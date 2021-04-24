@@ -10,16 +10,20 @@
 #include "../mc_pwm_if.h"
 #include "stm32f4xx_hal.h"
 
+
 void mc_pwm_update(TD_MC_PWM_PARAMS *pwm) {
 	/**
 	 * @note entspricht den macro __HAL_TIM_SET_AUTORELOAD usw.
 	 * @note nicht verwendet um compilerwarnungen zu vermeiden
 	 */
-	pwm->htim.Instance->ARR = pwm->top;
-	pwm->htim.Init.Prescaler = pwm->prescaler;
+	pwm_setfreq(pwm);
+	pwm_setduty(pwm);
 
-	switch (pwm->channelcount) {
-		case mc_pwm_single:
+	pwm->htim.Instance->ARR = pwm->top;
+	pwm->htim.Instance->PSC = pwm->prescaler;
+
+	switch (pwm->mcmode) {
+		case en_mode_led:
 			pwm->htim.Instance->CCR1 = pwm->comp_u; break;
 
 		case mc_pwm_hbridge:
@@ -33,6 +37,26 @@ void mc_pwm_update(TD_MC_PWM_PARAMS *pwm) {
 
 		default:			break;
 	}
+}
+
+
+
+void  pwm_setfreq(TD_MC_PWM_PARAMS *pwm)
+{
+	while (1)
+		{
+		pwm->top = pwm->speed/ (uint32_t)pwm->freq / (pwm->prescaler + 1) /2;
+
+		if (pwm->top < pwm->bits)
+		    break;
+		else
+		    pwm->prescaler++;
+		}
+}
+
+void  pwm_setduty(TD_MC_PWM_PARAMS *pwm)
+{
+	pwm->comp_u = pwm->duty * (float)pwm->top;
 }
 
 void pwm_init_bboard_led1(TD_MC_PWM_PARAMS *pwm) {
@@ -54,7 +78,7 @@ void pwm_init_bboard_led1(TD_MC_PWM_PARAMS *pwm) {
 		Error_Handler();
 	}
 	sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	sConfigOC.Pulse = 0;
+	sConfigOC.Pulse = 33333;
 	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
 	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
 	if (HAL_TIM_PWM_ConfigChannel(&pwm->htim, &sConfigOC, TIM_CHANNEL_1)
@@ -72,6 +96,8 @@ void pwm_init_bboard_led1(TD_MC_PWM_PARAMS *pwm) {
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	GPIO_InitStruct.Alternate = GPIO_AF9_TIM13;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	HAL_TIM_PWM_Start_IT(&pwm->htim, TIM_CHANNEL_1);
 
 }
 

@@ -14,7 +14,7 @@
 void mc_init_boardLedPwm(TD_MC_PARAMS* mcbench)
 {
     mcbench->pwm->speed = 64000000;
-    mcbench->pwm->bits = 16;
+    mcbench->pwm->bits = 0xFFFF;
     mcbench->pwm->duty_max = 0.9999;
     mcbench->pwm->duty_min = 0.00001;
     mcbench->pwm->freq_max = 0xFFFF;
@@ -24,7 +24,7 @@ void mc_init_boardLedPwm(TD_MC_PARAMS* mcbench)
 void mc_init_BlowerPwm(TD_MC_PARAMS* mcbench)
 {
     mcbench->pwm->speed = 64000000;
-    mcbench->pwm->bits = 16;
+    mcbench->pwm->bits = 0xFFFF;
     mcbench->pwm->duty_max = 0.9999;
     mcbench->pwm->duty_min = 0.00001;
     mcbench->pwm->freq_max = 0xFFFF;

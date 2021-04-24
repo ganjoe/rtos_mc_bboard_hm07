@@ -18,15 +18,16 @@ void StartMcTask(void *argument)
  * @brief Hardware Inits
  */
     pwm_init_bboard_led1	(&pwm);
-
+// pwm_init_bboard_led2(&pwm);
 /**
  * @brief Setup für Motorsitzung
  * @note könnte auch von den spezialisierten
  * @note mc_init_ funktionen gesetzt werden, ist so aber anschaulicher
  */
+    mcbench.benchsetup = en_mode_led;
     mcbench.pwm = &pwm;
     mcbench.ramp = &rampe;
-   // pwm_init_bboard_led2(&pwm);
+
 
 /**
  * @brief Motor control Inits
@@ -35,19 +36,23 @@ void StartMcTask(void *argument)
     mc_init_boardLedPwm(&mcbench);
     mc_init_boardLedRamp(&mcbench);
 
+
 	while(1)
 	{
 	    osDelay(1);
 
-	    mc_timediff(&mf_systick);
+	    //mc_timediff(&mf_systick);
 
-	    mcbench.ramp->timestep = mf_systick.timestep;
+	   // mcbench.ramp->timestep = mf_systick.timestep;
 
-	    mc_ramp		(&mcbench.ramp);
+	  //  mc_ramp		(&mcbench.ramp);
 
-	    mcbench.pwm->duty = mcbench.ramp->Setpoint;
+	   // mcbench.pwm->duty = mcbench.ramp->Setpoint;
 
-	   // mc_setduty	(&mcbench);
+	    mcbench.pwm->freq = 10;
+	    mcbench.pwm->duty = 0.9;
+	    mc_pwm_update(mcbench.pwm);
+
 
 	}
 

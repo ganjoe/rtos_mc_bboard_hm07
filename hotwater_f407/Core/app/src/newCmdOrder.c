@@ -163,6 +163,16 @@ void ramp(int argc, const char **argv)
 
     }
 
+void    init(int argc, const char **argv)
+{
+    int d = -1;
+    if (argc == 2)
+	{
+	sscanf(argv[1], "%d", &d);
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] mcbench: ok");
+	mcbench.benchsetup = (d);
+	}
+}
 /*-----------------------------------------------*/
 
 void StartCmdTask(void *argument)
@@ -194,6 +204,7 @@ void cmd_init_callbacks(TD_CMD *asdf)
     term_lol_setCallback(asdf, "duty", "pwm duty-cycle (-)ccw", "float",  duty);
     term_lol_setCallback(asdf, "freq", "pwm freq hz", "uint16", freq);
     term_lol_setCallback(asdf, "ramp", "zielwert 0..1, bezug(s)", "2 floats",  ramp);
+    term_lol_setCallback(asdf, "init", "setup 0,1,..", "1 int",  init);
 
 
     }

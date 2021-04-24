@@ -106,13 +106,13 @@ int main(void)
   MX_FATFS_Init();
   MX_ADC2_Init();
   MX_ADC3_Init();
-  MX_TIM14_Init();
   MX_TIM11_Init();
   /* USER CODE BEGIN 2 */
   cmd_init_callbacks(&newcmd);
 
   //schnellen tasktimer starten für zeitmessung
   HAL_TIM_Base_Start_IT(&htim6);
+
 
 
   /* USER CODE END 2 */

@@ -48,6 +48,7 @@ void 	cmd_init_callbacks(TD_CMD *newcmd);
 void    reset(int argc, const char **argv);
 void    settime(int argc, const char **argv);
 void    setdate(int argc, const char **argv);
+void    init(int argc, const char **argv);
 
 
 /*------------motor control commands--------------

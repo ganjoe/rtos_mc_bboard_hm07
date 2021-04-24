@@ -16,11 +16,11 @@
 
 typedef enum
 {
-	mc_pwm_single = 1,
+	en_mode_led,
 	mc_pwm_hbridge,
 	mc_pwm_threephase,
 
-}EN_MC_TIMERCHAN;
+}EN_MC_MODE;
 
 typedef struct
 {
@@ -33,7 +33,7 @@ typedef struct
 	 * @brief Compare-Channel für den Timer
 	 * @note betrifft den setter"mc_pwm_update"
 	 */
-	EN_MC_TIMERCHAN channelcount;
+	EN_MC_MODE mcmode;
 
 	/**
 	 * @brief takte pro sekunde
@@ -99,7 +99,9 @@ void mc_pwm_svn3x_setduty_w		(uint32_t setpoint);
 */
 
 void mc_pwm_update					(TD_MC_PWM_PARAMS* pwm);
+void  pwm_setfreq(TD_MC_PWM_PARAMS *pwm);
 
+void  pwm_setduty(TD_MC_PWM_PARAMS *pwm);
 
 extern TD_MC_PWM_PARAMS pwm, pwmled1, pwmled2;
 
