@@ -35,7 +35,7 @@ void mc_pwm_update(TD_MC_PWM_PARAMS *pwm) {
 
 }
 
-void  pwm_calcfreq(TD_MC_PWM_PARAMS *pwm)
+void pwm_calcfreq(TD_MC_PWM_PARAMS *pwm)
 {
 	while (1)
 		{
@@ -48,10 +48,15 @@ void  pwm_calcfreq(TD_MC_PWM_PARAMS *pwm)
 		}
 }
 
-void  pwm_calcduty(TD_MC_PWM_PARAMS *pwm)
+void pwm_calcduty(TD_MC_PWM_PARAMS *pwm)
 {
 	pwm->comp_u = pwm->duty * (float)pwm->top;
 }
+
+void pwm_init_blower(TD_MC_PWM_PARAMS *pwm)
+    {
+
+    }
 
 void pwm_init_bboard_led1(TD_MC_PWM_PARAMS *pwm) {
 
@@ -101,4 +106,4 @@ void pwm_init_bboard_led2(TD_MC_PWM_PARAMS *pwm)
 }
 
 
-TD_MC_PWM_PARAMS pwm;
+TD_MC_PWM_PARAMS pwm, pwm_led1;

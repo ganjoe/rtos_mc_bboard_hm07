@@ -58,6 +58,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define shunt_u_Pin GPIO_PIN_0
+#define shunt_u_GPIO_Port GPIOA
+#define shunt_v_Pin GPIO_PIN_1
+#define shunt_v_GPIO_Port GPIOA
+#define emk_u_Pin GPIO_PIN_2
+#define emk_u_GPIO_Port GPIOA
+#define emk_v_Pin GPIO_PIN_3
+#define emk_v_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

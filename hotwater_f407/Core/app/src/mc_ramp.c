@@ -36,6 +36,6 @@ void mc_ramp(RMPCNTL *ramp)
     }
 
 
-RMPCNTL rampe;
+RMPCNTL rampe, rampe_led1;
 
 

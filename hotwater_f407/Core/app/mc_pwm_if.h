@@ -14,14 +14,6 @@
 
 #include "main.h"
 
-typedef enum
-{
-	en_mode_led,
-	mc_pwm_hbridge,
-	mc_pwm_threephase,
-
-}EN_MC_MODE;
-
 typedef struct
 {
 	/**
@@ -29,11 +21,6 @@ typedef struct
 	 * @note das handle ist in tim.h initialisiert
 	 */
 	TIM_HandleTypeDef htim;
-	/**
-	 * @brief Compare-Channel für den Timer
-	 * @note betrifft den setter"mc_pwm_update"
-	 */
-	EN_MC_MODE mcmode;
 
 	/**
 	 * @brief takte pro sekunde
@@ -74,35 +61,17 @@ typedef struct
 }
 	TD_MC_PWM_PARAMS;
 
-/**
- * @brief pwm-setup für endstufe
- * @note legt fest worauf sich "pwm_set_duty" usw bezieht.
- * @note schreibt werte in das pwm - typedef
- */
+
 void pwm_init_bboard_led1		(TD_MC_PWM_PARAMS* pwm);
 void pwm_init_bboard_led2		(TD_MC_PWM_PARAMS* pwm);
-/*
-void mc_pwm_bcd6x_init			();
-void mc_pwm_bcd6x_setduty_u		(uint32_t setpoint);	//Normalbetrieb H-Brücke mit 6-fach pwm
-void mc_pwm_bcd6x_setduty_v		(uint32_t setpoint);
-void mc_pwm_bcd6x_setduty_w		(uint32_t setpoint);
+void pwm_init_blower			(TD_MC_PWM_PARAMS *pwm);
 
-void mc_pwm_bcd3x_init			();
-void mc_pwm_bcd3x_setduty_u		(uint32_t setpoint);	//Für Integrierte Halbbrücken-IC mit Enable, bzw. High-Z Signal
-void mc_pwm_bcd3x_setduty_v		(uint32_t setpoint);
-void mc_pwm_bcd3x_setduty_w		(uint32_t setpoint);
+void mc_pwm_update			(TD_MC_PWM_PARAMS* pwm);
 
-void mc_pwm_svn3x_init			();
-void mc_pwm_svn3x_setduty_u		(uint32_t setpoint);	//Drehstromlast für 3-fach pwm
-void mc_pwm_svn3x_setduty_v		(uint32_t setpoint);
-void mc_pwm_svn3x_setduty_w		(uint32_t setpoint);
-*/
+void pwm_calcfreq(TD_MC_PWM_PARAMS *pwm);
 
-void mc_pwm_update					(TD_MC_PWM_PARAMS* pwm);
-void  pwm_calcfreq(TD_MC_PWM_PARAMS *pwm);
+void pwm_calcduty(TD_MC_PWM_PARAMS *pwm);
 
-void  pwm_calcduty(TD_MC_PWM_PARAMS *pwm);
-
-extern TD_MC_PWM_PARAMS pwm, pwmled1, pwmled2;
+extern TD_MC_PWM_PARAMS pwm, pwm_led1;
 
 #endif /* INC_MC_PWM_IF_H_ */

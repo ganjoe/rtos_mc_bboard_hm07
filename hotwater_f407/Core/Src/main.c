@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "adc.h"
 #include "dac.h"
 #include "dma.h"
 #include "fatfs.h"
@@ -102,10 +103,11 @@ int main(void)
   MX_TIM2_Init();
   MX_FATFS_Init();
   MX_TIM11_Init();
-  MX_TIM4_Init();
+  MX_ADC1_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
-
+  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -194,10 +196,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM12)
-  {
+  if (htim->Instance == TIM12) {
     HAL_IncTick();
-
   }
   /* USER CODE BEGIN Callback 1 */
 
