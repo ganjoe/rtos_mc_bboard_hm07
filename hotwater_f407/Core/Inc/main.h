@@ -66,6 +66,12 @@ void Error_Handler(void);
 #define emk_u_GPIO_Port GPIOA
 #define emk_v_Pin GPIO_PIN_3
 #define emk_v_GPIO_Port GPIOA
+#define drv_en_Pin GPIO_PIN_6
+#define drv_en_GPIO_Port GPIOB
+#define drv_cs_Pin GPIO_PIN_7
+#define drv_cs_GPIO_Port GPIOB
+#define drv_fault_Pin GPIO_PIN_8
+#define drv_fault_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

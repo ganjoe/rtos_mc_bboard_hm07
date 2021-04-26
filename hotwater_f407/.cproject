@@ -457,7 +457,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="app/src/mc_drv83.c|app/src/flowmeter.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+                        <entry excluding="app/src/flowmeter.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FATFS"/>
                         						
@@ -915,7 +915,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="app/src/mc_drv83.c|app/src/flowmeter.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+                        <entry excluding="app/src/flowmeter.c" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="FATFS"/>
                         						
