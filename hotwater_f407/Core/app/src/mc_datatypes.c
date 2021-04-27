@@ -49,6 +49,7 @@ void mc_init_BlowerRamp(RMPCNTL* ramp)
     ramp->RampStepLimit = 0.01;
 }
 
+TD_MC_ADC_MATH math_shuntu, math_shuntv, math_emku, math_emkv;
 
 
 TD_MC_PARAMS mcbench;

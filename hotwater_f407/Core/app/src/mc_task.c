@@ -26,10 +26,9 @@ void StartMcTask(void *argument)
      * @brief Setup für Motorsitzung
      */
     mcbench.benchsetup = bb_hm7_blower;
-	mc_adc_newBuffer(&adcbuff, 64);
-	adcbuff.filterdepth = 32;	//filter bezieht sich auf pwm-zyklen
-	HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, 64);
-
+    mc_adc_newBuffer(&adcbuff, 64);
+    adcbuff.filterdepth = 32;	//filter bezieht sich auf pwm-zyklen
+    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, 64);
 
     /**
      * @brief Setup für dimmbare Melde-Led
@@ -73,8 +72,6 @@ void StartMcTask(void *argument)
 	    mc_ramp(&rampe_led1);
 	    pwm_led1.duty = rampe_led1.Setpoint;
 	    mc_pwm_update(&pwm_led1);
-
-
 	}
 
     }

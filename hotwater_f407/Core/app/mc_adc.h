@@ -20,10 +20,11 @@ typedef struct
     float max, min;
 
     /*	si berechnung	*/
-
     double Ilsb[5];
+
 }
     TD_MC_ADC_MATH;
+
 
 typedef struct
         {
@@ -33,6 +34,7 @@ typedef struct
         uint32_t filterdepth;
         uint32_t* workbuff;
         uint32_t AdcDmaBuffSize;
+
         }
     TD_MC_ADC_BUFF;
 

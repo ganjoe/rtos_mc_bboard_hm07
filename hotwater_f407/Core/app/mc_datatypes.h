@@ -15,6 +15,8 @@
 #include "datatypes.h"
 #include "mc_ramp.h"
 #include "mc_pwm_if.h"
+#include "mc_drv83.h"
+#include "mc_adc.h"
 
 typedef enum
 {
