@@ -14,7 +14,9 @@
 void mc_pwm_update(TD_MC_PWM_PARAMS *pwm) {
 	/**
 	 * @note entspricht den macro __HAL_TIM_SET_AUTORELOAD usw.
-	 * @note nicht verwendet um compilerwarnungen zu vermeiden
+	 * @note verwenden um compilerwarnungen zu vermeiden
+	 * @note center-aligned ist nur möglich wenn die setter
+	 * @note den output status pollen und bei low setzen
 	 */
 
 	/* pu -> si */
@@ -26,12 +28,12 @@ void mc_pwm_update(TD_MC_PWM_PARAMS *pwm) {
 
 	/**
 	 * @brief low level pwm setter
-	 * @note center-aligned ist nur möglich wenn die setter den output status pollen
+	 *
 	 * @note das hardware preload kann dies nicht, da nur bei overflow geupdated wird
 	 */
 	pwm->htim.Instance->CCR1 = pwm->comp_u;
-//	pwm->htim.Instance->CCR2 = pwm->comp_v;
-	//pwm->htim.Instance->CCR3 = pwm->comp_w;
+	pwm->htim.Instance->CCR2 = pwm->comp_v;
+	pwm->htim.Instance->CCR3 = pwm->comp_w;
 
 }
 
@@ -53,12 +55,8 @@ void pwm_calcduty(TD_MC_PWM_PARAMS *pwm)
 	pwm->comp_u = pwm->duty * (float)pwm->top;
 }
 
-void pwm_init_blower(TD_MC_PWM_PARAMS *pwm)
-    {
 
-    }
-
-void pwm_init_bboard_led1(TD_MC_PWM_PARAMS *pwm) {
+void pwm_init_timer_led1(TD_MC_PWM_PARAMS *pwm) {
 
 	__HAL_RCC_TIM13_CLK_ENABLE();
 
@@ -100,10 +98,14 @@ void pwm_init_bboard_led1(TD_MC_PWM_PARAMS *pwm) {
 
 }
 
-void pwm_init_bboard_led2(TD_MC_PWM_PARAMS *pwm)
+void pwm_init_timer_led2(TD_MC_PWM_PARAMS *pwm)
 {
 	HAL_TIM_PWM_Start_IT(&pwm->htim, TIM_CHANNEL_1);
 }
 
+void pwm_init_timer_mc(TD_MC_PWM_PARAMS *pwm)
+    {
+
+    }
 
 TD_MC_PWM_PARAMS pwm, pwm_led1;

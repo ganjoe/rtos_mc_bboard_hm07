@@ -13,6 +13,7 @@
 #include "../mc_ramp.h"
 #include "../newCmdOrder.h"
 #include "../mc_adc.h"
+#include "../mc_drv83.h"
 
 void StartMcTask(void *argument)
     {
@@ -30,10 +31,34 @@ void StartMcTask(void *argument)
     adcbuff.filterdepth = 32;	//filter bezieht sich auf pwm-zyklen
     HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, 64);
 
+    drv.modeSelect = drv_pwm_3x; 	drv_setPwmMode(&drv);
+    drv.csa_gain = drv_sgain_40; 	drv_setShuntGain(&drv);
+    drv.opref = drv_shunt_bidirectinal; drv_setShuntSign(&drv);
+
+    shunt.Ilsb[drv_sgain_40] = 0.0001;	//zur berechnung von SI
+    shunt.min = 0;
+    shunt.max = 10;			//bereich in SI für berechnung von pu
+    shunt.lowlimit = 10;
+    shunt.upperlimit = 0xFFF -10;	//limiter für adc-raw
+
+    emk.Ilsb[drv_sgain_40] = 0.0001;
+    emk.min = 0;
+    emk.max = 10;
+    emk.lowlimit = 10;
+    emk.upperlimit = 0xFFF -10;
+
+    pwm_init_timer_mc(&pwm);	//stm32 hal init
+    mc_init_BlowerPwm(&pwm);	//mc init
+    mc_init_BlowerRamp(&rampe);
+    pwm.freq = 1000;
+    rampe.Target = 0.5;
+    rampe.gain = 1;
+
+
     /**
      * @brief Setup für dimmbare Melde-Led
      */
-    pwm_init_bboard_led1(&pwm_led1);
+    pwm_init_timer_led1(&pwm_led1);
     mc_init_boardLedPwm(&pwm_led1);
     mc_init_boardLedRamp(&rampe_led1);
 
@@ -41,21 +66,12 @@ void StartMcTask(void *argument)
     rampe_led1.Target = 0.5;
     rampe_led1.gain = 1;
 
-/*
-    pwm_init_Blower(&pwm);
-    mc_init_BlowerPwm(&pwm);
+    /**
+     * @brief Setup für Regelung
+     */
 
 
-    mcbench.pwm = &pwm;
 
-    mcbench.ramp = &rampe;
-
-    mcbench.pwm->freq = 1000;
-
-    mcbench.ramp->Target = 0.1;
-
-    mcbench.ramp->gain = 0.4;
-*/
     while (1)
 	{
 	osDelay(1);
@@ -65,6 +81,11 @@ void StartMcTask(void *argument)
 	   	/*	adc nach si und pu auswerten	*/
 	    uint32_t adcrise, adcfall;
 	    mc_adc_avg_alt(&adcbuff, &adcrise, &adcfall);
+
+	    rampe.timestep = mf_systick.timestep;
+	    mc_ramp(&rampe);
+	    pwm.duty = rampe.Setpoint;
+	    mc_pwm_update(&pwm);
 
 
 	    	/*	animierte meldeleuchte	*/

@@ -244,6 +244,7 @@ void drv_readRegister(uint16_t regNr, uint16_t *data)
 	    HAL_TIMEOUT);
 
     }
+TD_DRV83 drv;
 
 /*-------------update function---------------*/
 

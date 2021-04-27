@@ -82,6 +82,10 @@ int drv_check_fault	(TD_DRV83 *select);
 void drv_readRegister(uint16_t regNr, uint16_t *data);
 void drv_writeCompareReg(uint8_t regNr, uint16_t reg);
 void drv_csPulse();
+/* hal init */
+void drv_init_spi();
+
+extern TD_DRV83 drv;
 
 #endif /* INC_DRV83_H_ */
 

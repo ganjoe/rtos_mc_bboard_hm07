@@ -41,5 +41,6 @@ void mc_init_boardLedRamp(RMPCNTL* ramp);
 void mc_init_BlowerRamp(RMPCNTL* ramp);
 
 extern TD_MC_PARAMS mcbench;
+extern TD_MC_ADC_MATH shunt, emk;
 
 #endif /* INC_MC_DATATYPES_H_ */

@@ -62,9 +62,9 @@ typedef struct
 	TD_MC_PWM_PARAMS;
 
 
-void pwm_init_bboard_led1		(TD_MC_PWM_PARAMS* pwm);
-void pwm_init_bboard_led2		(TD_MC_PWM_PARAMS* pwm);
-void pwm_init_blower			(TD_MC_PWM_PARAMS *pwm);
+void pwm_init_timer_led1		(TD_MC_PWM_PARAMS* pwm);
+void pwm_init_timer_led2		(TD_MC_PWM_PARAMS* pwm);
+void pwm_init_timer_mc			(TD_MC_PWM_PARAMS *pwm);
 
 void mc_pwm_update			(TD_MC_PWM_PARAMS* pwm);
 
