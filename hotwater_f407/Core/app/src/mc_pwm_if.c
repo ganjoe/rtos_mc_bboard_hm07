@@ -136,19 +136,10 @@ void pwm_init_timer_mc(TD_MC_PWM_PARAMS *pwm)
     __HAL_RCC_TIM1_CLK_ENABLE();
     pwm->htim.Instance = TIM1;
 
-
-    /* USER CODE BEGIN TIM1_Init 0 */
-
-    /* USER CODE END TIM1_Init 0 */
-
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
     TIM_MasterConfigTypeDef sMasterConfig = {0};
     TIM_OC_InitTypeDef sConfigOC = {0};
     TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
-
-    /* USER CODE BEGIN TIM1_Init 1 */
-
-    /* USER CODE END TIM1_Init 1 */
 
     pwm->htim.Init.Prescaler = 0;
     pwm->htim.Init.CounterMode = TIM_COUNTERMODE_UP;
@@ -157,24 +148,16 @@ void pwm_init_timer_mc(TD_MC_PWM_PARAMS *pwm)
     pwm->htim.Init.RepetitionCounter = 0;
     pwm->htim.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
     if (HAL_TIM_Base_Init(&pwm->htim) != HAL_OK)
-    {
       Error_Handler();
-    }
     sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
     if (HAL_TIM_ConfigClockSource(&pwm->htim, &sClockSourceConfig) != HAL_OK)
-    {
       Error_Handler();
-    }
     if (HAL_TIM_PWM_Init(&pwm->htim) != HAL_OK)
-    {
       Error_Handler();
-    }
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
     if (HAL_TIMEx_MasterConfigSynchronization(&pwm->htim, &sMasterConfig) != HAL_OK)
-    {
       Error_Handler();
-    }
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
     sConfigOC.Pulse = 5000;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
@@ -183,18 +166,12 @@ void pwm_init_timer_mc(TD_MC_PWM_PARAMS *pwm)
     sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
     sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
     if (HAL_TIM_PWM_ConfigChannel(&pwm->htim, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-    {
       Error_Handler();
-    }
     if (HAL_TIM_PWM_ConfigChannel(&pwm->htim, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
-    {
       Error_Handler();
-    }
     sConfigOC.Pulse = 0;
     if (HAL_TIM_PWM_ConfigChannel(&pwm->htim, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
-    {
       Error_Handler();
-    }
     sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
     sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
     sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
@@ -203,18 +180,9 @@ void pwm_init_timer_mc(TD_MC_PWM_PARAMS *pwm)
     sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
     sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
     if (HAL_TIMEx_ConfigBreakDeadTime(&pwm->htim, &sBreakDeadTimeConfig) != HAL_OK)
-    {
       Error_Handler();
-    }
-    /* USER CODE BEGIN TIM1_Init 2 */
 
-    /* USER CODE END TIM1_Init 2 */
     GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-    /* USER CODE BEGIN TIM1_MspPostInit 0 */
-
-    /* USER CODE END TIM1_MspPostInit 0 */
-
       __HAL_RCC_GPIOE_CLK_ENABLE();
       /**TIM1 GPIO Configuration
       PE9     ------> TIM1_CH1
