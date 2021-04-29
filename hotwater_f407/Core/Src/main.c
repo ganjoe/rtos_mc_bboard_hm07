@@ -105,11 +105,11 @@ int main(void)
   MX_FATFS_Init();
   MX_TIM11_Init();
   MX_ADC1_Init();
-  MX_TIM3_Init();
   MX_SPI1_Init();
+
   /* USER CODE BEGIN 2 */
 
-  HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
+
   /* USER CODE END 2 */
 
   /* Init scheduler */

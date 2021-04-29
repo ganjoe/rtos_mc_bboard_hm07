@@ -17,7 +17,6 @@
 #include "../terminal.h"
 
 
-
 void StartMcTask(void *argument)
     {
     /**
@@ -38,7 +37,7 @@ void StartMcTask(void *argument)
     HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, 64);
 
     drv_en_drv(1);
-    drv.modeSelect = drv_pwm_3x; 	drv_setPwmMode(&drv);
+    drv.modeSelect = drv_pwm_6x; 	drv_setPwmMode(&drv);
     drv.csa_gain = drv_sgain_40; 	drv_setShuntGain(&drv);
     drv.opref = drv_shunt_bidirectinal; drv_setShuntSign(&drv);
 
@@ -59,7 +58,7 @@ void StartMcTask(void *argument)
     mc_init_BlowerRamp(&rampe);
 
     pwm.freq = 1000;
-    rampe.Target = 0.5;
+    rampe.Target = -0.5;
     rampe.gain = 1;
 
 
