@@ -58,14 +58,14 @@ void StartMcTask(void *argument)
     mc_init_BlowerRamp(&rampe);
 
     pwm.freq = 1000;
-    rampe.Target = -0.5;
+    rampe.Target = -0.1;
     rampe.gain = 1;
 
 
     /**
      * @brief Setup für dimmbare Melde-Led
      */
-    pwm_init_timer_led1(&pwm_led1);
+    //pwm_init_timer_led1(&pwm_led1);
     mc_init_boardLedPwm(&pwm_led1);
     mc_init_boardLedRamp(&rampe_led1);
 

@@ -135,10 +135,10 @@ void duty(int argc, const char **argv)
 
 void freq(int argc, const char **argv)
     {
-    int d = -1;
+    float d = -1;
     if (argc == 2)
 	{
-	sscanf(argv[1], "%d", &d);
+	sscanf(argv[1], "%f", &d);
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] freq: ok");
 	mcbench.pwm->freq = (d);
 	}
@@ -163,7 +163,7 @@ void ramp(int argc, const char **argv)
 
     }
 
-void    init(int argc, const char **argv)
+void init(int argc, const char **argv)
 {
     int d = -1;
     if (argc == 2)

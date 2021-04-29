@@ -23,9 +23,7 @@
 #include "adc.h"
 #include "dac.h"
 #include "dma.h"
-#include "fatfs.h"
 #include "rtc.h"
-#include "sdio.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -98,15 +96,11 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_RTC_Init();
-  MX_SDIO_SD_Init();
   MX_USART1_UART_Init();
   MX_DAC_Init();
-  MX_TIM2_Init();
-  MX_FATFS_Init();
-  MX_TIM11_Init();
   MX_ADC1_Init();
   MX_SPI1_Init();
-
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
 

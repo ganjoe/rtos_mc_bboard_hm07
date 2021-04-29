@@ -18,6 +18,7 @@
 
 #include "../mc_drv83.h"
 #include "../utils.h"
+#include "../terminal.h"
 
 
 /*-------------mc api --------------------*/
@@ -152,7 +153,7 @@ void drv_setOvrLoadProt(TD_DRV83 *select)
 
 void drv_en_drv(int enable)
     {
-    //term_qPrintf(&myTxQueueHandle, "\r[drv_en_drv]");
+    term_qPrintf(&myTxQueueHandle, "\r[drv_en_drv]");
     if (enable)
 	{
 	HAL_GPIO_WritePin(drv_en_GPIO_Port, drv_en_Pin, 1);
@@ -160,12 +161,12 @@ void drv_en_drv(int enable)
 	HAL_GPIO_WritePin(drv_en_GPIO_Port, drv_en_Pin, 0);
 	HAL_Delay(1);
 	HAL_GPIO_WritePin(drv_en_GPIO_Port, drv_en_Pin, 1);
-	//term_qPrintf(&myTxQueueHandle, "\rreset & enable");
+	term_qPrintf(&myTxQueueHandle, "\rreset & enable");
 	}
     else
 	{
 	HAL_GPIO_WritePin(drv_en_GPIO_Port, drv_en_Pin, 0);
-	//term_qPrintf(&myTxQueueHandle, "\rdisabled");
+	term_qPrintf(&myTxQueueHandle, "\rdisabled");
 	}
 
     }
