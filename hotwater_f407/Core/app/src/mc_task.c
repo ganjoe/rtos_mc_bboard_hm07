@@ -32,9 +32,8 @@ void StartMcTask(void *argument)
     mcbench.pwm = &pwm;		//zuordnung legt fest worauf sich das terminal bezieht
     mcbench.ramp = &rampe;
 
-    mc_adc_newBuffer(&adcbuff, 64);
-    adcbuff.filterdepth = 32;	//filter bezieht sich auf pwm-zyklen
-    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, 64);
+	//filter bezieht sich auf pwm-zyklen
+
 
     drv_en_drv(1);
     drv.modeSelect = drv_pwm_6x; 	drv_setPwmMode(&drv);
@@ -58,7 +57,7 @@ void StartMcTask(void *argument)
     mc_init_BlowerRamp(&rampe);
 
     pwm.freq = 1000;
-    rampe.Target = -0.1;
+    rampe.Target = -0.05;
     rampe.gain = 1;
 
 
@@ -72,6 +71,10 @@ void StartMcTask(void *argument)
     pwm_led1.freq = 1000;
     rampe_led1.Target = 0.5;
     rampe_led1.gain = 1;
+
+    mc_adc_newBuffer(&adcbuff, 1);
+    adcbuff.filterdepth = 1;
+    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, 1);
 
     /**
      * @brief Setup für Regelung
@@ -103,3 +106,10 @@ void StartMcTask(void *argument)
 
     }
 
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+    {
+
+    HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
+    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, 1);
+
+    }

@@ -74,6 +74,8 @@ void Error_Handler(void);
 #define enable_u_GPIO_Port GPIOE
 #define enable_v_Pin GPIO_PIN_12
 #define enable_v_GPIO_Port GPIOE
+#define test_Pin GPIO_PIN_13
+#define test_GPIO_Port GPIOB
 #define drv_en_Pin GPIO_PIN_6
 #define drv_en_GPIO_Port GPIOB
 #define drv_cs_Pin GPIO_PIN_7
