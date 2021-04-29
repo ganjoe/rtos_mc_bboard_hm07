@@ -150,7 +150,7 @@ void drv_setOvrLoadProt(TD_DRV83 *select)
 
 /*-------------mc api --------------------*/
 
-void drv_en_drv(TD_DRV83 *select, int enable)
+void drv_en_drv(int enable)
     {
     //term_qPrintf(&myTxQueueHandle, "\r[drv_en_drv]");
     if (enable)
@@ -169,7 +169,7 @@ void drv_en_drv(TD_DRV83 *select, int enable)
 	}
 
     }
-int drv_check_fault(TD_DRV83 *select)
+int drv_check_fault()
     {
     return !HAL_GPIO_ReadPin(drv_fault_GPIO_Port, drv_fault_Pin);
     }

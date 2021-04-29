@@ -23,12 +23,12 @@ void mc_init_boardLedPwm(TD_MC_PWM_PARAMS *pwm)
 
 void mc_init_BlowerPwm(TD_MC_PWM_PARAMS *pwm)
 {
-    pwm->speed = 64000000;
+    pwm->speed = 168000000;
     pwm->bits = 0xFFFF;
     pwm->duty_max = 0.9999;
     pwm->duty_min = 0.00001;
-    pwm->freq_max = 0xFFFF;
-    pwm->freq_min = 0xF;
+    pwm->freq_max = 64000;
+    pwm->freq_min = 0xFF;
 }
 
 void mc_init_boardLedRamp(RMPCNTL* ramp)

@@ -14,6 +14,9 @@
 #include "../newCmdOrder.h"
 #include "../mc_adc.h"
 #include "../mc_drv83.h"
+#include "../terminal.h"
+
+
 
 void StartMcTask(void *argument)
     {
@@ -27,15 +30,19 @@ void StartMcTask(void *argument)
      * @brief Setup für Motorsitzung
      */
     mcbench.benchsetup = bb_hm7_blower;
+    mcbench.pwm = &pwm;		//zuordnung legt fest worauf sich das terminal bezieht
+    mcbench.ramp = &rampe;
+
     mc_adc_newBuffer(&adcbuff, 64);
     adcbuff.filterdepth = 32;	//filter bezieht sich auf pwm-zyklen
     HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, 64);
 
+    drv_en_drv(1);
     drv.modeSelect = drv_pwm_3x; 	drv_setPwmMode(&drv);
     drv.csa_gain = drv_sgain_40; 	drv_setShuntGain(&drv);
     drv.opref = drv_shunt_bidirectinal; drv_setShuntSign(&drv);
 
-    shunt.Ilsb[drv_sgain_40] = 0.0001;	//zur berechnung von SI
+    shunt.Ilsb[drv_sgain_40] = 0.0001;
     shunt.min = 0;
     shunt.max = 10;			//bereich in SI für berechnung von pu
     shunt.lowlimit = 10;
@@ -50,6 +57,7 @@ void StartMcTask(void *argument)
     pwm_init_timer_mc(&pwm);	//stm32 hal init
     mc_init_BlowerPwm(&pwm);	//mc init
     mc_init_BlowerRamp(&rampe);
+
     pwm.freq = 1000;
     rampe.Target = 0.5;
     rampe.gain = 1;
@@ -71,7 +79,6 @@ void StartMcTask(void *argument)
      */
 
 
-
     while (1)
 	{
 	osDelay(1);
@@ -82,17 +89,17 @@ void StartMcTask(void *argument)
 	    uint32_t adcrise, adcfall;
 	    mc_adc_avg_alt(&adcbuff, &adcrise, &adcfall);
 
-	    rampe.timestep = mf_systick.timestep;
-	    mc_ramp(&rampe);
-	    pwm.duty = rampe.Setpoint;
-	    mc_pwm_update(&pwm);
+	    mcbench.ramp->timestep = mf_systick.timestep;
+	    mc_ramp(mcbench.ramp);
+	    mcbench.pwm->duty = rampe.Setpoint;
+	    mc_pwm_bcd_update(mcbench.pwm);
 
 
 	    	/*	animierte meldeleuchte	*/
 	    rampe_led1.timestep = mf_systick.timestep;
 	    mc_ramp(&rampe_led1);
 	    pwm_led1.duty = rampe_led1.Setpoint;
-	    mc_pwm_update(&pwm_led1);
+	    mc_pwm_led_update(&pwm_led1);
 	}
 
     }

@@ -11,7 +11,7 @@
 #include "stm32f4xx_hal.h"
 
 
-void mc_pwm_update(TD_MC_PWM_PARAMS *pwm) {
+void mc_pwm_led_update(TD_MC_PWM_PARAMS *pwm) {
 	/**
 	 * @note entspricht den macro __HAL_TIM_SET_AUTORELOAD usw.
 	 * @note verwenden um compilerwarnungen zu vermeiden
@@ -32,10 +32,30 @@ void mc_pwm_update(TD_MC_PWM_PARAMS *pwm) {
 	 * @note das hardware preload kann dies nicht, da nur bei overflow geupdated wird
 	 */
 	pwm->htim.Instance->CCR1 = pwm->comp_u;
-	pwm->htim.Instance->CCR2 = pwm->comp_v;
-	pwm->htim.Instance->CCR3 = pwm->comp_w;
-
 }
+
+void mc_pwm_bcd_update(TD_MC_PWM_PARAMS *pwm)
+    {
+	pwm_calcfreq(pwm);
+	pwm->htim.Instance->ARR = pwm->top;
+	pwm->htim.Instance->PSC = pwm->prescaler;
+	uint32_t reload = (uint32_t)roundf((float)(pwm->htim.Instance->ARR) * (pwm->duty * 0.01F));
+
+	 if(reload > (pwm->htim.Instance->ARR))
+	     reload = pwm->htim.Instance->ARR;
+
+	if (pwm->duty > 0)
+	    {
+	    pwm->htim.Instance->CCR1 = (uint32_t)roundf((float)reload);
+	    pwm->htim.Instance->CCR2 = 0xFFFF;
+	    }
+	if (pwm->duty < 0)
+	    {
+	    pwm->htim.Instance->CCR2 = (uint32_t)roundf((float)reload);
+	    pwm->htim.Instance->CCR1 = 0xFFFF;
+	    }
+
+    }
 
 void pwm_calcfreq(TD_MC_PWM_PARAMS *pwm)
 {
