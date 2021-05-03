@@ -57,7 +57,7 @@ void StartMcTask(void *argument)
     mc_init_BlowerRamp(&rampe);
 
     pwm.freq = 1000;
-    rampe.Target = -0.05;
+    rampe.Target = -0.0;
     rampe.gain = 1;
 
 
@@ -88,7 +88,10 @@ void StartMcTask(void *argument)
 
 	   	/*	adc nach si und pu auswerten	*/
 	    uint32_t adcrise, adcfall;
-	    mc_adc_avg_alt(&adcbuff, &adcrise, &adcfall);
+	   // mc_adc_avg_alt(&adcbuff, &adcrise, &adcfall);
+	    adcrise = mc_adc_avg(&adcbuff, current_rise, 2);
+	    adcfall = mc_adc_avg(&adcbuff, current_fall, 2);
+
 
 	    mcbench.ramp->timestep = mf_systick.timestep;
 	    mc_ramp(mcbench.ramp);

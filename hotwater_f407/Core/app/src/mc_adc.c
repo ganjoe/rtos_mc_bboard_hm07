@@ -21,25 +21,27 @@ void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff, uint8_t size)
     buff->workbuff = (uint16_t*) pvPortMalloc( buff->filterdepth * sizeof(uint16_t));
     }
 
-void mc_adc_avg_alt(TD_MC_ADC_BUFF *buff, uint32_t* sum0, uint32_t* sum1)
+float mc_adc_si(TD_MC_ADC_BUFF *buff,TD_MC_ADC_MATH *lsb, uint32_t pos)
     {
-    uint32_t sum_rise = 0;
-    uint32_t sum_fall = 0;
 
-    for (int var = 0; var <= buff->filterdepth; var+=2)
-	{
-	sum_rise += (uint16_t)buff->workbuff[var];
-	}
-    for (int var = 1; var <= buff->filterdepth; var+=2)
-	{
-	sum_fall += (uint16_t)buff->workbuff[var];
-	}
-     sum_rise /= (buff->filterdepth/2);
-     sum_fall /= (buff->filterdepth/2);
+    }
+float mc_adc_pu(TD_MC_ADC_BUFF *buff,TD_MC_ADC_MATH *lsb, uint32_t pos)
+    {
+
     }
 
-uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t* pos)
+uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos, uint32_t channels)
     {
+    /* buffer muss initialisiert sein */
+   /* https://www.cypress.com/file/236481/download */
+    uint64_t sum = 0;
+
+    for (int var = pos; var <= buff->filterdepth; var+=channels)
+	{
+	sum += (uint16_t)buff->workbuff[var];
+	}
+
+    sum /= (buff->filterdepth/channels);
 
     }
 
