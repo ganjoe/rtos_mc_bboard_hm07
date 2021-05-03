@@ -15,9 +15,10 @@ extern void vPortFree( void *pv );
 
 void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff, uint8_t size)
     {
+    buff->filterdepth = size;
     vPortFree(buff->workbuff);
-    buff->AdcDmaBuffSize = size;
-    buff->workbuff = (uint32_t*) pvPortMalloc( buff->AdcDmaBuffSize * sizeof(uint32_t));
+
+    buff->workbuff = (uint16_t*) pvPortMalloc( buff->filterdepth * sizeof(uint16_t));
     }
 
 void mc_adc_avg_alt(TD_MC_ADC_BUFF *buff, uint32_t* sum0, uint32_t* sum1)
@@ -25,13 +26,21 @@ void mc_adc_avg_alt(TD_MC_ADC_BUFF *buff, uint32_t* sum0, uint32_t* sum1)
     uint32_t sum_rise = 0;
     uint32_t sum_fall = 0;
 
-    for (int var = 0; var < buff->filterdepth; var+=2)
+    for (int var = 0; var <= buff->filterdepth; var+=2)
 	{
 	sum_rise += (uint16_t)buff->workbuff[var];
-	sum_fall += (uint16_t)buff->workbuff[var+1];
 	}
-     sum_rise /= buff->AdcDmaBuffSize;
-     sum_fall /= buff->AdcDmaBuffSize;
+    for (int var = 1; var <= buff->filterdepth; var+=2)
+	{
+	sum_fall += (uint16_t)buff->workbuff[var];
+	}
+     sum_rise /= (buff->filterdepth/2);
+     sum_fall /= (buff->filterdepth/2);
+    }
+
+uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t* pos)
+    {
+
     }
 
 TD_MC_ADC_BUFF adcbuff;

@@ -32,8 +32,8 @@ typedef struct
      * @note die auswertetiefe ist dynamisch zur laufzeit
      */
         uint32_t filterdepth;
-        uint32_t* workbuff;
-        uint32_t AdcDmaBuffSize;
+        uint16_t* workbuff;
+
 
         }
     TD_MC_ADC_BUFF;

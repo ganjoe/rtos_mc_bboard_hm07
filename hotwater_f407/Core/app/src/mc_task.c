@@ -68,13 +68,12 @@ void StartMcTask(void *argument)
     mc_init_boardLedPwm(&pwm_led1);
     mc_init_boardLedRamp(&rampe_led1);
 
-    pwm_led1.freq = 1000;
-    rampe_led1.Target = 0.5;
+    pwm_led1.freq = 10000;
+    rampe_led1.Target = 0.2;
     rampe_led1.gain = 1;
 
-    mc_adc_newBuffer(&adcbuff, 1);
-    adcbuff.filterdepth = 1;
-    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, 1);
+    mc_adc_newBuffer(&adcbuff, 10);
+    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.filterdepth);
 
     /**
      * @brief Setup für Regelung
@@ -110,6 +109,6 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     {
 
     HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
-    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, 1);
+    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.filterdepth);
 
     }
