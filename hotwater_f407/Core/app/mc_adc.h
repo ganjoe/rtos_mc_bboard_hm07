@@ -11,18 +11,22 @@
 #include "main.h"
 #include "adc.h"
 
+
+
 typedef struct
 {
-
+    /* für bidirektionale messungen */
+    uint32_t rawoffset;
 
     /* raw adc limit	*/
-    uint32_t lowlimit, upperlimit;
+    uint32_t thresh;
 
     /*	pu berechnung	*/
     float max, min;
 
     /*	si berechnung	*/
-    double Ilsb[5];
+    float Ilsb[5];
+
 
 }
     TD_MC_ADC_MATH;
@@ -41,14 +45,17 @@ typedef struct
      */
         uint32_t filterdepth;
         uint16_t* workbuff;
-        uint32_t rawoffset;	//bzw. referenzspannung bei bidirektionalen shunts etc.
+        /* für bidirektionale messungen */
+        uint32_t rawoffset;
+
+        	//bzw. referenzspannung bei bidirektionalen shunts etc.
 
         }
     TD_MC_ADC_BUFF;
 
-
-float mc_adc_si(TD_MC_ADC_BUFF *buff,TD_MC_ADC_MATH *lsb, uint32_t pos);
-float mc_adc_pu(TD_MC_ADC_BUFF *buff,TD_MC_ADC_MATH *lsb, uint32_t pos);
+void mc_adc_ref(TD_MC_ADC_BUFF *buff);
+float mc_adc_si(TD_MC_ADC_MATH *lsb, uint32_t pos, uint32_t offset);
+float mc_adc_pu(TD_MC_ADC_MATH *lsb, uint32_t pos, uint32_t offset);
 
 void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff, uint8_t resultscount);
 uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos, uint32_t channels);

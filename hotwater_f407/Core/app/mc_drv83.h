@@ -23,6 +23,7 @@ typedef enum
 typedef enum
 {
 	/* Shunt amplifier gain */
+	drv_sgain_1,
 	drv_sgain_5,
 	drv_sgain_10,
 	drv_sgain_20,

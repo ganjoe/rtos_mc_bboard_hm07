@@ -62,6 +62,8 @@ void mc_pwm_bcd_update(TD_MC_PWM_PARAMS *pwm)
 	    {
 	    pwm->htim.Instance->CCR2 = 0x0;
 	    pwm->htim.Instance->CCR1 = 0x0;
+	    HAL_GPIO_WritePin(enable_v_GPIO_Port, enable_v_Pin, 0);
+	    HAL_GPIO_WritePin(enable_u_GPIO_Port, enable_u_Pin, 0);
 	    }
 
 

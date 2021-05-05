@@ -17,6 +17,7 @@
 #include "../terminal.h"
 
 
+
 void StartMcTask(void *argument)
     {
     /**
@@ -35,49 +36,61 @@ void StartMcTask(void *argument)
 	//filter bezieht sich auf pwm-zyklen
 
 
+/* drv83 init */
     drv_en_drv(1);
     drv.modeSelect = drv_pwm_6x; 	drv_setPwmMode(&drv);
     drv.csa_gain = drv_sgain_40; 	drv_setShuntGain(&drv);
     drv.opref = drv_shunt_bidirectinal; drv_setShuntSign(&drv);
 
-    shunt.Ilsb[drv_sgain_40] = 0.0001;
-    shunt.min = 0;
+/* parameter für analog */
+    shunt.Ilsb[drv_sgain_40] = 0.000719343;
+    shunt.Ilsb[drv_sgain_20] = 0.001438686;
+    shunt.Ilsb[drv_sgain_10] = 0.002877372;
+    shunt.Ilsb[drv_sgain_5] =  0.005754743;
+    shunt.Ilsb[drv_sgain_1] = 0.002877372;
+
+
+    shunt.min = -10;
     shunt.max = 10;			//bereich in SI für berechnung von pu
-    shunt.lowlimit = 10;
-    shunt.upperlimit = 0xFFF -10;	//limiter für adc-raw
+    shunt.thresh = 10;
+
 
     emk.Ilsb[drv_sgain_40] = 0.0001;
     emk.min = 0;
     emk.max = 10;
-    emk.lowlimit = 10;
-    emk.upperlimit = 0xFFF -10;
+    emk.thresh = 10;
 
+
+/* pwm timer init */
     pwm_init_timer_mc(&pwm);	//stm32 hal init
     mc_init_BlowerPwm(&pwm);	//mc init
     mc_init_BlowerRamp(&rampe);
 
-    pwm.freq = 1000;
+/* referenzspannung */
+
+    pwm.htim.Instance->CCR2 = 0x0;
+    pwm.htim.Instance->CCR1 = 0x0;
+    pwm.htim.Instance->CCR3 = 0x0;
+    mc_adc_ref(&adcbuff);
+
+/* startwerte */
+    pwm.freq = 10000;
     rampe.Target = -0.0;
     rampe.gain = 1;
 
+/* shunt adc mit dyn. buffer starten */
+    mc_adc_newBuffer(&adcbuff, 10);
+    pwm.htim.Instance->CNT = 0;
+    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.filterdepth);
 
-    /**
-     * @brief Setup für dimmbare Melde-Led
-     */
-    //pwm_init_timer_led1(&pwm_led1);
+/* led setup */
+   // pwm_init_timer_led1(&pwm_led1);
     mc_init_boardLedPwm(&pwm_led1);
     mc_init_boardLedRamp(&rampe_led1);
 
     pwm_led1.freq = 10000;
     rampe_led1.Target = 0.2;
     rampe_led1.gain = 1;
-
-    mc_adc_newBuffer(&adcbuff, 10);
-    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.filterdepth);
-
-    /**
-     * @brief Setup für Regelung
-     */
 
 
     while (1)
@@ -86,12 +99,17 @@ void StartMcTask(void *argument)
 
 	mc_timediff(&mf_systick);
 
-	   	/*	adc nach si und pu auswerten	*/
-	    uint32_t adcrise, adcfall;
-	   // mc_adc_avg_alt(&adcbuff, &adcrise, &adcfall);
+	    uint32_t adcrise, adcfall;	// rohwerte, nach averaging und oversampling
+	    float shuntrise, shuntfall;	// normierte werte -1 bis 1
+
+
 	    adcrise = mc_adc_avg(&adcbuff, current_rise, 2);
 	    adcfall = mc_adc_avg(&adcbuff, current_fall, 2);
 
+	    shuntrise = mc_adc_pu(&shunt, adcrise, adcbuff.rawoffset);
+	    shuntfall = mc_adc_pu(&shunt, adcfall, adcbuff.rawoffset);
+
+	    float sicurrent = mc_adc_si(&shunt, adcrise, adcbuff.rawoffset);
 
 	    mcbench.ramp->timestep = mf_systick.timestep;
 	    mc_ramp(mcbench.ramp);
@@ -99,11 +117,11 @@ void StartMcTask(void *argument)
 	    mc_pwm_bcd_update(mcbench.pwm);
 
 
-	    	/*	animierte meldeleuchte	*/
+	    	/*	animierte meldeleuchte
 	    rampe_led1.timestep = mf_systick.timestep;
 	    mc_ramp(&rampe_led1);
 	    pwm_led1.duty = rampe_led1.Setpoint;
-	    mc_pwm_led_update(&pwm_led1);
+	    mc_pwm_led_update(&pwm_led1);*/
 	}
 
     }
@@ -111,7 +129,9 @@ void StartMcTask(void *argument)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     {
 
-    HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
-    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.filterdepth);
+	HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
+	pwm.htim.Instance->CNT = 0;
+	HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.filterdepth);
+
 
     }
