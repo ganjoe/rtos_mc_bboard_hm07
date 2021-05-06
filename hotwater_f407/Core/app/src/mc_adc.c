@@ -21,16 +21,13 @@ void mc_adc_ref(TD_MC_ADC_BUFF *buff)
     {
     uint32_t sum = 0;
 
-
-
      for (int var = 0; var < 256; ++var)
  	{
  	HAL_ADC_Start(&hadc1);
- 	if (HAL_ADC_PollForConversion(&hadc1, 1000000) == HAL_OK)
+ 	if (HAL_ADC_PollForConversion(&hadc1, 100) == HAL_OK)
  	    {
  	   sum += HAL_ADC_GetValue(&hadc1);
  	    }
-
  	}
      sum/=256;
      buff->rawoffset = sum;
@@ -50,7 +47,9 @@ float mc_adc_si(TD_MC_ADC_MATH *lsb, uint32_t pos, uint32_t offset)
     }
 float mc_adc_pu(TD_MC_ADC_MATH *lsb, uint32_t pos, uint32_t offset)
     {
-    return mc_adc_si(lsb, pos, offset);
+    float si = mc_adc_si(lsb, pos, offset);
+    utils_map_ptr(&si, lsb->min, lsb->max, -1, 1);
+    return si;
     }
 
 uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos, uint32_t channels)

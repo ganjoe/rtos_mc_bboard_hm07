@@ -74,8 +74,8 @@ void StartMcTask(void *argument)
     mc_adc_ref(&adcbuff);
 
 /* startwerte */
-    pwm.freq = 10000;
-    rampe.Target = -0.0;
+    pwm.freq = 1000;
+    rampe.Target = 0.205;
     rampe.gain = 1;
 
 /* shunt adc mit dyn. buffer starten */
@@ -102,14 +102,13 @@ void StartMcTask(void *argument)
 	    uint32_t adcrise, adcfall;	// rohwerte, nach averaging und oversampling
 	    float shuntrise, shuntfall;	// normierte werte -1 bis 1
 
-
 	    adcrise = mc_adc_avg(&adcbuff, current_rise, 2);
 	    adcfall = mc_adc_avg(&adcbuff, current_fall, 2);
 
 	    shuntrise = mc_adc_pu(&shunt, adcrise, adcbuff.rawoffset);
 	    shuntfall = mc_adc_pu(&shunt, adcfall, adcbuff.rawoffset);
 
-	    float sicurrent = mc_adc_si(&shunt, adcrise, adcbuff.rawoffset);
+	    float sicurrent = mc_adc_pu(&shunt, adcrise, adcbuff.rawoffset);
 
 	    mcbench.ramp->timestep = mf_systick.timestep;
 	    mc_ramp(mcbench.ramp);

@@ -12,8 +12,7 @@
 
 void modflag_init()
 {
-
-	  mf_systick.timerspeed = 168000000;
+    mf_systick.timerspeed = 168000000;
 }
 
 void modflag_ovf_callback()
