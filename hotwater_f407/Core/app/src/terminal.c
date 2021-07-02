@@ -115,7 +115,7 @@ void StartRxTask(void *argument)
     {
     for (;;)
 	{
-	if ( xSemaphoreTake( myFlagNewStringHandle, 0) == pdPASS)
+	if (xSemaphoreTakeFromISR(myFlagNewStringHandle,0xffff) == pdPASS)
 	    {
 	    int ItemsLeft = uxQueueMessagesWaiting(myRxQueueHandle);
 
@@ -137,7 +137,7 @@ void StartRxTask(void *argument)
 		xSemaphoreGive(myCountNewCmdHandle);
 		}
 	    }
-	osDelay(1);
+
 	}
     }
 
