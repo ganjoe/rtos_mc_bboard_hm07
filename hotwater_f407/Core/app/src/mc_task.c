@@ -74,11 +74,12 @@ void StartMcTask(void *argument)
     mc_adc_ref(&adcbuff);
 
 /* startwerte */
-    pwm.freq = 1000;
-    rampe.Target = 0.205;
-    rampe.gain = 1;
+    pwm.freq = 40000;
+    rampe.Target = 0.1;
+    rampe.gain = 0.1;
 
 /* shunt adc mit dyn. buffer starten */
+    adcbuff.channels = 2;
     mc_adc_newBuffer(&adcbuff, 10);
     pwm.htim.Instance->CNT = 0;
     HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.filterdepth);
@@ -88,22 +89,21 @@ void StartMcTask(void *argument)
     mc_init_boardLedPwm(&pwm_led1);
     mc_init_boardLedRamp(&rampe_led1);
 
-    pwm_led1.freq = 10000;
+    pwm_led1.freq = 30000;
     rampe_led1.Target = 0.2;
     rampe_led1.gain = 1;
 
 
     while (1)
 	{
-	osDelay(1);
 
-	mc_timediff(&mf_systick);
+	    mc_timediff(&mf_systick);
 
 	    uint32_t adcrise, adcfall;	// rohwerte, nach averaging und oversampling
 	    float shuntrise, shuntfall;	// normierte werte -1 bis 1
 
-	    adcrise = mc_adc_avg(&adcbuff, current_rise, 2);
-	    adcfall = mc_adc_avg(&adcbuff, current_fall, 2);
+	    adcrise = mc_adc_avg(&adcbuff, current_rise);
+	    adcfall = mc_adc_avg(&adcbuff, current_fall);
 
 	    shuntrise = mc_adc_pu(&shunt, adcrise, adcbuff.rawoffset);
 	    shuntfall = mc_adc_pu(&shunt, adcfall, adcbuff.rawoffset);
@@ -127,10 +127,7 @@ void StartMcTask(void *argument)
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     {
-
 	HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
-	pwm.htim.Instance->CNT = 0;
 	HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.filterdepth);
-
 
     }

@@ -55,7 +55,23 @@ int utils_truncate_number_int(int *number, int min, int max)
 
     return did_trunc;
     }
+int utils_truncate_number_int32(uint32_t *number, uint32_t min, uint32_t max)
+    {
+    uint32_t did_trunc = 0;
 
+    if (*number > max)
+	{
+	*number = max;
+	did_trunc = 1;
+	}
+    else if (*number < min)
+	{
+	*number = min;
+	did_trunc = 1;
+	}
+
+    return did_trunc;
+    }
 
 int utils_truncate_number_abs(float *number, float max)
     {

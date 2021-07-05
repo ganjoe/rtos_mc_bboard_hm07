@@ -205,9 +205,9 @@ void drv_writeCompareReg(uint8_t regNr, uint16_t reg)
 	errcounter++;
 	if (errcounter == DRV_WRITE_FAIL_COUNT)
 	    {
-	 //   term_qPrintf(myTxQueueHandle,
-	//	    "\r[drv_writeCompareReg] DRV_WRITE_FAIL_COUNT %d",
-	//	    DRV_WRITE_FAIL_COUNT);
+	    term_qPrintf(myTxQueueHandle,
+		    "\r[drv_writeCompareReg] DRV_WRITE_FAIL_COUNT %d",
+		    DRV_WRITE_FAIL_COUNT);
 	    HAL_Delay(10);
 	    Error_Handler();
 	    }

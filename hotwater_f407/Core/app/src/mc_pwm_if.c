@@ -11,6 +11,8 @@
 #include "stm32f4xx_hal.h"
 #include "tim.h"
 
+   /* PWM mode 2 = Clear on compare match */
+   /* PWM mode 1 = Set on compare match */
 
 
 void mc_pwm_led_update(TD_MC_PWM_PARAMS *pwm) {
@@ -37,15 +39,22 @@ void mc_pwm_led_update(TD_MC_PWM_PARAMS *pwm) {
 }
 
 void mc_pwm_bcd_update(TD_MC_PWM_PARAMS *pwm)
+/**
+ * @note entspricht den macro __HAL_TIM_SET_AUTORELOAD usw.
+*/
     {
 	pwm_calcfreq(pwm);
-	pwm->htim.Instance->ARR = pwm->top;
+
 	pwm->htim.Instance->PSC = pwm->prescaler;
+
 	uint32_t reload = (float)(pwm->htim.Instance->ARR)* fabs(pwm->duty);
+
+	pwm->htim.Instance->ARR = pwm->top;
 
 
 	if (pwm->duty > 0)
 	    {
+
 	    pwm->htim.Instance->CCR1 = reload;
 	    pwm->htim.Instance->CCR2 = 0x0;
 	    HAL_GPIO_WritePin(enable_u_GPIO_Port, enable_u_Pin, 0);
@@ -53,6 +62,7 @@ void mc_pwm_bcd_update(TD_MC_PWM_PARAMS *pwm)
 	    }
 	if (pwm->duty < 0)
 	    {
+
 	    pwm->htim.Instance->CCR2 = reload;
 	    pwm->htim.Instance->CCR1 = 0x0;
 	    HAL_GPIO_WritePin(enable_u_GPIO_Port, enable_u_Pin, 1);
@@ -86,7 +96,6 @@ void pwm_calcduty(TD_MC_PWM_PARAMS *pwm)
 {
 	pwm->comp_u = pwm->duty * (float)pwm->top;
 }
-
 
 void pwm_init_timer_led1(TD_MC_PWM_PARAMS *pwm) {
 

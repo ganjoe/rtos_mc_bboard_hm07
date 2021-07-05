@@ -47,18 +47,19 @@ typedef struct
         uint16_t* workbuff;
         /* für bidirektionale messungen */
         uint32_t rawoffset;
+        uint32_t channels;
 
         	//bzw. referenzspannung bei bidirektionalen shunts etc.
 
         }
     TD_MC_ADC_BUFF;
 
-void mc_adc_ref(TD_MC_ADC_BUFF *buff);
+int mc_adc_ref(TD_MC_ADC_BUFF *buff);
 float mc_adc_si(TD_MC_ADC_MATH *lsb, uint32_t pos, uint32_t offset);
 float mc_adc_pu(TD_MC_ADC_MATH *lsb, uint32_t pos, uint32_t offset);
 
 void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff, uint8_t resultscount);
-uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos, uint32_t channels);
+uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos);
 
 extern TD_MC_ADC_BUFF adcbuff;
 

@@ -15,6 +15,7 @@
 int utils_truncate_number(float *number, float min, float max);
 int utils_truncate_int_ptr(int *number, int *min, int *max);
 int utils_truncate_number_int(int *number, int min, int max);
+int utils_truncate_number_int32(uint32_t *number, uint32_t min, uint32_t max);
 
 int utils_truncate_number_long(int64_t *number, int64_t min, int64_t max);
 
