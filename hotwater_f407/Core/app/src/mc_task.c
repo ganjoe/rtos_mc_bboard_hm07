@@ -16,8 +16,6 @@
 #include "../mc_drv83.h"
 #include "../terminal.h"
 
-
-
 void StartMcTask(void *argument)
     {
     /**
@@ -98,9 +96,6 @@ void StartMcTask(void *argument)
 	{
 
 	    mc_timediff(&mf_systick);
-
-	    uint32_t adcrise, adcfall;	// rohwerte, nach averaging und oversampling
-	    float shuntrise, shuntfall;	// normierte werte -1 bis 1
 
 	    mcrt.adcrise = mc_adc_avg(&adcbuff, current_rise);
 	    mcrt.adcfall = mc_adc_avg(&adcbuff, current_fall);

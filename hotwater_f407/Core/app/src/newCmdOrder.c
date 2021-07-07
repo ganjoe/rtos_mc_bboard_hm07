@@ -144,7 +144,7 @@ void help(int argc, const char **argv)
 			    newcmd.callbacks[var].command,
 			    newcmd.callbacks[var].arg_names,
 			    newcmd.callbacks[var].help);
-	HAL_Delay(1);
+	HAL_Delay(10);
 
 	}
     }
@@ -209,9 +209,10 @@ void init(int argc, const char **argv)
 
 void drvgain(int argc, const char **argv)
     {
-    unsigned int d = -1;
+    int d = -1;
     if (argc == 2)
 	{
+	sscanf(argv[1], "%d", &d);
 	switch (d)
 	    {
 	    case drv_sgain_1: drv.csa_gain = drv_sgain_1;
@@ -268,7 +269,7 @@ void cmd_init_callbacks(TD_CMD *asdf)
     term_lol_setCallback(asdf, "freq", "pwm freq hz", "uint16", freq);
     term_lol_setCallback(asdf, "ramp", "zielwert 0..1, bezug(s)", "2 floats",  ramp);
     term_lol_setCallback(asdf, "init", "setup 0,1,..", "1 int",  init);
-
+    term_lol_setCallback(asdf, "drvgain", "shuntgain vom drv83", "0:5",  drvgain);
 
     }
 void cmd_parse_lobj(TD_CMD *newcmd, TD_LINEOBJ *line)
