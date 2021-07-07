@@ -145,12 +145,16 @@ void StartTxTask(void *argument)
     {
     for (;;)
 	{
-	osStatus val;
-	val = osMessageQueueGet(myTxQueueHandle, &lReceivedValue, 0, 0);
-	switch (val)
+	osStatus val = 0;
+	val = osMessageQueueGet(myTxQueueHandle, &lReceivedValue, 0, 100);
+	if (val == osOK)
 	    {
-	    case osOK:
 	    HAL_UART_Transmit(&huart1, lReceivedValue, 1, 199);
+	    }
+	else
+	    {
+
+
 	    }
 	}
     }

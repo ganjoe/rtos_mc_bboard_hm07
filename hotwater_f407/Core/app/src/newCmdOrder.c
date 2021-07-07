@@ -19,6 +19,7 @@
 #include "../datatypes.h"
 #include "../terminal.h"
 #include "../mc_ramp.h"
+#include "../mc_dlog.h"
 
 
 /* muss in diesen scope stehen */
@@ -118,6 +119,37 @@ void setdate(int argc, const char **argv)
 	}
     }
 
+void setlog(int argc, const char **argv)
+    {
+    float f = -1;
+    if (argc == 2)
+	{
+	sscanf(argv[1], "%f", &f);
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] termlog: ok", f);
+	dlogSetUpdateFreq(&termlog, f);
+
+	}
+    }
+
+void sdlog(int argc, const char **argv)
+    {
+
+    }
+
+void help(int argc, const char **argv)
+    {
+    for (int var = 0; var < newcmd.callback_write; ++var)
+	{
+	term_qPrintf(myTxQueueHandle, "\rCMD %s ARG %s DESC %s \r",
+			    newcmd.callbacks[var].command,
+			    newcmd.callbacks[var].arg_names,
+			    newcmd.callbacks[var].help);
+	HAL_Delay(1);
+
+	}
+    }
+
+
 /*------------motor control commands--------------*/
 
 void duty(int argc, const char **argv)
@@ -132,6 +164,7 @@ void duty(int argc, const char **argv)
 
 	}
     }
+
 
 void freq(int argc, const char **argv)
     {
@@ -173,6 +206,33 @@ void init(int argc, const char **argv)
 	mcbench.benchsetup = (d);
 	}
 }
+
+void drvgain(int argc, const char **argv)
+    {
+    unsigned int d = -1;
+    if (argc == 2)
+	{
+	switch (d)
+	    {
+	    case drv_sgain_1: drv.csa_gain = drv_sgain_1;
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: drv_sgain_1 ok");break;
+	    case drv_sgain_5: drv.csa_gain = drv_sgain_5;
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: drv_sgain_5 ok");break;
+	    case drv_sgain_10: drv.csa_gain = drv_sgain_10;
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: drv_sgain_10 ok");break;
+	    case drv_sgain_20: drv.csa_gain = drv_sgain_20;
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: drv_sgain_20 ok");break;
+	    case drv_sgain_40: drv.csa_gain = drv_sgain_40;
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: drv_sgain_40 ok");break;
+	    default:
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: gain(0:4)");
+		break;
+	    }
+	drv_setShuntGain(&drv);
+	}
+    }
+
+
 /*-----------------------------------------------*/
 
 void StartCmdTask(void *argument)
@@ -200,6 +260,9 @@ void cmd_init_callbacks(TD_CMD *asdf)
     term_lol_setCallback(asdf, "reset", "mcu reset", "1,0 uint", reset);
     term_lol_setCallback(asdf, "settime", "mcu reset", "3 uint", settime);
     term_lol_setCallback(asdf, "setdate", "mcu reset", "3 uint", setdate);
+    term_lol_setCallback(asdf, "setlog", "livedaten terminal", "update freq", setlog);
+    term_lol_setCallback(asdf, "sdlog", "livedaten flash", "updatefreq", sdlog);
+    term_lol_setCallback(asdf, "help", "registrierte befehle", "kein", help);
 
     term_lol_setCallback(asdf, "duty", "pwm duty-cycle (-)ccw", "float",  duty);
     term_lol_setCallback(asdf, "freq", "pwm freq hz", "uint16", freq);

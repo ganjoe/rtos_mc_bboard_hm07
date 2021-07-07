@@ -102,13 +102,14 @@ void StartMcTask(void *argument)
 	    uint32_t adcrise, adcfall;	// rohwerte, nach averaging und oversampling
 	    float shuntrise, shuntfall;	// normierte werte -1 bis 1
 
-	    adcrise = mc_adc_avg(&adcbuff, current_rise);
-	    adcfall = mc_adc_avg(&adcbuff, current_fall);
+	    mcrt.adcrise = mc_adc_avg(&adcbuff, current_rise);
+	    mcrt.adcfall = mc_adc_avg(&adcbuff, current_fall);
 
-	    shuntrise = mc_adc_pu(&shunt, adcrise, adcbuff.rawoffset);
-	    shuntfall = mc_adc_pu(&shunt, adcfall, adcbuff.rawoffset);
+	    mcrt.shuntrise = mc_adc_pu(&shunt, mcrt.adcrise, adcbuff.rawoffset);
+	    mcrt.shuntfall = mc_adc_pu(&shunt, mcrt.adcfall, adcbuff.rawoffset);
 
-	    float sicurrent = mc_adc_pu(&shunt, adcrise, adcbuff.rawoffset);
+	    mcrt.ShuntRiseSI = mc_adc_pu(&shunt, mcrt.adcrise, adcbuff.rawoffset);
+	    mcrt.ShuntFallSI = mc_adc_pu(&shunt, mcrt.adcfall, adcbuff.rawoffset);
 
 	    mcbench.ramp->timestep = mf_systick.timestep;
 	    mc_ramp(mcbench.ramp);

@@ -92,7 +92,7 @@ const osThreadAttr_t myCmdTask_attributes = {
 };
 /* Definitions for myLogUartTask */
 osThreadId_t myLogUartTaskHandle;
-uint32_t myLogUartTaskBuffer[ 128 ];
+uint32_t myLogUartTaskBuffer[ 512 ];
 osStaticThreadDef_t myLogUartTaskControlBlock;
 const osThreadAttr_t myLogUartTask_attributes = {
   .name = "myLogUartTask",
@@ -116,7 +116,7 @@ const osThreadAttr_t myMcTask_attributes = {
 };
 /* Definitions for myTxQueue */
 osMessageQueueId_t myTxQueueHandle;
-uint8_t myTxQueueBuffer[ 128 * sizeof( uint8_t ) ];
+uint8_t myTxQueueBuffer[ 256 * sizeof( uint8_t ) ];
 osStaticMessageQDef_t myTxQueueControlBlock;
 const osMessageQueueAttr_t myTxQueue_attributes = {
   .name = "myTxQueue",
@@ -214,7 +214,7 @@ void StartDefaultTask(void *argument);
 extern void StartRxTask(void *argument);
 extern void StartTxTask(void *argument);
 extern void StartCmdTask(void *argument);
-void StartLogUartTask(void *argument);
+extern void StartLogUartTask(void *argument);
 extern void StartMcTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -332,7 +332,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* creation of myTxQueue */
-  myTxQueueHandle = osMessageQueueNew (128, sizeof(uint8_t), &myTxQueue_attributes);
+  myTxQueueHandle = osMessageQueueNew (256, sizeof(uint8_t), &myTxQueue_attributes);
 
   /* creation of myRxQueue */
   myRxQueueHandle = osMessageQueueNew (64, sizeof(uint8_t), &myRxQueue_attributes);
@@ -419,34 +419,6 @@ void StartDefaultTask(void *argument)
 
 	}
   /* USER CODE END StartDefaultTask */
-}
-
-/* USER CODE BEGIN Header_StartLogUartTask */
-/**
-* @brief Function implementing the myLogUartTask thread.
-* @param argument: Not used
-* @retval None
-*/
-/* USER CODE END Header_StartLogUartTask */
-void StartLogUartTask(void *argument)
-{
-  /* USER CODE BEGIN StartLogUartTask */
-  /* Infinite loop */
-  osStatus_t val;
-  for(;;)
-  {
-    TD_LINEOBJ line = {0};
-
-   val = osMessageQueueGet(myLogLineObjQueueHandle, &line, NULL, osWaitForever) ;
-
-   switch(val)
-       {
-   case osOK:
-       term_vprintLineObj(myTxQueueHandle, &line);
-       //dbase_StoreSD( &line);
-       }
-  }
-  /* USER CODE END StartLogUartTask */
 }
 
 /* Private application code --------------------------------------------------*/
