@@ -9,6 +9,7 @@
 #include "../mc_adc.h"
 #include "../utils.h"
 #include "../mc_drv83.h"
+#include "adc.h"
 
 
 /* freetos  */
@@ -17,28 +18,7 @@ extern void vPortFree( void *pv );
 
 /* für ein hübscheres interface */
 
-int mc_adc_ref(TD_MC_ADC_BUFF *buff)
-    {
-    uint32_t sum = 0;
-    uint32_t samples = 1024;
-    uint32_t ovrsample = 256;
-    uint32_t adcresolution = 0xfff;
-    uint32_t maxsamples = 0xffffffff / (ovrsample *adcresolution);
-    int did_trunc;
-    did_trunc = utils_truncate_number_int32(samples, 1, maxsamples);
 
-     for (int var = 0; var < samples; ++var)
- 	{
- 	HAL_ADC_Start(&hadc1);
- 	if (HAL_ADC_PollForConversion(&hadc1, HAL_TIMEOUT) == HAL_OK)
- 	    {
- 	   sum += HAL_ADC_GetValue(&hadc1)*ovrsample;
- 	    }
- 	}
-     sum/=samples;
-     buff->rawoffset = sum /ovrsample;
-     return did_trunc;
-    }
 
 void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff, uint8_t size)
     {
@@ -47,16 +27,12 @@ void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff, uint8_t size)
     buff->workbuff = (uint16_t*) pvPortMalloc( buff->filterdepth * sizeof(uint16_t));
     }
 
-float mc_adc_si(TD_MC_ADC_MATH *lsb, uint32_t pos, uint32_t offset)
+void mc_shunt_si(TD_MC_DRV_CSA *shunt, float* result, uint32_t raw)
     {
-    int32_t val = pos - offset;
-    return (float)val  * lsb->Ilsb[drv_sgain_40];
-    }
-float mc_adc_pu(TD_MC_ADC_MATH *lsb, uint32_t pos, uint32_t offset)
-    {
-    float si = mc_adc_si(lsb, pos, offset);
-    utils_map_ptr(&si, lsb->min, lsb->max, -1, 1);
-    return si;
+    float val;
+    val = (float)raw - shunt->rawoffset;
+
+    *result = shunt->lsb * val;
     }
 
 uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos)

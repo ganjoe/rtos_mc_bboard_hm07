@@ -9,6 +9,7 @@
 #define INC_DRV83_H_
 
 #include "main.h"
+
 // wenn du es gefunden hast, schreibs gleich woanders hin !
 #define DRV_WRITE_FAIL_COUNT 3
 
@@ -23,7 +24,6 @@ typedef enum
 typedef enum
 {
 	/* Shunt amplifier gain */
-	drv_sgain_1,
 	drv_sgain_5,
 	drv_sgain_10,
 	drv_sgain_20,
@@ -63,6 +63,30 @@ typedef enum
     }
     EN_DRV_ADDR;
 
+    typedef struct
+    {
+        /* für bidirektionale messungen */
+        uint32_t rawoffset;
+
+        /* raw adc limit	*/
+        uint32_t thresh;
+
+        /*	pu berechnung	*/
+        float max, min;
+
+        /*	lsbs für jede verstärkung	*/
+        float Ilsb[4];
+
+        /*	gewählter Ilsb	*/
+        float lsb;
+
+        /*	verstärkungsfaktoren */
+        EN_DRV_MODE_SHNT csa_gain;
+
+
+    }
+    TD_MC_DRV_CSA;
+
 typedef struct
     	{
     	uint16_t shadowRegister[8];
@@ -70,13 +94,16 @@ typedef struct
     	EN_DRV_MODE_PWM modeSelect;
     	EN_DRV_MODE_OFFSET opref;
     	EN_DRV_MODE_OLP OLshuntvolts;
-    	EN_DRV_MODE_SHNT csa_gain;
+
+    	TD_MC_DRV_CSA csa_shunt, emk;
+
     	}
     TD_DRV83;
 
 void drv_setPwmMode	(TD_DRV83 *select);
 void drv_setShuntGain	(TD_DRV83 *select);
 void drv_setShuntSign	(TD_DRV83 *select);
+uint32_t drv_adc_ref();
 void drv_setOvrLoadProt	(TD_DRV83 *select);
 void drv_en_drv		(int enable);
 int drv_check_fault	();

@@ -239,15 +239,13 @@ void drvgain(int argc, const char **argv)
 	sscanf(argv[1], "%d", &d);
 	switch (d)
 	    {
-	    case drv_sgain_1: drv.csa_gain = drv_sgain_1;
-		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: drv_sgain_1 ok");break;
-	    case drv_sgain_5: drv.csa_gain = drv_sgain_5;
+	    case drv_sgain_5: drv.csa_shunt.csa_gain = drv_sgain_5;
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: drv_sgain_5 ok");break;
-	    case drv_sgain_10: drv.csa_gain = drv_sgain_10;
+	    case drv_sgain_10: drv.csa_shunt.csa_gain = drv_sgain_10;
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: drv_sgain_10 ok");break;
-	    case drv_sgain_20: drv.csa_gain = drv_sgain_20;
+	    case drv_sgain_20: drv.csa_shunt.csa_gain = drv_sgain_20;
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: drv_sgain_20 ok");break;
-	    case drv_sgain_40: drv.csa_gain = drv_sgain_40;
+	    case drv_sgain_40: drv.csa_shunt.csa_gain = drv_sgain_40;
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: drv_sgain_40 ok");break;
 	    default:
 		term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvgain: gain(0:4)");

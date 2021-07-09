@@ -19,9 +19,10 @@
 #include "../mc_drv83.h"
 #include "../utils.h"
 #include "../terminal.h"
+#include "adc.h"
 
 
-/*-------------mc api --------------------*/
+
 
 void drv_setPwmMode(TD_DRV83 *select)
     {
@@ -88,26 +89,30 @@ void drv_setShuntGain(TD_DRV83 *select)
 
     drv_readRegister(CSAcontrol, &regbuffer);
 
-    switch (select->csa_gain)
+    switch (select->csa_shunt.csa_gain)
 	{
     case drv_sgain_5:
 	utils_set_bit_in_Word(&regbuffer, 6, 0);
 	utils_set_bit_in_Word(&regbuffer, 7, 0);
-	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x5");
+	select->csa_shunt.lsb = select->csa_shunt.Ilsb[drv_sgain_5];
+	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x5 | ILSB: %f",select->csa_shunt.Ilsb[drv_sgain_5]);
 	break;
     case drv_sgain_10:
 	utils_set_bit_in_Word(&regbuffer, 6, 1);
 	utils_set_bit_in_Word(&regbuffer, 7, 0);
+	select->csa_shunt.lsb = select->csa_shunt.Ilsb[drv_sgain_10];
 	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x10");
 	break;
     case drv_sgain_20:
 	utils_set_bit_in_Word(&regbuffer, 6, 0);
 	utils_set_bit_in_Word(&regbuffer, 7, 1);
+	select->csa_shunt.lsb = select->csa_shunt.Ilsb[drv_sgain_20];
 	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x20");
 	break;
     case drv_sgain_40:
 	utils_set_bit_in_Word(&regbuffer, 6, 1);
 	utils_set_bit_in_Word(&regbuffer, 7, 1);
+	select->csa_shunt.lsb = select->csa_shunt.Ilsb[drv_sgain_40];
 	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x40");
 	break;
 	}
@@ -151,7 +156,31 @@ void drv_setOvrLoadProt(TD_DRV83 *select)
     drv_writeCompareReg(CSAcontrol, regbuffer);
     }
 
-/*-------------mc api --------------------*/
+uint32_t drv_adc_ref()
+    {
+    uint32_t sum = 0;
+    uint32_t samples = 1024;
+    uint32_t ovrsample = 256;
+    uint32_t adcresolution = 0xfff;
+    uint32_t maxsamples = 0xffffffff / (ovrsample *adcresolution);
+    int did_trunc;
+    did_trunc = utils_truncate_number_int32(samples, 1, maxsamples);
+
+     for (int var = 0; var < samples; ++var)
+ 	{
+ 	HAL_ADC_Start(&hadc1);
+ 	if (HAL_ADC_PollForConversion(&hadc1, HAL_TIMEOUT) == HAL_OK)
+ 	    {
+ 	   sum += HAL_ADC_GetValue(&hadc1)*ovrsample;
+
+ 	    }
+ 	}
+     sum/=samples;
+
+     return  sum /ovrsample;
+    }
+
+
 
 void drv_en_drv(int enable)
     {

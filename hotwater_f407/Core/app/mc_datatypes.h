@@ -37,9 +37,9 @@ typedef struct
 
 typedef struct
     {
-    uint32_t adcrise, adcfall;	// rohwerte, nach averaging und oversampling
+    uint32_t MotCurrRiseRaw, MotCurrFallRaw;	// rohwerte, nach averaging und oversampling
     float shuntrise, shuntfall;	// normierte werte -1 bis 1
-    float ShuntRiseSI,ShuntFallSI// verrechnet mit ILSB
+    float MotCurrRiseSi,MotCurrFallSi// verrechnet mit ILSB
     }
     TD_MC_RTDATA;
 
@@ -52,6 +52,6 @@ void mc_init_BlowerRamp(RMPCNTL* ramp);
 
 extern TD_MC_RTDATA mcrt;
 extern TD_MC_PARAMS mcbench;
-extern TD_MC_ADC_MATH shunt, emk;
+
 
 #endif /* INC_MC_DATATYPES_H_ */

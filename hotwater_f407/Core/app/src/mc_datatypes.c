@@ -49,8 +49,5 @@ void mc_init_BlowerRamp(RMPCNTL* ramp)
     ramp->RampStepLimit = 0.01;
 }
 
-TD_MC_ADC_MATH shunt, emk;	//für alle shunts oder spannungsteiler
-
-
 TD_MC_PARAMS mcbench;
 TD_MC_RTDATA mcrt;

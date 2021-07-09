@@ -31,33 +31,36 @@ void StartMcTask(void *argument)
     mcbench.pwm = &pwm;		//zuordnung legt fest worauf sich das terminal bezieht
     mcbench.ramp = &rampe;
 
+
 	//filter bezieht sich auf pwm-zyklen
 
+/* parameter für shunt und spannungsteiler */
+    drv.csa_shunt.Ilsb[drv_sgain_40] = 0.00290258;
+    drv.csa_shunt.Ilsb[drv_sgain_20] = 0.001438686;
+    drv.csa_shunt.Ilsb[drv_sgain_10] = 0.002877372;
+    drv.csa_shunt.Ilsb[drv_sgain_5] =  0.005754743;
+    drv.csa_shunt.rawoffset = drv_adc_ref();
 
 /* drv83 init */
+
     drv_en_drv(1);
-    drv.modeSelect = drv_pwm_6x; 	drv_setPwmMode(&drv);
-    drv.opref = drv_shunt_bidirectinal; drv_setShuntSign(&drv);
-    drv.csa_gain = drv_sgain_20; 	drv_setShuntGain(&drv);
+
+    drv.modeSelect = drv_pwm_6x;
+	drv_setPwmMode(&drv);
+    drv.opref = drv_shunt_bidirectinal;
+	drv_setShuntSign(&drv);
+    drv.csa_shunt.csa_gain = drv_sgain_5;
+	drv_setShuntGain(&drv);
 
 
-/* parameter für analog */
-    shunt.Ilsb[drv_sgain_40] = 0.000719343;
-    shunt.Ilsb[drv_sgain_20] = 0.001438686;
-    shunt.Ilsb[drv_sgain_10] = 0.002877372;
-    shunt.Ilsb[drv_sgain_5] =  0.005754743;
-    shunt.Ilsb[drv_sgain_1] = 0.002877372;
+    drv.csa_shunt.min = -10;	//bereich in SI für berechnung von pu
+    drv.csa_shunt.max = 10;
+    drv.csa_shunt.thresh = 10;	//schwelle für wert>0
 
-
-    shunt.min = -10;
-    shunt.max = 10;			//bereich in SI für berechnung von pu
-    shunt.thresh = 10;
-
-
-    emk.Ilsb[drv_sgain_40] = 0.0001;
-    emk.min = 0;
-    emk.max = 10;
-    emk.thresh = 10;
+    drv.emk.Ilsb[drv_sgain_40] = 0.0001;
+    drv.emk.min = 0;
+    drv.emk.max = 10;
+    drv.emk.thresh = 10;
 
 
 /* pwm timer init */
@@ -70,7 +73,7 @@ void StartMcTask(void *argument)
     pwm.htim.Instance->CCR2 = 0x0;
     pwm.htim.Instance->CCR1 = 0x0;
     pwm.htim.Instance->CCR3 = 0x0;
-    mc_adc_ref(&adcbuff);
+    drv.csa_shunt.rawoffset = drv_adc_ref();
 
 /* startwerte */
     pwm.freq = 40000;
@@ -83,29 +86,17 @@ void StartMcTask(void *argument)
     pwm.htim.Instance->CNT = 0;
     HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.filterdepth);
 
-/* led setup */
-   // pwm_init_timer_led1(&pwm_led1);
-    mc_init_boardLedPwm(&pwm_led1);
-    mc_init_boardLedRamp(&rampe_led1);
-
-    pwm_led1.freq = 30000;
-    rampe_led1.Target = 0.2;
-    rampe_led1.gain = 1;
-
 
     while (1)
 	{
 
 	    mc_timediff(&mf_systick);
 
-	    mcrt.adcrise = mc_adc_avg(&adcbuff, current_rise);
-	    mcrt.adcfall = mc_adc_avg(&adcbuff, current_fall);
+	    mcrt.MotCurrRiseRaw = mc_adc_avg(&adcbuff, EN_RISE);
+	    mcrt.MotCurrFallRaw = mc_adc_avg(&adcbuff, EN_FALL);
 
-	    mcrt.shuntrise = mc_adc_pu(&shunt, mcrt.adcrise, adcbuff.rawoffset);
-	    mcrt.shuntfall = mc_adc_pu(&shunt, mcrt.adcfall, adcbuff.rawoffset);
-
-	    mcrt.ShuntRiseSI = mc_adc_pu(&shunt, mcrt.adcrise, adcbuff.rawoffset);
-	    mcrt.ShuntFallSI = mc_adc_pu(&shunt, mcrt.adcfall, adcbuff.rawoffset);
+	    mc_shunt_si(&drv.csa_shunt, &mcrt.MotCurrRiseSi , mcrt.MotCurrRiseRaw);
+	    mc_shunt_si(&drv.csa_shunt, &mcrt.MotCurrFallSi , mcrt.MotCurrFallRaw);
 
 	    mcbench.ramp->timestep = mf_systick.timestep;
 	    mc_ramp(mcbench.ramp);
@@ -113,11 +104,6 @@ void StartMcTask(void *argument)
 	    mc_pwm_bcd_update(mcbench.pwm);
 
 
-	    	/*	animierte meldeleuchte
-	    rampe_led1.timestep = mf_systick.timestep;
-	    mc_ramp(&rampe_led1);
-	    pwm_led1.duty = rampe_led1.Setpoint;
-	    mc_pwm_led_update(&pwm_led1);*/
 	}
 
     }
