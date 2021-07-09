@@ -99,10 +99,12 @@ void drv_setShuntGain(TD_DRV83 *select)
 	utils_set_bit_in_Word(&regbuffer, 6, 1);
 	utils_set_bit_in_Word(&regbuffer, 7, 0);
 	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x10");
+	break;
     case drv_sgain_20:
 	utils_set_bit_in_Word(&regbuffer, 6, 0);
 	utils_set_bit_in_Word(&regbuffer, 7, 1);
 	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x20");
+	break;
     case drv_sgain_40:
 	utils_set_bit_in_Word(&regbuffer, 6, 1);
 	utils_set_bit_in_Word(&regbuffer, 7, 1);
@@ -241,8 +243,7 @@ void drv_readRegister(uint16_t regNr, uint16_t *data)
     // rw -bit setzen(15)
     utils_set_bit_in_Word(&tword, 15, 1);
     drv_csPulse();
-    HAL_SPI_TransmitReceive(&hspi1, (uint8_t*) &tword, (uint8_t*) data, 1,
-	    HAL_TIMEOUT);
+    HAL_SPI_TransmitReceive(&hspi1, (uint8_t*) &tword, (uint8_t*) data, 1,HAL_TIMEOUT);
 
     }
 TD_DRV83 drv;

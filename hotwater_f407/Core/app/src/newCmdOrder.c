@@ -207,6 +207,30 @@ void init(int argc, const char **argv)
 	}
 }
 
+void drvrreg(int argc, const char **argv)
+    {
+    int d = -1;
+    uint16_t reg = 0;
+    if (argc == 2)
+	{
+	sscanf(argv[1], "%d", &d);
+	if(!utils_truncate_number_int(&d, 0, 7))
+	    {
+	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvrreg: ok");
+	    drv_readRegister(d, &reg);
+	    term_qPrintf(myTxQueueHandle, "\r%d",reg);
+	    }
+	else
+	    {
+	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvrreg: arg(0:15)");
+	    }
+	}
+    else
+	{
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvrreg: arg(0:15)");
+	}
+    }
+
 void drvgain(int argc, const char **argv)
     {
     int d = -1;
@@ -270,6 +294,7 @@ void cmd_init_callbacks(TD_CMD *asdf)
     term_lol_setCallback(asdf, "ramp", "zielwert 0..1, bezug(s)", "2 floats",  ramp);
     term_lol_setCallback(asdf, "init", "setup 0,1,..", "1 int",  init);
     term_lol_setCallback(asdf, "drvgain", "shuntgain vom drv83", "0:5",  drvgain);
+    term_lol_setCallback(asdf, "drvrreg", "drv83 register read", "0:15",  drvrreg);
 
     }
 void cmd_parse_lobj(TD_CMD *newcmd, TD_LINEOBJ *line)

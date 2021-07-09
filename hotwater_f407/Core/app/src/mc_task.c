@@ -37,8 +37,9 @@ void StartMcTask(void *argument)
 /* drv83 init */
     drv_en_drv(1);
     drv.modeSelect = drv_pwm_6x; 	drv_setPwmMode(&drv);
-    drv.csa_gain = drv_sgain_40; 	drv_setShuntGain(&drv);
     drv.opref = drv_shunt_bidirectinal; drv_setShuntSign(&drv);
+    drv.csa_gain = drv_sgain_20; 	drv_setShuntGain(&drv);
+
 
 /* parameter für analog */
     shunt.Ilsb[drv_sgain_40] = 0.000719343;
@@ -73,7 +74,7 @@ void StartMcTask(void *argument)
 
 /* startwerte */
     pwm.freq = 40000;
-    rampe.Target = 0.1;
+    rampe.Target = -0.1;
     rampe.gain = 0.1;
 
 /* shunt adc mit dyn. buffer starten */

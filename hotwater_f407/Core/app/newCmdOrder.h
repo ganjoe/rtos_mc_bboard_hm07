@@ -61,6 +61,7 @@ void	duty	(int argc, const char **argv);
 void	freq	(int argc, const char **argv);
 void	ramp	(int argc, const char **argv);
 void	drvgain (int argc, const char **argv);
+void	drvrreg (int argc, const char **argv);
 
 extern TD_CMD newcmd;
 #endif /* APP_NEWCMDORDER_H_ */
