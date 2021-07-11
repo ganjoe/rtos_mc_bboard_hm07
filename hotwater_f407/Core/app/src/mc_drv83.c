@@ -19,9 +19,8 @@
 #include "../mc_drv83.h"
 #include "../utils.h"
 #include "../terminal.h"
+#include "../mc_datatypes.h"
 #include "adc.h"
-
-
 
 
 void drv_setPwmMode(TD_DRV83 *select)
@@ -180,7 +179,19 @@ uint32_t drv_adc_ref()
      return  sum /ovrsample;
     }
 
+void drv_calib_csa(TD_DRV83 *select, float calcurrent, uint32_t rawcurrent)
+    {
+    float ilsb = 0;
+    for (int gain = drv_sgain_5; gain <= drv_sgain_40; ++gain)
+	{
+	select->csa_shunt.csa_gain = gain;
+	drv_setShuntGain(select);
+	HAL_Delay(100);
+	ilsb = calcurrent / (float)abs(mcrt.MotCurrRiseRaw - select->csa_shunt.rawoffset);
 
+	select->csa_shunt.Ilsb[gain] = ilsb;
+	}
+    }
 
 void drv_en_drv(int enable)
     {

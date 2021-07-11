@@ -104,6 +104,7 @@ void drv_setPwmMode	(TD_DRV83 *select);
 void drv_setShuntGain	(TD_DRV83 *select);
 void drv_setShuntSign	(TD_DRV83 *select);
 uint32_t drv_adc_ref();
+void drv_calib_csa(TD_DRV83 *select, float calcurrent, uint32_t rawcurrent);
 void drv_setOvrLoadProt	(TD_DRV83 *select);
 void drv_en_drv		(int enable);
 int drv_check_fault	();

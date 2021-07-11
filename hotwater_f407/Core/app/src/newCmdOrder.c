@@ -255,6 +255,19 @@ void drvgain(int argc, const char **argv)
 	}
     }
 
+void drvcal(int argc, const char **argv)
+    {
+    float cal = -1;
+    if (argc == 2)
+	{
+	sscanf(argv[1], "%f", &cal);
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvcal: ok");
+	drv_calib_csa(&drv, cal, mcrt.MotCurrRiseRaw);
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvcal: new lsb set");
+
+	}
+    }
+
 
 /*-----------------------------------------------*/
 
@@ -293,6 +306,7 @@ void cmd_init_callbacks(TD_CMD *asdf)
     term_lol_setCallback(asdf, "init", "setup 0,1,..", "1 int",  init);
     term_lol_setCallback(asdf, "drvgain", "shuntgain vom drv83", "0:5",  drvgain);
     term_lol_setCallback(asdf, "drvrreg", "drv83 register read", "0:15",  drvrreg);
+    term_lol_setCallback(asdf, "drvcal", "drv83 csa calibration", "cal current(float)",  drvcal);
 
     }
 void cmd_parse_lobj(TD_CMD *newcmd, TD_LINEOBJ *line)
