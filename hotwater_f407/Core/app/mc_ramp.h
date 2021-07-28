@@ -24,12 +24,12 @@ typedef struct
 	float	 delta;			// diff ein und ausgang
 	float	 minInc;			//minimale abweichung für berechnung, bzw skip wenn fast gleich um strom zu sparen
 
-	} RMPCNTL;
+	} TD_RAMP;
 
 
-void mc_ramp		(RMPCNTL* ramp);
+void mc_ramp		(TD_RAMP* ramp);
 
-extern RMPCNTL rampe, rampe_led1;
+extern TD_RAMP rampe, rampe_led1;
 
 #endif /* INC_MC_RAMP_H_ */
 

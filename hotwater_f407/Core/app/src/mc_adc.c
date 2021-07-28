@@ -5,7 +5,6 @@
  *      Author: danie
  */
 
-
 #include "../mc_adc.h"
 #include "../utils.h"
 #include "../mc_drv83.h"
@@ -14,11 +13,10 @@
 
 /* freetos  */
 extern void *pvPortMalloc( size_t xWantedSize );
+
 extern void vPortFree( void *pv );
 
 /* für ein hübscheres interface */
-
-
 
 void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff, uint8_t size)
     {

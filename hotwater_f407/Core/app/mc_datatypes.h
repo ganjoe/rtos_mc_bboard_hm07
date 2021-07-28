@@ -17,6 +17,7 @@
 #include "mc_pwm_if.h"
 #include "mc_drv83.h"
 #include "mc_adc.h"
+#include "newCmdOrder.h"
 
 typedef enum
 {
@@ -25,32 +26,31 @@ typedef enum
 }
 	EN_MC_WORKBENCH;
 
-
-
-typedef struct
-{
-	TD_MC_PWM_PARAMS* pwm;
-	EN_MC_WORKBENCH	 benchsetup;
-	RMPCNTL* 	 ramp;
-}
-	TD_MC_PARAMS;
-
 typedef struct
     {
     uint32_t MotCurrRiseRaw, MotCurrFallRaw;	// rohwerte, nach averaging und oversampling
     float shuntrise, shuntfall;	// normierte werte -1 bis 1
     float MotCurrRiseSi,MotCurrFallSi// verrechnet mit ILSB
     }
-    TD_MC_RTDATA;
+    TD_MC_LIVE;
 
-void mc_init_default(TD_MC_PARAMS* mcbench);
+typedef struct
+{
+	TD_MC_PWM_PARAMS* pwm;
+	EN_MC_WORKBENCH	 benchsetup;
+	TD_RAMP* 	 ramp;
+	TD_MC_LIVE*	mcrt;
+	TD_CMD*		cmd;
+	TD_MC_ADC_BUFF*	adcbuff;
+	TD_DRV83*		drv;
+}
+	TD_MC_PARAMS;
 
-void mc_init_boardLedPwm(TD_MC_PWM_PARAMS *pwm);
-void mc_init_BlowerPwm(TD_MC_PWM_PARAMS *pwm);
-void mc_init_boardLedRamp(RMPCNTL* ramp);
-void mc_init_BlowerRamp(RMPCNTL* ramp);
+	void mc_init_BlowerPwm(TD_MC_PWM_PARAMS *pwm);
+	void mc_init_BlowerRamp(TD_RAMP* ramp);
 
-extern TD_MC_RTDATA mcrt;
+
+extern TD_MC_LIVE mcrt;
 extern TD_MC_PARAMS mcbench;
 
 
