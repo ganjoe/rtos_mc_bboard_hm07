@@ -9,7 +9,7 @@
 #include "../utils.h"
 
 
-void mc_ramp(RMPCNTL *ramp)
+void mc_ramp(TD_RAMP *ramp)
     {
     /*  Ti - Style: TargetValue ist bei der EINGANG, Setpoint der AUSGANG
      * Normalerweise meint beides das gleiche, aber wenn mehrere
@@ -36,6 +36,6 @@ void mc_ramp(RMPCNTL *ramp)
     }
 
 
-RMPCNTL rampe, rampe_led1;
+TD_RAMP rampe, rampe_led1;
 
 
