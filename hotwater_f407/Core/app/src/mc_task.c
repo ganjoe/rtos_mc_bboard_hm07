@@ -14,7 +14,32 @@
 
 void StartMcTask(void *argument)
     {
-    confgen_setdefaults(&mcbench, 0);
+
+
+     mcbench.benchsetup = bb_hm7_blower;
+     mcbench.pwm = &pwm;
+     mcbench.ramp = &rampe;
+     mcbench.drv = &drv;
+     mcbench.mf_systick = &mf_systick;
+     mcbench.adcbuff = &adcbuff;
+
+    cmd_init_callbacks(&newcmd);
+
+    confgen_setdefaults(&mcbench);
+    drv_en_drv(1);
+    drv_setPwmMode(&drv);
+    drv_setShuntSign(&drv);
+    drv_setShuntGain(&drv);
+
+    mc_adc_newBuffer(&adcbuff);	// array muss in heap für task-kontext passen
+
+    drv.csa_shunt.rawoffset = drv_adc_ref();
+
+    pwm_init_timer_mc(&pwm);	//stm32 hal init
+
+    HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adcbuff.workbuff, adcbuff.buffersize);
+
+
     while (1)
 	{
 
@@ -43,5 +68,5 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     {
     McTask();
     HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
-    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.filterdepth);
+    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.buffersize);
     }

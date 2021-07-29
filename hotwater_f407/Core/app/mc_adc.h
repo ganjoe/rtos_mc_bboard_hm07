@@ -28,10 +28,11 @@ typedef struct
     /**
      * @note die auswertetiefe ist dynamisch zur laufzeit
      */
-        uint32_t filterdepth;
+        uint16_t buffersize;
+        uint16_t filterdepht;
         uint16_t* workbuff;
         /* für bidirektionale messungen */
-        uint32_t channels;
+        uint16_t channels;
 
         }
     TD_MC_ADC_BUFF;
@@ -40,7 +41,7 @@ typedef struct
 
 void mc_shunt_si(TD_MC_DRV_CSA *shunt, float* result, uint32_t raw);
 
-void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff, uint8_t resultscount);
+void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff);
 
 uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos);
 

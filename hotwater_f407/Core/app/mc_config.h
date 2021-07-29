@@ -11,7 +11,7 @@
 #include "mc_datatypes.h"
 
 //schreibt standardwerte in die mc-config
-int confgen_setdefaults(TD_MC_PARAMS *mc_params,EN_MC_WORKBENCH setup);
+int confgen_setdefaults(TD_MC_PARAMS *mc_params);
 
 //mc-config wird mit werten aus buffer überschrieben
 int confgen_demultiplex_config(TD_MC_PARAMS *mc_params, uint8_t* buffer);

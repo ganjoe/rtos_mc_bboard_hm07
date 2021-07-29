@@ -18,11 +18,11 @@ extern void vPortFree( void *pv );
 
 /* für ein hübscheres interface */
 
-void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff, uint8_t size)
+void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff)
     {
-    buff->filterdepth = size * buff->channels;
+    buff->buffersize = buff->filterdepht * buff->channels;
     vPortFree(buff->workbuff);
-    buff->workbuff = (uint16_t*) pvPortMalloc( buff->filterdepth * sizeof(uint16_t));
+    buff->workbuff = (uint16_t*) pvPortMalloc( buff->buffersize * sizeof(uint16_t));
     }
 
 void mc_shunt_si(TD_MC_DRV_CSA *shunt, float* result, uint32_t raw)
@@ -41,12 +41,12 @@ uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos)
     uint64_t sum = 0;
     uint32_t var = 0;
 
-    for (var = pos; var <= buff->filterdepth -1 ; var += buff->channels)
+    for (var = pos; var <= buff->buffersize -1 ; var += buff->channels)
 	{
 	sum += (uint16_t)buff->workbuff[var];
 	}
 
-    sum /= (buff->filterdepth/buff->channels);
+    sum /= (buff->buffersize/buff->channels);
 
     return sum;
 
