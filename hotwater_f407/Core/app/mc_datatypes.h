@@ -21,8 +21,9 @@
 
 typedef enum
 {
-	bb_hm7_blower,
-	bb_boardled,
+
+    bb_hm7_blower,
+    bb_boardled,
 }
 	EN_MC_WORKBENCH;
 
@@ -42,7 +43,8 @@ typedef struct
 	TD_MC_LIVE*	mcrt;
 	TD_CMD*		cmd;
 	TD_MC_ADC_BUFF*	adcbuff;
-	TD_DRV83*		drv;
+	TD_DRV83*	drv;
+	TD_MODFLAG*	mf_systick;
 }
 	TD_MC_PARAMS;
 

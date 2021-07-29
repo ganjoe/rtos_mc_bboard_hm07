@@ -28,19 +28,6 @@ void mc_init_BlowerRamp(TD_RAMP* ramp)
     ramp->timestep = 0.001;
     ramp->RampStepLimit = 0.01;
 }
-/*
-
-void mc_init_boardLedRamp(TD_RAMP* ramp)
-{
-    ramp->gain = 1;
-    ramp->highlimit = 1;
-    ramp->lowlimit = -1.0;
-    ramp->timestep = 0.001;
-    ramp->RampStepLimit = 0.01;
-}
-
-
-*/
 
 TD_MC_PARAMS mcbench;
 TD_MC_LIVE mcrt;

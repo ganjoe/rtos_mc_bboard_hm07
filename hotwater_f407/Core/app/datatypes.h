@@ -57,7 +57,6 @@ typedef struct
 
 /*----------export----------------*/
 
-    void	modflag_init();
 
     void 	 modflag_ovf_callback();
 
