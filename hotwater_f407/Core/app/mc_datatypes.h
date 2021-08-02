@@ -36,16 +36,16 @@ typedef struct
     TD_MC_LIVE;
 
 typedef struct
-{
-	TD_MC_PWM_PARAMS* pwm;
-	EN_MC_WORKBENCH	 benchsetup;
-	TD_RAMP* 	 ramp;
-	TD_MC_LIVE*	mcrt;
-	TD_CMD*		cmd;
-	TD_MC_ADC_BUFF*	adcbuff;
-	TD_DRV83*	drv;
-	TD_MODFLAG*	mf_systick;
-}
+    {
+    TD_MC_PWM_PARAMS*	pwm;
+    EN_MC_WORKBENCH	benchsetup;
+    TD_RAMP* 	 	ramp;
+    TD_MC_LIVE*		mcrt;
+    TD_CMD*		cmd;
+    TD_MC_ADC_BUFF*	adcbuff;
+    TD_DRV83*		drv;
+    TD_MODFLAG*		mf_systick;
+    }
 	TD_MC_PARAMS;
 
 	void mc_init_BlowerPwm(TD_MC_PWM_PARAMS *pwm);

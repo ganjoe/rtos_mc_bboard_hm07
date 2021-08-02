@@ -72,13 +72,13 @@ typedef enum
         uint32_t thresh;
 
         /*	pu berechnung	*/
-        float max, min;
+        //float max, min;
 
         /*	lsbs für jede verstärkung	*/
-        float Ilsb[4];
+        double Ilsb[4];
 
         /*	gewählter Ilsb	*/
-        float lsb;
+        double lsb;
 
         /*	verstärkungsfaktoren */
         EN_DRV_MODE_SHNT csa_gain;

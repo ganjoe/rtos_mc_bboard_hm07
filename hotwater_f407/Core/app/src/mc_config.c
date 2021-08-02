@@ -5,6 +5,10 @@
  *      Author: pymd02
  */
 #include "../mc_config.h"
+#include "../utils_buffer.h"
+
+#define MCPARAMS_SIGNATURE	1337
+
 
 
 int confgen_setdefaults(TD_MC_PARAMS *mc)
@@ -24,13 +28,13 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     drv.opref = drv_shunt_bidirectinal;
     drv.csa_shunt.csa_gain = drv_sgain_5;
 
-    drv.csa_shunt.min = -10;	//bereich in SI für berechnung von pu
-    drv.csa_shunt.max = 10;
+   // drv.csa_shunt.min = -10;	//bereich in SI für berechnung von pu
+   // drv.csa_shunt.max = 10;
     drv.csa_shunt.thresh = 10;	//schwelle für wert>0
 
     drv.emk.Ilsb[drv_sgain_40] = 0.0001;
-    drv.emk.min = 0;
-    drv.emk.max = 10;
+   // drv.emk.min = 0;
+   // drv.emk.max = 10;
     drv.emk.thresh = 10;
 
 
@@ -38,10 +42,6 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
 
     pwm.speed = 168000000;
     pwm.bits = 0xFFFF;
-    pwm.duty_max = 0.9999;
-    pwm.duty_min = 0.00001;
-    pwm.freq_max = 64000;
-    pwm.freq_min = 0xFF;
     pwm.freq = 40000;
 
     rampe.gain = 1;
@@ -55,6 +55,92 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
 
 
     }
+
+int confgen_demultiplex_mcparams(TD_MC_PARAMS *mc, uint8_t* buffer)
+    {
+	int32_t ind = 0;
+	uint32_t signature = buffer_get_uint32(buffer, &ind);
+
+	if (signature != MCPARAMS_SIGNATURE)
+	    {
+	    return false;
+	    }
+
+	buffer_append_uint32(buffer, MCPARAMS_SIGNATURE, &ind);
+
+        mc->pwm->bits = buffer_get_uint32(buffer, index);
+	mc->pwm->speed = buffer_get_uint32(buffer, index);
+	mc->pwm->freq = buffer_get_float16(buffer, 10, index);
+	mc->pwm->prescaler = buffer_get_uint32(buffer, index);
+        mc->pwm->top = buffer_get_uint32(buffer, index);
+        mc->pwm->duty = buffer_get_float16(buffer, 1000, index);
+
+	mc->ramp->gain =  buffer_get_float16(buffer, 1000, index);
+	mc->ramp->highlimit= buffer_get_float16(buffer, 1000, index);
+	mc->ramp->lowlimit= buffer_get_float16(buffer, 1000, index);
+	mc->ramp->timestep= buffer_get_float16(buffer, 1000, index);
+        mc->ramp->RampStepLimit= buffer_get_float16(buffer, 1000, index);
+
+        mc->drv->csa_shunt.Ilsb[0] = buffer_get_float32_auto(buffer, index);
+        mc->drv->csa_shunt.Ilsb[1] = buffer_get_float32_auto(buffer, index);
+        mc->drv->csa_shunt.Ilsb[2] = buffer_get_float32_auto(buffer, index);
+        mc->drv->csa_shunt.Ilsb[3] = buffer_get_float32_auto(buffer, index);
+
+        mc->drv->csa_shunt.rawoffset = 	buffer_get_uint32(buffer, index);
+        mc->drv->csa_shunt.thresh = 	buffer_get_uint32(buffer, index);
+
+        mc->drv->OLshuntvolts =  	buffer[ind++];
+        mc->drv->modeSelect =  		buffer[ind++];;
+        mc->drv->opref =  		buffer[ind++];;
+        mc->drv->regAdress =  		buffer[ind++];;
+        mc->drv->csa_shunt.csa_gain =  	buffer[ind++];;
+    }
+int confgen_multiplex_mcparams	(TD_MC_PARAMS *mc, uint8_t* buffer)
+
+    {
+    int32_t ind = 0;
+
+    buffer_append_uint32(buffer, MCPARAMS_SIGNATURE, &ind);
+
+    buffer_append_uint32(buffer, mc->pwm->bits, &ind);
+    buffer_append_uint32(buffer, mc->pwm->speed, &ind);
+    buffer_append_float16(buffer, mc->pwm->freq,10, &ind);
+    buffer_append_uint32(buffer, mc->pwm->prescaler, &ind);
+    buffer_append_uint32(buffer, mc->pwm->top, &ind);
+    buffer_append_float16(buffer, mc->pwm->duty,1000, &ind);
+
+    buffer_append_float16(buffer, mc->ramp->gain,1000, &ind);
+    buffer_append_float16(buffer, mc->ramp->highlimit,1000, &ind);
+    buffer_append_float16(buffer, mc->ramp->lowlimit,1000, &ind);
+    buffer_append_float16(buffer, mc->ramp->timestep,1000, &ind);
+    buffer_append_float16(buffer, mc->ramp->RampStepLimit,1000, &ind);
+
+    buffer_append_float32_auto(buffer, mc->drv->csa_shunt.Ilsb[0], &ind);
+    buffer_append_float32_auto(buffer, mc->drv->csa_shunt.Ilsb[1], &ind);
+    buffer_append_float32_auto(buffer, mc->drv->csa_shunt.Ilsb[2], &ind);
+    buffer_append_float32_auto(buffer, mc->drv->csa_shunt.Ilsb[3], &ind);
+
+    buffer_append_uint32(buffer, mc->drv->csa_shunt.rawoffset, &ind);
+    buffer_append_uint32(buffer, mc->drv->csa_shunt.thresh, &ind);
+
+    buffer[ind++] = mc->drv->OLshuntvolts;
+    buffer[ind++] = mc->drv->modeSelect;
+    buffer[ind++] = mc->drv->opref;
+    buffer[ind++] = mc->drv->regAdress;
+    buffer[ind++] = mc->drv->csa_shunt.csa_gain;
+
+    return ind;
+    }
+
+int confgen_storeSD	(uint8_t* buffer, const char* filename)
+    {
+
+    }
+int confgen_loadSD	(uint8_t* buffer, const char* filename)
+    {
+
+    }
+
 void initMcTask()
     {
 

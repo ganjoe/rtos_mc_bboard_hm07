@@ -33,31 +33,9 @@ typedef struct
 	 */
 	uint32_t bits;
 
-	/**
-	 * @brief timer overflow und compare event
-	 * @note livewert für pwm-freq steuerung
-	 */
-	uint32_t top, prescaler, comp_u, comp_v, comp_w;
+	uint32_t top, prescaler;
 
-	/**
-	 * @brief vorgaben für hw-limits
-	 * @note 1/s
-	 */
-	uint32_t freq_max, freq_min;
-	uint32_t duty_max, duty_min;
-
-	/**
-	 * @brief user - vorgaben für limiter
-	 * @note dimensionslos, per unit
-	 * @note mit vorzeichen für drehrichtung
-	 */
-	float pwm_duty_max, pwm_duty_min;
-
-	/**
-	 * @brief mc-loop dutycycle und pwm-frequenz
-	 * @note normiert mit vorzeichen für drehrichtung
-	 */
-	float duty, duty_u, duty_v, duty_w, freq;
+	float duty,  freq;
 }
 	TD_MC_PWM_PARAMS;
 
@@ -71,7 +49,7 @@ void mc_pwm_bcd_update			(TD_MC_PWM_PARAMS *pwm);
 
 void pwm_calcfreq(TD_MC_PWM_PARAMS *pwm);
 
-void pwm_calcduty(TD_MC_PWM_PARAMS *pwm);
+
 
 extern TD_MC_PWM_PARAMS pwm, pwm_led1;
 

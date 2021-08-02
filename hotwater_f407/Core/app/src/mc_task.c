@@ -14,30 +14,27 @@
 
 void StartMcTask(void *argument)
     {
+    mcbench.benchsetup = bb_hm7_blower;
+      mcbench.pwm = &pwm;
+      mcbench.ramp = &rampe;
+      mcbench.drv = &drv;
+      mcbench.mf_systick = &mf_systick;
+      mcbench.adcbuff = &adcbuff;
 
+     cmd_init_callbacks(&newcmd);
+     confgen_setdefaults(&mcbench);
+     drv_en_drv(1);
+     drv_setPwmMode(&drv);
+     drv_setShuntSign(&drv);
+     drv_setShuntGain(&drv);
 
-     mcbench.benchsetup = bb_hm7_blower;
-     mcbench.pwm = &pwm;
-     mcbench.ramp = &rampe;
-     mcbench.drv = &drv;
-     mcbench.mf_systick = &mf_systick;
-     mcbench.adcbuff = &adcbuff;
+     mc_adc_newBuffer(&adcbuff);	// array muss in heap für task-kontext passen
 
-    cmd_init_callbacks(&newcmd);
+     drv.csa_shunt.rawoffset = drv_adc_ref();
 
-    confgen_setdefaults(&mcbench);
-    drv_en_drv(1);
-    drv_setPwmMode(&drv);
-    drv_setShuntSign(&drv);
-    drv_setShuntGain(&drv);
+     pwm_init_timer_mc(&pwm);	//stm32 hal init
 
-    mc_adc_newBuffer(&adcbuff);	// array muss in heap für task-kontext passen
-
-    drv.csa_shunt.rawoffset = drv_adc_ref();
-
-    pwm_init_timer_mc(&pwm);	//stm32 hal init
-
-    HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adcbuff.workbuff, adcbuff.buffersize);
+     HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adcbuff.workbuff, adcbuff.buffersize);
 
 
     while (1)
