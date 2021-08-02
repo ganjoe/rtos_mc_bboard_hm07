@@ -16,20 +16,20 @@ typedef struct
 	{
 	float   Target; 		// Input: Target input (pu)
 	float   Setpoint;		// Output: Target output (pu)
-	float	 nextInc;		// nächstes y für letztes x (pu)
-	float   RampStepLimit;	// Limiter für nextInc (praktisch eine mindestrampe um arge pwm sprünge zu vermeiden
-	float 	 gain;			// Bezug für pu, verhältnis zwischen timestep und nextInc
-	float	 highlimit, lowlimit;	// Bezug für Gain. die rampe wird flacher, nicht nur geclippt
-	float 	 timestep; // ms zeitschritt kann dynamisch sein, in timerticks
-	float	 delta;			// diff ein und ausgang
-	float	 minInc;			//minimale abweichung für berechnung, bzw skip wenn fast gleich um strom zu sparen
+	float	nextInc;		// nächstes y für letztes x (pu)
+	float   RampStepLimit;		// Limiter für nextInc (praktisch eine mindestrampe um arge pwm sprünge zu vermeiden
+	float 	gain;			// Bezug für pu, verhältnis zwischen timestep und nextInc
+	float	highlimit, lowlimit;	// Bezug für Gain. die rampe wird flacher, nicht nur geclippt
+	float 	timestep; 		// ms zeitschritt kann dynamisch sein, in timerticks
+	float	delta;			// diff ein und ausgang
+	float	minInc;			//minimale abweichung für berechnung, bzw skip wenn fast gleich um strom zu sparen
 
 	} TD_RAMP;
 
 
 void mc_ramp		(TD_RAMP* ramp);
 
-extern TD_RAMP rampe, rampe_led1;
+extern TD_RAMP rampe;
 
 #endif /* INC_MC_RAMP_H_ */
 
