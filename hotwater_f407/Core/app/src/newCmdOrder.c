@@ -132,11 +132,6 @@ void setlog(int argc, const char **argv)
 	}
     }
 
-void sdlog(int argc, const char **argv)
-    {
-
-    }
-
 void help(int argc, const char **argv)
     {
     for (int var = 0; var < newcmd.callback_write; ++var)
@@ -154,11 +149,11 @@ void confsave(int argc, const char **argv)
 {
     int stringsize = -1;
     int byteswrote = -1;
-    char filename[TD_LINEOBJ_MAX_FILENAMESIZE];
+
     if (argc ==2)
 	{
 	stringsize = strlen(argv[1]);
-	if (!utils_truncate_number_int(&stringsize, 1, TD_LINEOBJ_MAX_FILENAMESIZE))
+	if (!utils_truncate_number_int(&stringsize, 1, CONFGEN_FILENAMESIZE))
 	    {
 
 	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] confsave ok: %s", argv[1]);
@@ -171,7 +166,7 @@ void confsave(int argc, const char **argv)
 		}
 	    else
 		{
-		term_qPrintf(myTxQueueHandle, "\r[parseCmd] confsave: fehler schreiben", byteswrote);
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] confsave: fehler schreiben oder buffer overflow", byteswrote);
 		}
 	    }
 	else
@@ -180,10 +175,35 @@ void confsave(int argc, const char **argv)
 	    }
 	}
 }
+
 void confload(int argc, const char **argv)
 {}
+
 void confshow(int argc, const char **argv)
-{}
+{
+    int bytesread;
+    int dlogticks;
+    if (argc == 2)
+	{
+
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] confshow ok: %s\r", argv[1]);
+	uint8_t confbuffer[CONFGEN_BUFFERSIZE];
+	bytesread = confgen_loadSD(confbuffer, argv[1]);
+	if (bytesread == CONFGEN_BUFFERSIZE)
+	    {
+	    term_qPrintf(myTxQueueHandle, "\rstart binary config:\r");
+	    dlogticks = termlog.ticks_update_terminal;
+	    termlog.ticks_update_terminal = 0;
+	    term_sendBuffer(myTxQueueHandle, &confbuffer, bytesread);
+	    term_qPrintf(myTxQueueHandle, "\rend binary config:\r");
+	    termlog.ticks_update_terminal = dlogticks;
+	    }
+	else
+	    {
+	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] confshow fehler: %d", bytesread);
+	    }
+	}
+}
 
 /*------------motor control commands--------------*/
 
@@ -330,8 +350,8 @@ void cmd_init_callbacks(TD_CMD *asdf)
     term_lol_setCallback(asdf, "reset", "mcu reset", "1,0 uint", reset);
     term_lol_setCallback(asdf, "settime", "mcu reset", "3 uint", settime);
     term_lol_setCallback(asdf, "setdate", "mcu reset", "3 uint", setdate);
-    term_lol_setCallback(asdf, "setlog", "livedaten terminal", "update freq", setlog);
-    term_lol_setCallback(asdf, "sdlog", "livedaten flash", "updatefreq", sdlog);
+    term_lol_setCallback(asdf, "setlog", "update frequenz terminal log", "ufloat", setlog);
+
     term_lol_setCallback(asdf, "help", "registrierte befehle", "kein", help);
     term_lol_setCallback(asdf, "confsave", "mcparams in datei schreiben", "dateiname", confsave);
     term_lol_setCallback(asdf, "confshow", "mcparams laden und ins terminal schreiben", "dateiname", confshow);

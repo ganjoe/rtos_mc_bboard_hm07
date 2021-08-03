@@ -31,7 +31,7 @@ typedef struct
     {
     uint32_t MotCurrRiseRaw, MotCurrFallRaw;	// rohwerte, nach averaging und oversampling
     float shuntrise, shuntfall;	// normierte werte -1 bis 1
-    float MotCurrRiseSi,MotCurrFallSi// verrechnet mit ILSB
+    float MotCurrRiseSi,MotCurrFallSi;// verrechnet mit ILSB
     }
     TD_MC_LIVE;
 

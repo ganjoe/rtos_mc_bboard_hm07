@@ -51,7 +51,7 @@ DWORD get_fattime(void)
 }
 
 /* USER CODE BEGIN Application */
-int sd_writebuffer(char* filename, char* buffer, uint8_t buffersize, uint8_t pos)
+int sd_writebuffer(char* filename, uint8_t* buffer, uint8_t buffersize, uint8_t pos)
 {
 	int bytesWrote = -1;
 	FRESULT fres;
@@ -81,7 +81,24 @@ int sd_writebuffer(char* filename, char* buffer, uint8_t buffersize, uint8_t pos
 
 		return bytesWrote;
 }
-int sd_lol_writeline(char* filename, char* linebuff, uint8_t chars, uint8_t line)
+int sd_readbuffer(char* filename, uint8_t* buffer, uint8_t buffersize, uint8_t pos)
+    {
+    unsigned int bytesRead = 0;
+    FRESULT fres;
+
+    fres = f_mount(&SDFatFS, SDPath, 1);
+    fres = f_open(&SDFile, filename, FA_READ);
+    fres = f_lseek(&SDFile, buffersize * pos);
+    fres = f_read(&SDFile, buffer, buffersize, &bytesRead);
+    fres = f_close(&SDFile);
+    fres = f_mount(&SDFatFS, SDPath, 0);
+
+    if(fres == FR_OK)
+	return (int)bytesRead;
+    else
+	return -1;
+    }
+int sd_lol_writeline(char* filename, uint8_t* linebuff, uint8_t chars, uint8_t line)
 {
 	int bytesWrote = -1;
 	FRESULT fres;
@@ -126,6 +143,8 @@ int sd_lol_writeline(char* filename, char* linebuff, uint8_t chars, uint8_t line
 	 free (linebuffer);
 		return bytesWrote;
 }
+
+
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
