@@ -40,6 +40,10 @@ void MX_FATFS_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 
+/*
+ * chars: anzahl zeichen pro zeile; line: zeile zum schreiben	*/
+int sd_lol_writeline(char* filename, char* linebuff, uint8_t chars, uint8_t line);
+int sd_lol_readline(char* filename, char* linebuff, uint8_t chars, uint8_t line);
 /* USER CODE END Prototypes */
 #ifdef __cplusplus
 }

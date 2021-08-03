@@ -94,7 +94,6 @@ typedef struct
     	EN_DRV_MODE_PWM modeSelect;
     	EN_DRV_MODE_OFFSET opref;
     	EN_DRV_MODE_OLP OLshuntvolts;
-
     	TD_MC_DRV_CSA csa_shunt, emk;
 
     	}
