@@ -61,31 +61,28 @@ int confgen_demultiplex_mcparams(TD_MC_PARAMS *mc, uint8_t* buffer)
 
 	if (signature != MCPARAMS_SIGNATURE)
 	    {
-	    return false;
+	    return -1;
 	    }
+        mc->pwm->bits = buffer_get_uint32(buffer, &ind);
+	mc->pwm->speed = buffer_get_uint32(buffer, &ind);
+	mc->pwm->freq = buffer_get_float16(buffer, 10, &ind);
+	mc->pwm->prescaler = buffer_get_uint32(buffer, &ind);
+        mc->pwm->top = buffer_get_uint32(buffer, &ind);
+        mc->pwm->duty = buffer_get_float16(buffer, 1000, &ind);
 
-	buffer_append_uint32(buffer, MCPARAMS_SIGNATURE, &ind);
+	mc->ramp->gain =  buffer_get_float16(buffer, 1000, &ind);
+	mc->ramp->highlimit= buffer_get_float16(buffer, 1000, &ind);
+	mc->ramp->lowlimit= buffer_get_float16(buffer, 1000, &ind);
+	mc->ramp->timestep= buffer_get_float16(buffer, 1000, &ind);
+        mc->ramp->RampStepLimit= buffer_get_float16(buffer, 1000, &ind);
 
-        mc->pwm->bits = buffer_get_uint32(buffer, index);
-	mc->pwm->speed = buffer_get_uint32(buffer, index);
-	mc->pwm->freq = buffer_get_float16(buffer, 10, index);
-	mc->pwm->prescaler = buffer_get_uint32(buffer, index);
-        mc->pwm->top = buffer_get_uint32(buffer, index);
-        mc->pwm->duty = buffer_get_float16(buffer, 1000, index);
+        mc->drv->csa_shunt.Ilsb[0] = buffer_get_float32_auto(buffer, &ind);
+        mc->drv->csa_shunt.Ilsb[1] = buffer_get_float32_auto(buffer, &ind);
+        mc->drv->csa_shunt.Ilsb[2] = buffer_get_float32_auto(buffer, &ind);
+        mc->drv->csa_shunt.Ilsb[3] = buffer_get_float32_auto(buffer, &ind);
 
-	mc->ramp->gain =  buffer_get_float16(buffer, 1000, index);
-	mc->ramp->highlimit= buffer_get_float16(buffer, 1000, index);
-	mc->ramp->lowlimit= buffer_get_float16(buffer, 1000, index);
-	mc->ramp->timestep= buffer_get_float16(buffer, 1000, index);
-        mc->ramp->RampStepLimit= buffer_get_float16(buffer, 1000, index);
-
-        mc->drv->csa_shunt.Ilsb[0] = buffer_get_float32_auto(buffer, index);
-        mc->drv->csa_shunt.Ilsb[1] = buffer_get_float32_auto(buffer, index);
-        mc->drv->csa_shunt.Ilsb[2] = buffer_get_float32_auto(buffer, index);
-        mc->drv->csa_shunt.Ilsb[3] = buffer_get_float32_auto(buffer, index);
-
-        mc->drv->csa_shunt.rawoffset = 	buffer_get_uint32(buffer, index);
-        mc->drv->csa_shunt.thresh = 	buffer_get_uint32(buffer, index);
+        mc->drv->csa_shunt.rawoffset = 	buffer_get_uint32(buffer, &ind);
+        mc->drv->csa_shunt.thresh = 	buffer_get_uint32(buffer, &ind);
 
         mc->drv->OLshuntvolts =  	buffer[ind++];
         mc->drv->modeSelect =  		buffer[ind++];
@@ -93,7 +90,7 @@ int confgen_demultiplex_mcparams(TD_MC_PARAMS *mc, uint8_t* buffer)
         mc->drv->regAdress =  		buffer[ind++];
         mc->drv->csa_shunt.csa_gain =  	buffer[ind++];
 
-        return 1;
+        return ind;
 
     }
 int confgen_multiplex_mcparams	(TD_MC_PARAMS *mc, uint8_t* buffer)
@@ -102,7 +99,6 @@ int confgen_multiplex_mcparams	(TD_MC_PARAMS *mc, uint8_t* buffer)
     int32_t ind = 0;
 
     buffer_append_uint32(buffer, MCPARAMS_SIGNATURE, &ind);
-
     buffer_append_uint32(buffer, mc->pwm->bits, &ind);
     buffer_append_uint32(buffer, mc->pwm->speed, &ind);
     buffer_append_float16(buffer, mc->pwm->freq,10, &ind);

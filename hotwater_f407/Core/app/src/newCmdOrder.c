@@ -183,6 +183,7 @@ void confshow(int argc, const char **argv)
 {
     int bytesread;
     int dlogticks;
+    uint32_t signature;
     if (argc == 2)
 	{
 
@@ -191,16 +192,25 @@ void confshow(int argc, const char **argv)
 	bytesread = confgen_loadSD(confbuffer, argv[1]);
 	if (bytesread == CONFGEN_BUFFERSIZE)
 	    {
-	    term_qPrintf(myTxQueueHandle, "\rstart binary config:\r");
-	    dlogticks = termlog.ticks_update_terminal;
+	    signature = buffer_get_uint32(confbuffer, 0);
+	    if(signature = MCPARAMS_SIGNATURE)
+		{
+	    term_qPrintf(myTxQueueHandle, "\rstart binary config (signature: %d):\r", signature);
+	    dlogticks = termlog.ticks_update_terminal;	// logging im terminal pausieren
 	    termlog.ticks_update_terminal = 0;
+
 	    term_sendBuffer(myTxQueueHandle, &confbuffer, bytesread);
 	    term_qPrintf(myTxQueueHandle, "\rend binary config:\r");
-	    termlog.ticks_update_terminal = dlogticks;
+	    termlog.ticks_update_terminal = dlogticks;	// logging wieder aufnehmen
+		}
+	    else
+		{
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] confshow fehler signature: %d", signature);
+		}
 	    }
 	else
 	    {
-	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] confshow fehler: %d", bytesread);
+	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] confshow lol-fehler: %d", bytesread);
 	    }
 	}
 }
