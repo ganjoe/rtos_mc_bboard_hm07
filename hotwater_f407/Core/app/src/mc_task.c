@@ -39,7 +39,7 @@ void StartMcTask(void *argument)
 
      char linebuff[] = "lol";
 
-   //  sd_lol_writeline("test.txt", linebuff, 3, 0);
+   sd_lol_writeline("test.txt", linebuff, 3, 0);
     while (1)
 	{
 
