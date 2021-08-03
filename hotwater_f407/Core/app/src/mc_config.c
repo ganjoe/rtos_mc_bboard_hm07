@@ -7,8 +7,6 @@
 #include "../mc_config.h"
 #include "../utils_buffer.h"
 
-#define MCPARAMS_SIGNATURE	1337
-
 
 
 int confgen_setdefaults(TD_MC_PARAMS *mc)
@@ -132,10 +130,14 @@ int confgen_multiplex_mcparams	(TD_MC_PARAMS *mc, uint8_t* buffer)
     return ind;
     }
 
-int confgen_storeSD	(uint8_t* buffer, const char* filename)
+int confgen_storeSD	(char* filename)
     {
-
+    int byteswrote;
+    char confbuffer[CONFGEN_BUFFERSIZE];
+    byteswrote = sd_writebuffer(filename, confbuffer, CONFGEN_BUFFERSIZE, 0);
+    return byteswrote;
     }
+
 int confgen_loadSD	(uint8_t* buffer, const char* filename)
     {
 

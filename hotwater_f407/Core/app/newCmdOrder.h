@@ -51,6 +51,10 @@ void    setdate(int argc, const char **argv);
 void	setlog(int argc, const char **argv);
 void	sdlog(int argc, const char **argv);
 void 	help(int argc, const char **argv);
+void 	confsave(int argc, const char **argv);
+void 	confshow(int argc, const char **argv);
+void 	confload(int argc, const char **argv);
+
 /*------------motor control commands--------------
  * - Contactron-Style Test Interface
  * - Init - Commands
