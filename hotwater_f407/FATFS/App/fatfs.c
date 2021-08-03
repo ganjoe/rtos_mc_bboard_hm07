@@ -34,9 +34,7 @@ void MX_FATFS_Init(void)
 
   /* USER CODE BEGIN Init */
   /* additional user code for init */
-  FRESULT fres=0;
-  fres = 	f_mount(&SDFatFS, SDPath, 1);
-  fres =	f_open(&SDFile, "asdf", FA_READ| FA_WRITE);
+
   /* USER CODE END Init */
 }
 
