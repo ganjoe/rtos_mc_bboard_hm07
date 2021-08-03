@@ -51,7 +51,7 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     adcbuff.channels = 2;
     adcbuff.filterdepht = 10;
 
-
+    return 1;
     }
 
 int confgen_demultiplex_mcparams(TD_MC_PARAMS *mc, uint8_t* buffer)
@@ -88,10 +88,13 @@ int confgen_demultiplex_mcparams(TD_MC_PARAMS *mc, uint8_t* buffer)
         mc->drv->csa_shunt.thresh = 	buffer_get_uint32(buffer, index);
 
         mc->drv->OLshuntvolts =  	buffer[ind++];
-        mc->drv->modeSelect =  		buffer[ind++];;
-        mc->drv->opref =  		buffer[ind++];;
-        mc->drv->regAdress =  		buffer[ind++];;
-        mc->drv->csa_shunt.csa_gain =  	buffer[ind++];;
+        mc->drv->modeSelect =  		buffer[ind++];
+        mc->drv->opref =  		buffer[ind++];
+        mc->drv->regAdress =  		buffer[ind++];
+        mc->drv->csa_shunt.csa_gain =  	buffer[ind++];
+
+        return 1;
+
     }
 int confgen_multiplex_mcparams	(TD_MC_PARAMS *mc, uint8_t* buffer)
 
@@ -132,15 +135,23 @@ int confgen_multiplex_mcparams	(TD_MC_PARAMS *mc, uint8_t* buffer)
 
 int confgen_storeSD	(char* filename)
     {
-    int byteswrote;
-    char confbuffer[CONFGEN_BUFFERSIZE];
+    int byteswrote, confsize;
+    uint8_t confbuffer[CONFGEN_BUFFERSIZE];
+    confsize = confgen_multiplex_mcparams(&mcbench, confbuffer);
+    for (int var = confsize; var < CONFGEN_BUFFERSIZE; ++var)
+	{
+	confbuffer[var] = "@";
+	}
     byteswrote = sd_writebuffer(filename, confbuffer, CONFGEN_BUFFERSIZE, 0);
-    return byteswrote;
+    if (confsize<=byteswrote)
+	return confsize;
+    else
+	return -1;
     }
 
 int confgen_loadSD	(uint8_t* buffer, const char* filename)
     {
-
+    return sd_readbuffer(filename, buffer, CONFGEN_BUFFERSIZE, 0);
     }
 
 void initMcTask()

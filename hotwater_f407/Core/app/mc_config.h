@@ -28,5 +28,6 @@ int confgen_multiplex_config(uint8_t* buffer, TD_MC_PARAMS *data);
 int confgen_multiplex_livedata(uint8_t* buffer, TD_MC_LIVE *data);
 
 int confgen_storeSD	(char* filename);
+int confgen_loadSD	(uint8_t* buffer, const char* filename);
 
 #endif /* APP_MC_CONFIG_H_ */

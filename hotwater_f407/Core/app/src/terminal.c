@@ -45,11 +45,13 @@ void term_qPrintf	(osMessageQueueId_t QueueHandle, char *fmt, ...)
 
 	utils_truncate_number_int(&bytesWrote, 0, ItemsLeft);
 
-	for (int var = 0; var < bytesWrote; ++var)
+/*	for (int var = 0; var < bytesWrote; ++var)
 	    {
 	    osMessageQueuePut(QueueHandle, &pbuffer[var], 0, osWaitForever);
 	    // xQueueSendToBack(QueueHandle, &pbuffer[var], 0);
 	    }
+*/
+	term_sendBuffer(QueueHandle, pbuffer, bytesWrote);
 	}
     else
 	{
@@ -57,6 +59,14 @@ void term_qPrintf	(osMessageQueueId_t QueueHandle, char *fmt, ...)
 
 	xQueueSendToBack(QueueHandle, "!F", 0);
 
+	}
+    }
+
+void term_sendBuffer(osMessageQueueId_t QueueHandle, char* buffer, int buffersize)
+    {
+    for (int var = 0; var < buffersize; ++var)
+	{
+	osMessageQueuePut(QueueHandle, &buffer[var], 0, osWaitForever);
 	}
     }
 
