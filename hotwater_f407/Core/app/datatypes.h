@@ -30,11 +30,6 @@
 
 /*-------------params----------------*/
 
-#define TD_LINEOBJ_MAX_SSIZE 16
-#define TD_LINEOBJ_MAX_HEADERSIZE 8
-#define TD_LINEOBJ_MAX_POSTFIXSIZE 5
-#define TD_LINEOBJ_MAX_TIMESTRINGSIZE 18
-#define TD_LINEOBJ_MAX_FILENAMESIZE 8
 
 
 /*----------appvars----------------*/

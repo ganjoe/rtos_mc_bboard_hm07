@@ -51,6 +51,36 @@ DWORD get_fattime(void)
 }
 
 /* USER CODE BEGIN Application */
+int sd_writebuffer(char* filename, char* buffer, uint8_t buffersize, uint8_t pos)
+{
+	int bytesWrote = -1;
+	FRESULT fres;
+
+/*---------------------------------------------------------*/
+	fres = 	f_mount(&SDFatFS, SDPath, 1);
+	fres =	f_open(&SDFile, filename, FA_READ| FA_WRITE);
+	if (fres == FR_NO_FILE)
+		 {
+		 fres =	f_open(&SDFile, filename, FA_CREATE_ALWAYS | FA_WRITE | FA_READ);
+		 }
+	if (fres == FR_DISK_ERR)
+		 {
+		bytesWrote = -1;
+		 }
+	if (fres == FR_INVALID_DRIVE)
+		 {
+		bytesWrote = -1;
+		 }
+	if (fres == FR_OK)
+		{
+		 f_lseek(&SDFile, buffersize * pos);
+		 f_write(&SDFile, buffer, buffersize, &bytesWrote);
+		 f_close(&SDFile);
+		 f_mount(&SDFatFS, SDPath, 0);
+		}
+
+		return bytesWrote;
+}
 int sd_lol_writeline(char* filename, char* linebuff, uint8_t chars, uint8_t line)
 {
 	int bytesWrote = -1;

@@ -20,6 +20,7 @@
 #include "../terminal.h"
 #include "../mc_ramp.h"
 #include "../mc_dlog.h"
+#include "../mc_config.h"
 
 
 /* muss in diesen scope stehen */
@@ -149,6 +150,40 @@ void help(int argc, const char **argv)
 	}
     }
 
+void confsave(int argc, const char **argv)
+{
+    int stringsize = -1;
+    int byteswrote = -1;
+    char filename[TD_LINEOBJ_MAX_FILENAMESIZE];
+    if (argc ==2)
+	{
+	stringsize = strlen(argv[1]);
+	if (!utils_truncate_number_int(&stringsize, 1, TD_LINEOBJ_MAX_FILENAMESIZE))
+	    {
+
+	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] confsave ok: %s", argv[1]);
+
+	    byteswrote = confgen_storeSD(argv[1]);
+
+	    if(byteswrote > 0 )
+		{
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] confsave: %d bytes geschrieben", byteswrote);
+		}
+	    else
+		{
+		term_qPrintf(myTxQueueHandle, "\r[parseCmd] confsave: fehler schreiben", byteswrote);
+		}
+	    }
+	else
+	    {
+	    term_qPrintf(myTxQueueHandle, "\r dateinamen (1:8)");
+	    }
+	}
+}
+void confload(int argc, const char **argv)
+{}
+void confshow(int argc, const char **argv)
+{}
 
 /*------------motor control commands--------------*/
 
@@ -164,7 +199,6 @@ void duty(int argc, const char **argv)
 
 	}
     }
-
 
 void freq(int argc, const char **argv)
     {
@@ -299,6 +333,10 @@ void cmd_init_callbacks(TD_CMD *asdf)
     term_lol_setCallback(asdf, "setlog", "livedaten terminal", "update freq", setlog);
     term_lol_setCallback(asdf, "sdlog", "livedaten flash", "updatefreq", sdlog);
     term_lol_setCallback(asdf, "help", "registrierte befehle", "kein", help);
+    term_lol_setCallback(asdf, "confsave", "mcparams in datei schreiben", "dateiname", confsave);
+    term_lol_setCallback(asdf, "confshow", "mcparams laden und ins terminal schreiben", "dateiname", confshow);
+    term_lol_setCallback(asdf, "confload", "mcparams ins ram laden", "dateiname", confload);
+
 
     term_lol_setCallback(asdf, "duty", "pwm duty-cycle (-)ccw", "float",  duty);
     term_lol_setCallback(asdf, "freq", "pwm freq hz", "uint16", freq);
