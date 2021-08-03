@@ -9,7 +9,7 @@
 
 
 #include "../mc_config.h"
-
+#include "fatfs.h"
 
 
 void StartMcTask(void *argument)
@@ -37,6 +37,9 @@ void StartMcTask(void *argument)
      HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adcbuff.workbuff, adcbuff.buffersize);
 
 
+     char linebuff[] = "lol";
+
+   //  sd_lol_writeline("test.txt", linebuff, 3, 0);
     while (1)
 	{
 

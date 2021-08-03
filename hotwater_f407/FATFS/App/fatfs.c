@@ -34,6 +34,9 @@ void MX_FATFS_Init(void)
 
   /* USER CODE BEGIN Init */
   /* additional user code for init */
+  FRESULT fres=0;
+  fres = 	f_mount(&SDFatFS, SDPath, 1);
+  fres =	f_open(&SDFile, "asdf", FA_READ| FA_WRITE);
   /* USER CODE END Init */
 }
 
@@ -50,7 +53,51 @@ DWORD get_fattime(void)
 }
 
 /* USER CODE BEGIN Application */
+int sd_lol_writeline(char* filename, char* linebuff, uint8_t chars, uint8_t line)
+{
+	int bytesWrote = -1;
+	FRESULT fres;
+	int slen;
+	char* linebuffer;
+/*---------------------------------------------------------*/
+	linebuffer = calloc(chars, 1);	// + \r und platz für die letzte \0 von calloc
+	strcpy(linebuffer, linebuff);
+	memcpy(linebuffer+chars-1, "\r",1);
 
+	slen =strlen(linebuffer);
+	if (slen > chars)
+		{
+		linebuffer =strdup("to boku");
+		}
+
+/*---------------------------------------------------------*/
+	fres = 	f_mount(&SDFatFS, SDPath, 1);
+	fres =	f_open(&SDFile, filename, FA_READ| FA_WRITE);
+	if (fres == FR_NO_FILE)
+		 {
+		 fres =	f_open(&SDFile, filename, FA_CREATE_ALWAYS | FA_WRITE | FA_READ);
+		 }
+	if (fres == FR_DISK_ERR)
+		 {
+		bytesWrote = -1;
+		 }
+	if (fres == FR_INVALID_DRIVE)
+		 {
+		bytesWrote = -1;
+		 }
+	if (fres == FR_OK)
+		{
+		 f_lseek(&SDFile, chars * line);
+		 f_write(&SDFile, linebuffer, chars, &bytesWrote);
+		 f_close(&SDFile);
+		 f_mount(&SDFatFS, SDPath, 0);
+		}
+
+
+/*---------------------------------------------------------*/
+	 free (linebuffer);
+		return bytesWrote;
+}
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
