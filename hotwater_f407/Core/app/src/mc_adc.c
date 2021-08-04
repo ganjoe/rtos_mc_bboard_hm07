@@ -10,6 +10,7 @@
 #include "../mc_drv83.h"
 #include "adc.h"
 
+   /* thema oversampling: https://www.cypress.com/file/236481/download */
 
 /* freetos  */
 extern void *pvPortMalloc( size_t xWantedSize );
@@ -33,11 +34,12 @@ void mc_shunt_si(TD_MC_DRV_CSA *shunt, float* result, uint32_t raw)
     *result = shunt->lsb * val;
     }
 
+
+
 uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos)
     {
     /* buffer muss initialisiert sein */
-    /* thema oversampling: */
-   /* https://www.cypress.com/file/236481/download */
+
     uint64_t sum = 0;
     uint32_t var = 0;
 

@@ -326,7 +326,7 @@ void drvcal(int argc, const char **argv)
 	{
 	sscanf(argv[1], "%f", &cal);
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvcal: ok");
-	drv_calib_csa(&drv, cal, mcrt.MotCurrRiseRaw);
+	drv_calib_csa(&drv, cal, mcrt.adc_shunt_u_rise);
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvcal: new lsb set");
 
 	}

@@ -10,7 +10,11 @@
 
 #include "../mc_config.h"
 #include "fatfs.h"
+#include "tim.h"
 
+int dmadoneflag=1;
+void McTask();
+void McTaskInit();
 
 void StartMcTask(void *argument)
     {
@@ -28,7 +32,7 @@ void StartMcTask(void *argument)
      drv_setShuntSign(&drv);
      drv_setShuntGain(&drv);
 
-     mc_adc_newBuffer(&adcbuff);	// array muss in heap für task-kontext passen
+     mc_adc_newBuffer(&adcbuff);
 
      drv.csa_shunt.rawoffset = drv_adc_ref();
 
@@ -36,36 +40,44 @@ void StartMcTask(void *argument)
 
      HAL_ADC_Start_DMA(&hadc1, (uint32_t*)adcbuff.workbuff, adcbuff.buffersize);
 
-     char linebuff[] = "lol";
-
-
     while (1)
 	{
+        if(dmadoneflag)
+	    {
+	    dmadoneflag=0;
+	    mc_timediff(&mf_systick);
 
+	    mcrt.adc_shunt_u_rise = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTU_RISE);
+	    mcrt.adc_shunt_u_fall = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTU_FALL);
+	    mcrt.adc_shunt_v_rise = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTV_RISE);
+	    mcrt.adc_shunt_v_fall = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTV_FALL);
+	    mcrt.adc_phase_u_bus = mc_adc_avg(&adcbuff, ADCBUFFPOS_BUSVOLT_U);
+	    mcrt.adc_phase_v_bus = mc_adc_avg(&adcbuff, ADCBUFFPOS_BUSVOLT_V);
+	    mcrt.adc_phase_u_emk = mc_adc_avg(&adcbuff, ADCBUFFPOS_EMK_U);
+	    mcrt.adc_phase_v_emk = mc_adc_avg(&adcbuff, ADCBUFFPOS_EMK_V);
+
+
+	    mc_shunt_si(&drv.csa_shunt, &mcrt.MotCurrRiseSi , mcrt.adc_shunt_u_rise);
+	    mc_shunt_si(&drv.csa_shunt, &mcrt.MotCurrFallSi , mcrt.adc_shunt_u_fall);
+
+
+	    mcbench.ramp->timestep = mf_systick.timestep;
+	    mc_ramp(mcbench.ramp);
+	    mcbench.pwm->duty = rampe.Setpoint;
+	    mc_pwm_bcd_update(mcbench.pwm);
+
+
+	    }
 	}
 
     }
 
-void McTask()
-    {
-    mc_timediff(&mf_systick);
 
-    mcrt.MotCurrRiseRaw = mc_adc_avg(&adcbuff, EN_RISE);
-    mcrt.MotCurrFallRaw = mc_adc_avg(&adcbuff, EN_FALL);
-
-    mc_shunt_si(&drv.csa_shunt, &mcrt.MotCurrRiseSi , mcrt.MotCurrRiseRaw);
-    mc_shunt_si(&drv.csa_shunt, &mcrt.MotCurrFallSi , mcrt.MotCurrFallRaw);
-
-    mcbench.ramp->timestep = mf_systick.timestep;
-    mc_ramp(mcbench.ramp);
-    mcbench.pwm->duty = rampe.Setpoint;
-    mc_pwm_bcd_update(mcbench.pwm);
-
-    }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     {
-    McTask();
+    dmadoneflag = 1;
+
     HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
-    HAL_ADC_Start_DMA(&hadc1, adcbuff.workbuff, adcbuff.buffersize);
+
     }

@@ -13,25 +13,27 @@
 #include "mc_drv83.h"
 
 
-
-
-
 typedef enum
 {
-    EN_RISE,
-    EN_FALL,
+    ADCBUFFPOS_SHUNTU_RISE,
+    ADCBUFFPOS_SHUNTV_RISE,
+    ADCBUFFPOS_BUSVOLT_U,
+    ADCBUFFPOS_BUSVOLT_V,
+    ADCBUFFPOS_SHUNTU_FALL,
+    ADCBUFFPOS_SHUNTV_FALL,
+    ADCBUFFPOS_EMK_U,
+    ADCBUFFPOS_EMK_V,
 }
-    EN_MC_ADC_CURREDGE;
+    EN_ADC_BCD_BUFFPOS;
+
 
 typedef struct
         {
-    /**
-     * @note die auswertetiefe ist dynamisch zur laufzeit
-     */
+
         uint16_t buffersize;
         uint16_t filterdepht;
         uint16_t* workbuff;
-        /* für bidirektionale messungen */
+
         uint16_t channels;
 
         }
