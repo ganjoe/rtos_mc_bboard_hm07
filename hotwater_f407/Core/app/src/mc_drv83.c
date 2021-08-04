@@ -187,7 +187,7 @@ void drv_calib_csa(TD_DRV83 *select, float calcurrent, uint32_t rawcurrent)
 	select->csa_shunt.csa_gain = gain;
 	drv_setShuntGain(select);
 	HAL_Delay(100);
-	ilsb = calcurrent / (float)abs(mcrt.MotCurrRiseRaw - select->csa_shunt.rawoffset);
+	//ilsb = calcurrent / (float)abs(mcrt.MotCurrRiseRaw - select->csa_shunt.rawoffset);
 
 	select->csa_shunt.Ilsb[gain] = ilsb;
 	}

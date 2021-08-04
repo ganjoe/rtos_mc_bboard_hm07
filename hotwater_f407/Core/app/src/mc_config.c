@@ -26,13 +26,9 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     drv.opref = drv_shunt_bidirectinal;
     drv.csa_shunt.csa_gain = drv_sgain_5;
 
-   // drv.csa_shunt.min = -10;	//bereich in SI für berechnung von pu
-   // drv.csa_shunt.max = 10;
     drv.csa_shunt.thresh = 10;	//schwelle für wert>0
 
     drv.emk.Ilsb[drv_sgain_40] = 0.0001;
-   // drv.emk.min = 0;
-   // drv.emk.max = 10;
     drv.emk.thresh = 10;
 
 
@@ -48,8 +44,8 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     rampe.timestep = 0.001;
     rampe.RampStepLimit = 0.01;
 
-    adcbuff.channels = 2;
-    adcbuff.filterdepht = 10;
+    adcbuff.channels = 8;
+    adcbuff.filterdepht = 5;
 
     return 1;
     }

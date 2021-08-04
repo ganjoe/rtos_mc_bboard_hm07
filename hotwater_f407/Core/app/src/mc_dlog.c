@@ -22,17 +22,30 @@ void StartLogUartTask(void *argument)
 	if (termlog.ticks_update_terminal)
 	    {
 	    term_qPrintf(myTxQueueHandle, "--------\r");
-	    dbase_Make(&termlogline, "ADCraw", 0, "Shunt_U", "rise", 0, "%d",mcrt.MotCurrRiseRaw);
+	    dbase_Make(&termlogline, "ADCraw", 0, "Shunt_U", "rise", 0, "%d",mcrt.adc_shunt_u_rise);
 	    term_vprintLineObj(myTxQueueHandle, &termlogline);
 
-	    dbase_Make(&termlogline, "ADCraw", 0, "Shunt_U", "fall", 0, "%d",mcrt.MotCurrFallRaw);
+	    dbase_Make(&termlogline, "ADCraw", 0, "Shunt_V", "rise", 0, "%d",mcrt.adc_shunt_v_rise);
 	    term_vprintLineObj(myTxQueueHandle, &termlogline);
 
-	    dbase_Make(&termlogline, "ADCSi", 0, "Shunt_U", "rise", 0, "%f",mcrt.MotCurrRiseSi);
+	    dbase_Make(&termlogline, "ADCraw", 0, "Bus_U", "rise", 0, "%d",mcrt.adc_phase_u_bus);
 	    term_vprintLineObj(myTxQueueHandle, &termlogline);
 
-	    dbase_Make(&termlogline, "ADCSi", 0, "Shunt_U", "fall", 0, "%f",mcrt.MotCurrFallSi);
+	    dbase_Make(&termlogline, "ADCraw", 0, "Bus_V", "rise", 0, "%d",mcrt.adc_phase_v_bus);
 	    term_vprintLineObj(myTxQueueHandle, &termlogline);
+
+	    dbase_Make(&termlogline, "ADCraw", 0, "Shunt_U", "fall", 0, "%d",mcrt.adc_shunt_u_fall);
+	    term_vprintLineObj(myTxQueueHandle, &termlogline);
+
+	    dbase_Make(&termlogline, "ADCraw", 0, "Shunt_V", "fall", 0, "%d",mcrt.adc_shunt_v_fall);
+	    term_vprintLineObj(myTxQueueHandle, &termlogline);
+
+	    dbase_Make(&termlogline, "ADCraw", 0, "EMK_U", "fall", 0, "%d",mcrt.adc_phase_u_emk);
+	    term_vprintLineObj(myTxQueueHandle, &termlogline);
+
+	    dbase_Make(&termlogline, "ADCraw", 0, "EMK_V", "fall", 0, "%d",mcrt.adc_phase_v_emk);
+	    term_vprintLineObj(myTxQueueHandle, &termlogline);
+
 	    }
 	else
 	    {

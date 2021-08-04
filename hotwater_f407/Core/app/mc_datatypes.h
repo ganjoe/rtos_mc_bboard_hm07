@@ -29,7 +29,13 @@ typedef enum
 
 typedef struct
     {
-    uint32_t MotCurrRiseRaw, MotCurrFallRaw;	// rohwerte, nach averaging und oversampling
+    uint32_t adc_shunt_u_rise, adc_shunt_u_fall;	// rohwerte, nach averaging und oversampling
+    uint32_t adc_shunt_v_rise, adc_shunt_v_fall;
+    uint32_t adc_phase_u_bus, adc_phase_v_bus;
+    uint32_t adc_phase_u_emk, adc_phase_v_emk;
+
+
+
     float shuntrise, shuntfall;	// normierte werte -1 bis 1
     float MotCurrRiseSi,MotCurrFallSi;// verrechnet mit ILSB
     }
