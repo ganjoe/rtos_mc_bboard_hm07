@@ -38,6 +38,8 @@ void mc_timediff(TD_MODFLAG *cnt)
 	cnt->timestep = (float) (cnt->tickdiff) / (float) (cnt->timerspeed / (HAL_SYSTICKTIMER->PSC + 1));
     }
 
+
+
 /*
  * @brief _weak funktion aus stm-hal.
  * @note muss gecallt werden da sonst hal-delay bzw. die firmware nicht funktioniert

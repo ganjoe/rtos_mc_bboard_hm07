@@ -18,6 +18,7 @@
 #include "mc_drv83.h"
 #include "mc_adc.h"
 #include "newCmdOrder.h"
+#include "mc_dlog.h"
 
 typedef enum
 {
@@ -27,6 +28,8 @@ typedef enum
 }
 	EN_MC_WORKBENCH;
 
+
+
 typedef struct
     {
     uint32_t adc_shunt_u_rise, adc_shunt_u_fall;	// rohwerte, nach averaging und oversampling
@@ -34,10 +37,9 @@ typedef struct
     uint32_t adc_phase_u_bus, adc_phase_v_bus;
     uint32_t adc_phase_u_emk, adc_phase_v_emk;
 
+    float MotCurrRiseSi,MotCurrFallSi;
+    float MotVoltBusSi;
 
-
-    float shuntrise, shuntfall;	// normierte werte -1 bis 1
-    float MotCurrRiseSi,MotCurrFallSi;// verrechnet mit ILSB
     }
     TD_MC_LIVE;
 

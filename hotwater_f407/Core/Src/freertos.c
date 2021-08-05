@@ -104,7 +104,7 @@ const osThreadAttr_t myLogUartTask_attributes = {
 };
 /* Definitions for myMcTask */
 osThreadId_t myMcTaskHandle;
-uint32_t myMcTaskBuffer[ 128 ];
+uint32_t myMcTaskBuffer[ 256 ];
 osStaticThreadDef_t myMcTaskControlBlock;
 const osThreadAttr_t myMcTask_attributes = {
   .name = "myMcTask",

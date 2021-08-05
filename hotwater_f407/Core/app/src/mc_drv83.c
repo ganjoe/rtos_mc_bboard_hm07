@@ -81,37 +81,37 @@ void drv_setShuntSign(TD_DRV83 *select)
 
     }
 
-void drv_setShuntGain(TD_DRV83 *select)
+void drv_setShuntGain(TD_MC_DRV_CSA *select)
     {
 
     uint16_t regbuffer = 0;
 
     drv_readRegister(CSAcontrol, &regbuffer);
 
-    switch (select->csa_shunt.csa_gain)
+    switch (select->csa_gain)
 	{
     case drv_sgain_5:
 	utils_set_bit_in_Word(&regbuffer, 6, 0);
 	utils_set_bit_in_Word(&regbuffer, 7, 0);
-	select->csa_shunt.lsb = select->csa_shunt.Ilsb[drv_sgain_5];
+	select->lsb = select->Ilsb[drv_sgain_5];
 	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x5 | ILSB: %f",select->csa_shunt.Ilsb[drv_sgain_5]);
 	break;
     case drv_sgain_10:
 	utils_set_bit_in_Word(&regbuffer, 6, 1);
 	utils_set_bit_in_Word(&regbuffer, 7, 0);
-	select->csa_shunt.lsb = select->csa_shunt.Ilsb[drv_sgain_10];
+	select->lsb = select->Ilsb[drv_sgain_10];
 	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x10");
 	break;
     case drv_sgain_20:
 	utils_set_bit_in_Word(&regbuffer, 6, 0);
 	utils_set_bit_in_Word(&regbuffer, 7, 1);
-	select->csa_shunt.lsb = select->csa_shunt.Ilsb[drv_sgain_20];
+	select->lsb = select->Ilsb[drv_sgain_20];
 	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x20");
 	break;
     case drv_sgain_40:
 	utils_set_bit_in_Word(&regbuffer, 6, 1);
 	utils_set_bit_in_Word(&regbuffer, 7, 1);
-	select->csa_shunt.lsb = select->csa_shunt.Ilsb[drv_sgain_40];
+	select->lsb = select->Ilsb[drv_sgain_40];
 	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x40");
 	break;
 	}
@@ -179,18 +179,30 @@ uint32_t drv_adc_ref()
      return  sum /ovrsample;
     }
 
-void drv_calib_csa(TD_DRV83 *select, float calcurrent, uint32_t rawcurrent)
+void drv_calib_csa(TD_MC_DRV_CSA *select, float calcurrent, int16_t rawcurrent)
     {
     float ilsb = 0;
+    dlogPause(&termlog);
     for (int gain = drv_sgain_5; gain <= drv_sgain_40; ++gain)
 	{
-	select->csa_shunt.csa_gain = gain;
+	select->csa_gain = gain;
 	drv_setShuntGain(select);
 	HAL_Delay(100);
-	//ilsb = calcurrent / (float)abs(mcrt.MotCurrRiseRaw - select->csa_shunt.rawoffset);
-
-	select->csa_shunt.Ilsb[gain] = ilsb;
+	ilsb = calcurrent / (float)abs(rawcurrent - select->rawoffset);
+	select->Ilsb[gain] = ilsb;
+	term_qPrintf(myTxQueueHandle, "gain select | raw(-)offset | ilsb\r %d\t |%d\t |%f\t", gain, rawcurrent - select->rawoffset, ilsb);
 	}
+    dlogResume(&termlog);
+    }
+
+float drv_calib(TD_MC_DRV_CSA *select, float calcurrent, int16_t rawcurrent)
+    {
+    float ilsb;
+    dlogPause(&termlog);
+    ilsb =   calcurrent / (float)abs(rawcurrent - select->rawoffset);
+    term_qPrintf(myTxQueueHandle, "raw(-)offset | ilsb\r %d\t |%f\t", rawcurrent - select->rawoffset, ilsb);
+    dlogResume(&termlog);
+    return ilsb;
     }
 
 void drv_en_drv(int enable)

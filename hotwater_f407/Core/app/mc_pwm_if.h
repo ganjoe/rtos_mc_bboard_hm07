@@ -13,6 +13,16 @@
 #define INC_MC_PWM_IF_H_
 
 #include "main.h"
+	typedef enum
+	{
+	    cw_pwm = 1,
+	    ccw_pwm,
+
+	    cw_shaft,
+	    ccw_shaft,
+	    detect,
+	}
+	    EN_MC_MOTORSTATE;
 
 typedef struct
 {
@@ -36,8 +46,11 @@ typedef struct
 	uint32_t top, prescaler;
 
 	float duty,  freq;
+
+	EN_MC_MOTORSTATE direction;
 }
 	TD_MC_PWM_PARAMS;
+
 
 
 void pwm_init_timer_led1		(TD_MC_PWM_PARAMS* pwm);
@@ -45,7 +58,7 @@ void pwm_init_timer_led2		(TD_MC_PWM_PARAMS* pwm);
 void pwm_init_timer_mc			(TD_MC_PWM_PARAMS *pwm);
 
 void mc_pwm_led_update			(TD_MC_PWM_PARAMS* pwm);
-void mc_pwm_bcd_update			(TD_MC_PWM_PARAMS *pwm);
+EN_MC_MOTORSTATE mc_pwm_bcd_update	(TD_MC_PWM_PARAMS *pwm);
 
 void pwm_calcfreq(TD_MC_PWM_PARAMS *pwm);
 
