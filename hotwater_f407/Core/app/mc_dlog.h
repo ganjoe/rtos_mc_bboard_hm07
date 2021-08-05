@@ -22,11 +22,14 @@ typedef enum
 typedef struct
 {
     uint32_t ticks_update_terminal;
+    uint32_t ticks_update_terminal_backup;
     uint16_t itemSelectMask;
 }
     TD_DATALOGGA;
 
-void dlogSetSelectSingle(TD_DATALOGGA *dlog, EN_LOGITEMS items);
+    void dlogPause(TD_DATALOGGA *dlog);
+    void dlogResume(TD_DATALOGGA *dlog);
+
 void dlogSetSelectMulti(TD_DATALOGGA *dlog);
 void dlogSetUpdateFreq(TD_DATALOGGA *dlog, float freq);
 

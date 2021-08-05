@@ -46,6 +46,12 @@ void StartLogUartTask(void *argument)
 	    dbase_Make(&termlogline, "ADCraw", 0, "EMK_V", "fall", 0, "%d",mcrt.adc_phase_v_emk);
 	    term_vprintLineObj(myTxQueueHandle, &termlogline);
 
+	    dbase_Make(&termlogline, "SI", 0, "Busvolt", "pwm", 0, "%f",mcrt.MotVoltBusSi);
+	    term_vprintLineObj(myTxQueueHandle, &termlogline);
+
+	    dbase_Make(&termlogline, "SI", 0, "Strom", "cw/ccw", 0, "%f",mcrt.MotCurrRiseSi);
+	    term_vprintLineObj(myTxQueueHandle, &termlogline);
+
 	    }
 	else
 	    {
@@ -56,10 +62,7 @@ void StartLogUartTask(void *argument)
 	}
     }
 
-void dlogSetSelectSingle(TD_DATALOGGA *dlog, EN_LOGITEMS items)
-    {
-    utils_set_bit_in_Word(&dlog->itemSelectMask, items, 1);
-    }
+
 void dlogSetUpdateFreq(TD_DATALOGGA *dlog, float freq)
     {
     if (freq == 0)
@@ -72,7 +75,20 @@ void dlogSetUpdateFreq(TD_DATALOGGA *dlog, float freq)
 	}
     }
 
+void dlogPause(TD_DATALOGGA *dlog)
+    {
+    dlog->ticks_update_terminal_backup = dlog->ticks_update_terminal;
+    dlog->ticks_update_terminal = 0;
+    term_qPrintf(myTxQueueHandle, "\rdlog pause");
+    }
+void dlogResume(TD_DATALOGGA *dlog)
+    {
+    term_qPrintf(myTxQueueHandle, "dlog resume\r");
+    dlog->ticks_update_terminal = dlog->ticks_update_terminal_backup;
+
+    }
+
 TD_LINEOBJ termlogline;
-TD_DATALOGGA termlog ={.ticks_update_terminal = 1000} ;
+TD_DATALOGGA termlog;
 
 #endif /* APP_SRC_MC_DLOG_C_ */

@@ -14,22 +14,24 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     // init zeitmessung
     mf_systick.timerspeed = 168000000;
 
+    termlog.ticks_update_terminal = 1000;
+
 /* parameter für shunt und spannungsteiler */
     drv.csa_shunt.Ilsb[drv_sgain_40] = 0.00290258;
     drv.csa_shunt.Ilsb[drv_sgain_20] = 0.001438686;
     drv.csa_shunt.Ilsb[drv_sgain_10] = 0.002877372;
     drv.csa_shunt.Ilsb[drv_sgain_5] =  0.005754743;
 
+    drv.busvolt.lsb = 0.058824;
+
 /* drv83 init */
 
     drv.modeSelect = drv_pwm_6x;
     drv.opref = drv_shunt_bidirectinal;
+    drv.csa_shunt.rawoffset = 2040;	//sollte bei init überschrieben werden
     drv.csa_shunt.csa_gain = drv_sgain_5;
-
     drv.csa_shunt.thresh = 10;	//schwelle für wert>0
 
-    drv.emk.Ilsb[drv_sgain_40] = 0.0001;
-    drv.emk.thresh = 10;
 
 
 /* pwm timer init */
@@ -37,6 +39,7 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     pwm.speed = 168000000;
     pwm.bits = 0xFFFF;
     pwm.freq = 40000;
+
 
     rampe.gain = 1;
     rampe.highlimit = 1;
@@ -46,6 +49,8 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
 
     adcbuff.channels = 8;
     adcbuff.filterdepht = 5;
+
+
 
     return 1;
     }

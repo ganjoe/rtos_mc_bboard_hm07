@@ -66,7 +66,7 @@ typedef enum
     typedef struct
     {
         /* für bidirektionale messungen */
-        uint32_t rawoffset;
+        int16_t rawoffset;
 
         /* raw adc limit	*/
         uint32_t thresh;
@@ -94,16 +94,17 @@ typedef struct
     	EN_DRV_MODE_PWM modeSelect;
     	EN_DRV_MODE_OFFSET opref;
     	EN_DRV_MODE_OLP OLshuntvolts;
-    	TD_MC_DRV_CSA csa_shunt, emk;
+    	TD_MC_DRV_CSA csa_shunt, emk, busvolt;
 
     	}
     TD_DRV83;
 
 void drv_setPwmMode	(TD_DRV83 *select);
-void drv_setShuntGain	(TD_DRV83 *select);
+void drv_setShuntGain	(TD_MC_DRV_CSA *select);
 void drv_setShuntSign	(TD_DRV83 *select);
 uint32_t drv_adc_ref();
-void drv_calib_csa(TD_DRV83 *select, float calcurrent, uint32_t rawcurrent);
+void drv_calib_csa(TD_MC_DRV_CSA *select, float calcurrent, int16_t rawcurrent);
+float drv_calib(TD_MC_DRV_CSA *select, float calcurrent, int16_t rawcurrent);
 void drv_setOvrLoadProt	(TD_DRV83 *select);
 void drv_en_drv		(int enable);
 int drv_check_fault	();

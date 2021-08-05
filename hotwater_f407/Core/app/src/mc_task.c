@@ -12,7 +12,7 @@
 #include "fatfs.h"
 #include "tim.h"
 
-int dmadoneflag=1;
+int dmadoneflag=0;
 void McTask();
 void McTaskInit();
 
@@ -42,42 +42,39 @@ void StartMcTask(void *argument)
 
     while (1)
 	{
-        if(dmadoneflag)
+	switch (pwm.direction)
 	    {
-	    dmadoneflag=0;
+	    case cw_pwm:
+		mcrt.adc_shunt_u_rise = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTU_RISE);
+		mcrt.adc_shunt_u_fall = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTU_FALL);
+		mcrt.adc_phase_u_bus = mc_adc_avg(&adcbuff, ADCBUFFPOS_BUSVOLT_U);
+		mcrt.adc_phase_u_emk = mc_adc_avg(&adcbuff, ADCBUFFPOS_EMK_U);
+		mc_shunt_si(&drv.csa_shunt, &mcrt.MotCurrRiseSi , mcrt.adc_shunt_u_rise);
+		mc_shunt_si(&drv.busvolt, &mcrt.MotVoltBusSi , mcrt.adc_phase_u_bus);
+		break;
+
+	    case ccw_pwm:
+		mcrt.adc_shunt_v_rise = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTV_RISE);
+		mcrt.adc_shunt_v_fall = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTV_FALL);
+		mcrt.adc_phase_v_bus = mc_adc_avg(&adcbuff, ADCBUFFPOS_BUSVOLT_V);
+		mcrt.adc_phase_v_emk = mc_adc_avg(&adcbuff, ADCBUFFPOS_EMK_V);
+		mc_shunt_si(&drv.csa_shunt, &mcrt.MotCurrRiseSi , mcrt.adc_shunt_v_rise);
+		mc_shunt_si(&drv.busvolt, &mcrt.MotVoltBusSi , mcrt.adc_phase_v_bus);
+		break;
+
+		}
 	    mc_timediff(&mf_systick);
-
-	    mcrt.adc_shunt_u_rise = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTU_RISE);
-	    mcrt.adc_shunt_u_fall = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTU_FALL);
-	    mcrt.adc_shunt_v_rise = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTV_RISE);
-	    mcrt.adc_shunt_v_fall = mc_adc_avg(&adcbuff, ADCBUFFPOS_SHUNTV_FALL);
-	    mcrt.adc_phase_u_bus = mc_adc_avg(&adcbuff, ADCBUFFPOS_BUSVOLT_U);
-	    mcrt.adc_phase_v_bus = mc_adc_avg(&adcbuff, ADCBUFFPOS_BUSVOLT_V);
-	    mcrt.adc_phase_u_emk = mc_adc_avg(&adcbuff, ADCBUFFPOS_EMK_U);
-	    mcrt.adc_phase_v_emk = mc_adc_avg(&adcbuff, ADCBUFFPOS_EMK_V);
-
-
-	    mc_shunt_si(&drv.csa_shunt, &mcrt.MotCurrRiseSi , mcrt.adc_shunt_u_rise);
-	    mc_shunt_si(&drv.csa_shunt, &mcrt.MotCurrFallSi , mcrt.adc_shunt_u_fall);
-
-
 	    mcbench.ramp->timestep = mf_systick.timestep;
 	    mc_ramp(mcbench.ramp);
 	    mcbench.pwm->duty = rampe.Setpoint;
-	    mc_pwm_bcd_update(mcbench.pwm);
+	    pwm.direction = mc_pwm_bcd_update(mcbench.pwm);
 
-
-	    }
 	}
 
     }
 
-
-
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     {
-    dmadoneflag = 1;
-
-    HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
+     HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
 
     }

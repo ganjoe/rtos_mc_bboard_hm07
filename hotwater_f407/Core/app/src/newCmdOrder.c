@@ -134,6 +134,7 @@ void setlog(int argc, const char **argv)
 
 void help(int argc, const char **argv)
     {
+    dlogPause(&termlog);
     for (int var = 0; var < newcmd.callback_write; ++var)
 	{
 	term_qPrintf(myTxQueueHandle, "\rCMD %s ARG %s DESC %s \r",
@@ -143,6 +144,7 @@ void help(int argc, const char **argv)
 	HAL_Delay(10);
 
 	}
+
     }
 
 void confsave(int argc, const char **argv)
@@ -319,17 +321,54 @@ void drvgain(int argc, const char **argv)
 	}
     }
 
-void drvcal(int argc, const char **argv)
+void csacal(int argc, const char **argv)
     {
     float cal = -1;
     if (argc == 2)
 	{
 	sscanf(argv[1], "%f", &cal);
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvcal: ok");
-	drv_calib_csa(&drv, cal, mcrt.adc_shunt_u_rise);
+
+	switch (pwm.direction) {
+	    case cw_pwm:
+		drv_calib_csa(&drv.csa_shunt, cal, mcrt.adc_shunt_u_rise);
+		break;
+	    case ccw_pwm:
+		drv_calib_csa(&drv.csa_shunt, cal, mcrt.adc_shunt_v_rise);
+	    default:
+		break;
+	}
+
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] drvcal: new lsb set");
 
 	}
+    }
+
+void phasecal(int argc, const char **argv)
+    {
+    float cal = -1;
+    if (argc == 2)
+	{
+	sscanf(argv[1], "%f", &cal);
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] phasecal: ok");
+
+	switch (pwm.direction) {
+	    case cw_pwm:
+		drv_calib(&drv.busvolt, cal, mcrt.adc_phase_u_bus);
+		break;
+	    case ccw_pwm:
+		drv_calib(&drv.busvolt, cal, mcrt.adc_phase_v_bus);
+	    default:
+		break;
+	}
+
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] phasecal: new lsb set");
+	}
+    else
+	{
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] phasecal: fehler argument");
+	}
+
     }
 
 
@@ -374,7 +413,8 @@ void cmd_init_callbacks(TD_CMD *asdf)
     term_lol_setCallback(asdf, "init", "setup 0,1,..", "1 int",  init);
     term_lol_setCallback(asdf, "drvgain", "shuntgain vom drv83", "0:5",  drvgain);
     term_lol_setCallback(asdf, "drvrreg", "drv83 register read", "0:15",  drvrreg);
-    term_lol_setCallback(asdf, "drvcal", "drv83 csa calibration", "cal current(float)",  drvcal);
+    term_lol_setCallback(asdf, "csacal", "drv83 csa calibration", "cal current(float)",  csacal);
+    term_lol_setCallback(asdf, "phasecal", "phase voltage calibration", "cal voltage(float)",  phasecal);
 
     }
 void cmd_parse_lobj(TD_CMD *newcmd, TD_LINEOBJ *line)
