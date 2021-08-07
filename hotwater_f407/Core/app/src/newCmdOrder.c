@@ -354,10 +354,10 @@ void phasecal(int argc, const char **argv)
 
 	switch (pwm.direction) {
 	    case cw_pwm:
-		drv_calib(&drv.busvolt, cal, mcrt.adc_phase_u_bus);
+		drv_calib(&drv.div_phase, cal, mcrt.adc_phase_u_bus);
 		break;
 	    case ccw_pwm:
-		drv_calib(&drv.busvolt, cal, mcrt.adc_phase_v_bus);
+		drv_calib(&drv.div_phase, cal, mcrt.adc_phase_v_bus);
 	    default:
 		break;
 	}

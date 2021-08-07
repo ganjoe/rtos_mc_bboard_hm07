@@ -105,6 +105,7 @@ int main(void)
   MX_TIM3_Init();
   MX_SDIO_SD_Init();
   MX_FATFS_Init();
+  MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
