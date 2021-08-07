@@ -22,7 +22,7 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     drv.csa_shunt.Ilsb[drv_sgain_10] = 0.002877372;
     drv.csa_shunt.Ilsb[drv_sgain_5] =  0.005754743;
 
-    drv.busvolt.lsb = 0.058824;
+    drv.div_phase.lsb = 0.058824;
 
 /* drv83 init */
 
@@ -40,17 +40,19 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     pwm.bits = 0xFFFF;
     pwm.freq = 40000;
 
-
     rampe.gain = 1;
     rampe.highlimit = 1;
     rampe.lowlimit = -1.0;
     rampe.timestep = 0.001;
     rampe.RampStepLimit = 0.01;
 
-    adcbuff.channels = 8;
-    adcbuff.filterdepht = 5;
+    adc_1_buff.channels = 4;
+    adc_1_buff.workbuffsize = 25;
+    adc_1_buff.filterdepht = 25;
 
-
+    adc_2_buff.channels = 4;
+    adc_2_buff.workbuffsize = 25;
+    adc_2_buff.filterdepht = 25;
 
     return 1;
     }
