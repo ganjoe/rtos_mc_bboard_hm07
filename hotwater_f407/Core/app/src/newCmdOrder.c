@@ -141,7 +141,7 @@ void help(int argc, const char **argv)
 			    newcmd.callbacks[var].command,
 			    newcmd.callbacks[var].arg_names,
 			    newcmd.callbacks[var].help);
-	HAL_Delay(10);
+
 
 	}
 
@@ -371,6 +371,48 @@ void phasecal(int argc, const char **argv)
 
     }
 
+void csaoffset(int argc, const char**argv)
+    {
+
+    float backup_target, backup_gain;
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] csaoffset: ok");
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] csaoffset: old offset: %d", drv.csa_shunt.rawoffset);
+	backup_target = rampe.Target;
+	backup_gain = rampe.gain;
+	rampe.Target = 0;
+	rampe.gain = 5;
+	osDelay(500);
+	drv.csa_shunt.rawoffset = drv_adc_ref();
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] csaoffset: new offset: %d", drv.csa_shunt.rawoffset);
+	rampe.Target = backup_target;
+	rampe.gain = backup_gain;
+    }
+
+void phaseoffset(int argc, const char**argv)
+    {
+
+    float backup_target, backup_gain;
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] phaseoffset: ok");
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] phaseoffset: old offset: %d", drv.div_phase.rawoffset);
+	backup_target = rampe.Target;
+	backup_gain = rampe.gain;
+	rampe.Target = 0;
+	rampe.gain = 5;
+	osDelay(500);
+
+	if (mcrt.adc_phase_u_bus)
+		drv.div_phase.rawoffset = mcrt.adc_phase_u_bus;
+	if (mcrt.adc_phase_v_bus)
+		drv.div_phase.rawoffset = mcrt.adc_phase_v_bus;
+
+
+
+
+
+	term_qPrintf(myTxQueueHandle, "\r[parseCmd] phaseoffset: new offset: %d", drv.div_phase.rawoffset);
+	rampe.Target = backup_target;
+	rampe.gain = backup_gain;
+    }
 
 /*-----------------------------------------------*/
 
@@ -414,8 +456,9 @@ void cmd_init_callbacks(TD_CMD *asdf)
     term_lol_setCallback(asdf, "drvgain", "shuntgain vom drv83", "0:5",  drvgain);
     term_lol_setCallback(asdf, "drvrreg", "drv83 register read", "0:15",  drvrreg);
     term_lol_setCallback(asdf, "csacal", "drv83 csa calibration", "cal current(float)",  csacal);
+    term_lol_setCallback(asdf, "csaoffset", "drv83 csa offset", "none",  csaoffset);
     term_lol_setCallback(asdf, "phasecal", "phase voltage calibration", "cal voltage(float)",  phasecal);
-
+    term_lol_setCallback(asdf, "phaseoffset", "phase voltage offset", "none",  phaseoffset);
     }
 void cmd_parse_lobj(TD_CMD *newcmd, TD_LINEOBJ *line)
     {

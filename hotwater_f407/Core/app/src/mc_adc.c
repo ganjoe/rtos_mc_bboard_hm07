@@ -38,19 +38,26 @@ void mc_shunt_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw)
 
 uint32_t mc_adc_CircBuffDemultiplex(TD_MC_ADC_BUFF *adcbuff, uint32_t seqpos,uint32_t dmapos)
     {// 4 uhr morgens
+    //am besten mit exel-tabelle nachvollziehen
     int i = 0;
     int ir = 0;
-    int fd = adcbuff->filterdepht;	//resultbufferindex
+    int fd = adcbuff->filterdepht;
 
     i = dmapos / adcbuff->channels;
     i *= adcbuff->channels;
     i += seqpos;
 
-    if (i > dmapos)	{i -= adcbuff->channels;}
+    if (i > dmapos)
+	{
+	i -= adcbuff->channels;
+	}
 
     while (fd)
 	{
-	if (i < 0)   {  i += adcbuff->workbuffsize;   }
+	if (i < 0)
+	    {
+	    i += adcbuff->workbuffsize;
+	    }
 	adcbuff->filterbuff[ir] = adcbuff->workbuff[i];
 	i -= adcbuff->channels;
 	ir++;
@@ -58,19 +65,18 @@ uint32_t mc_adc_CircBuffDemultiplex(TD_MC_ADC_BUFF *adcbuff, uint32_t seqpos,uin
 	}
     }
 
-uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos)
+uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff)
 {
 /* buffer muss initialisiert sein */
 
 uint64_t sum = 0;
 uint32_t var = 0;
 
-for (var = pos; var <= buff->workbuffsize - 1; var += buff->channels)
+for (; var <= buff->filterdepht; var ++)
     {
-    sum += (uint16_t) buff->workbuff[var];
+    sum += (uint16_t) buff->filterbuff[var];
     }
-
-sum /= (buff->workbuffsize / buff->channels);
+sum /= buff->filterdepht;
 
 return sum;
 
