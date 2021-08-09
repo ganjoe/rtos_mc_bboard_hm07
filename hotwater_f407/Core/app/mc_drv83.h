@@ -66,7 +66,7 @@ typedef enum
     typedef struct
     {
         /* für bidirektionale messungen */
-        int16_t rawoffset;
+	uint32_t rawoffset;
 
         /* raw adc limit	*/
         uint32_t thresh;
