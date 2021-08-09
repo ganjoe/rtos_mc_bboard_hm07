@@ -94,25 +94,25 @@ void drv_setShuntGain(TD_MC_DRV_CSA *select)
 	utils_set_bit_in_Word(&regbuffer, 6, 0);
 	utils_set_bit_in_Word(&regbuffer, 7, 0);
 	select->lsb = select->Ilsb[drv_sgain_5];
-	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x5 | ILSB: %f",select->csa_shunt.Ilsb[drv_sgain_5]);
+	term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x5");
 	break;
     case drv_sgain_10:
 	utils_set_bit_in_Word(&regbuffer, 6, 1);
 	utils_set_bit_in_Word(&regbuffer, 7, 0);
 	select->lsb = select->Ilsb[drv_sgain_10];
-	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x10");
+	term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x10");
 	break;
     case drv_sgain_20:
 	utils_set_bit_in_Word(&regbuffer, 6, 0);
 	utils_set_bit_in_Word(&regbuffer, 7, 1);
 	select->lsb = select->Ilsb[drv_sgain_20];
-	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x20");
+	term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x20");
 	break;
     case drv_sgain_40:
 	utils_set_bit_in_Word(&regbuffer, 6, 1);
 	utils_set_bit_in_Word(&regbuffer, 7, 1);
 	select->lsb = select->Ilsb[drv_sgain_40];
-	//term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x40");
+	term_qPrintf(&myTxQueueHandle, "\r[drv_setShuntGain] x40");
 	break;
 	}
 
@@ -179,6 +179,8 @@ uint32_t drv_adc_ref()
      return  sum /ovrsample;
     }
 
+
+
 void drv_calib_csa(TD_MC_DRV_CSA *select, float calcurrent, int16_t rawcurrent)
     {
     float ilsb = 0;
@@ -199,8 +201,8 @@ float drv_calib(TD_MC_DRV_CSA *select, float calcurrent, int16_t rawcurrent)
     {
     float ilsb;
     dlogPause(&termlog);
-    select->lsb =   calcurrent / (float)abs(rawcurrent - select->rawoffset);
-    term_qPrintf(myTxQueueHandle, "raw(-)offset | ilsb\r %d\t |%f\t", rawcurrent - select->rawoffset, select->lsb);
+    select->lsb =   calcurrent / (float)abs(rawcurrent-select->rawoffset);
+    term_qPrintf(myTxQueueHandle, "\rraw(-)offset | ilsb\r %d\t |%f\t", rawcurrent - select->rawoffset, select->lsb);
     dlogResume(&termlog);
     return ilsb;
     }
