@@ -199,8 +199,8 @@ float drv_calib(TD_MC_DRV_CSA *select, float calcurrent, int16_t rawcurrent)
     {
     float ilsb;
     dlogPause(&termlog);
-    ilsb =   calcurrent / (float)abs(rawcurrent - select->rawoffset);
-    term_qPrintf(myTxQueueHandle, "raw(-)offset | ilsb\r %d\t |%f\t", rawcurrent - select->rawoffset, ilsb);
+    select->lsb =   calcurrent / (float)abs(rawcurrent - select->rawoffset);
+    term_qPrintf(myTxQueueHandle, "raw(-)offset | ilsb\r %d\t |%f\t", rawcurrent - select->rawoffset, select->lsb);
     dlogResume(&termlog);
     return ilsb;
     }

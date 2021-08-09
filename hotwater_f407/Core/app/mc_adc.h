@@ -47,7 +47,7 @@ void mc_shunt_si(TD_MC_DRV_CSA *shunt, float* result, uint32_t raw);
 
 void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff);
 
-uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff, uint32_t pos);
+uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff);
 
 /* adc-channel aus dma-buffer demultiplexen,
  * während der puffer geschrieben wird.

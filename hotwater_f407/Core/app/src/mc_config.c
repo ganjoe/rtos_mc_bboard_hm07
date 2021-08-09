@@ -47,8 +47,8 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     rampe.RampStepLimit = 0.01;
 
     adc_1_buff.channels = 4;
-    adc_1_buff.workbuffsize = 25;
-    adc_1_buff.filterdepht = 25;
+    adc_1_buff.workbuffsize = 3;
+    adc_1_buff.filterdepht = 3;
 
     adc_2_buff.channels = 4;
     adc_2_buff.workbuffsize = 25;
