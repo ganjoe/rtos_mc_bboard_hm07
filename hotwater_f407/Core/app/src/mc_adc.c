@@ -36,6 +36,7 @@ void mc_shunt_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw)
     *result = shunt->lsb * val;
     }
 
+
 uint32_t mc_adc_CircBuffDemultiplex(TD_MC_ADC_BUFF *adcbuff, uint32_t seqpos,uint32_t dmapos)
     {// 4 uhr morgens
     //am besten mit exel-tabelle nachvollziehen

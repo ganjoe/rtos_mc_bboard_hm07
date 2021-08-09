@@ -38,7 +38,7 @@ typedef struct
     uint32_t adc_phase_u_emk, adc_phase_v_emk;
 
     float MotCurrRiseSi,MotCurrFallSi;
-    float MotVoltBusSi;
+    float MotVoltBusSi, MotVoltEmkSi;
 
     }
     TD_MC_LIVE;

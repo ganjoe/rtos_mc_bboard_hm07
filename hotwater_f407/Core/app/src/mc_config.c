@@ -14,23 +14,29 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     // init zeitmessung
     mf_systick.timerspeed = 168000000;
 
-    termlog.ticks_update_terminal = 1000;
+    termlog.ticks_update_terminal = 0;
 
 /* parameter für shunt und spannungsteiler */
-    drv.csa_shunt.Ilsb[drv_sgain_40] = 0.00290258;
-    drv.csa_shunt.Ilsb[drv_sgain_20] = 0.001438686;
-    drv.csa_shunt.Ilsb[drv_sgain_10] = 0.002877372;
-    drv.csa_shunt.Ilsb[drv_sgain_5] =  0.005754743;
+    drv.csa_u.Ilsb[drv_sgain_40] = 0.00290258;
+    drv.csa_u.Ilsb[drv_sgain_20] = 0.001438686;
+    drv.csa_u.Ilsb[drv_sgain_10] = 0.002877372;
+    drv.csa_u.Ilsb[drv_sgain_5] =  0.005754743;
 
-    drv.div_phase.lsb = 0.058824;
+    drv.vdiv_u.lsb = 0.0328;
+    drv.vdiv_v.lsb = 0.0328;
+    drv.vdiv_u.rawoffset = 50;
+    drv.vdiv_v.rawoffset = 50;
 
 /* drv83 init */
 
     drv.modeSelect = drv_pwm_6x;
     drv.opref = drv_shunt_bidirectinal;
-    drv.csa_shunt.rawoffset = 2040;	//sollte bei init überschrieben werden
-    drv.csa_shunt.csa_gain = drv_sgain_5;
-    drv.csa_shunt.thresh = 10;	//schwelle für wert>0
+    drv.csa_u.rawoffset = 2040;	//sollte bei init überschrieben werden
+    drv.csa_v.rawoffset = 2040;
+
+    drv.csa_u.csa_gain = drv_sgain_5;
+    drv.csa_v.csa_gain = drv_sgain_5;
+    drv.csa_u.thresh = 10;	//schwelle für wert>0
 
 
 
@@ -47,12 +53,13 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     rampe.RampStepLimit = 0.01;
 
     adc_1_buff.channels = 4;
-    adc_1_buff.workbuffsize = 3;
-    adc_1_buff.filterdepht = 3;
+    adc_1_buff.workbuffsize = 30;
+    adc_1_buff.filterdepht = 30;
 
     adc_2_buff.channels = 4;
-    adc_2_buff.workbuffsize = 25;
-    adc_2_buff.filterdepht = 25;
+    adc_2_buff.workbuffsize = 30;
+    adc_2_buff.filterdepht = 30;
+
 
     return 1;
     }
@@ -79,19 +86,19 @@ int confgen_demultiplex_mcparams(TD_MC_PARAMS *mc, uint8_t* buffer)
 	mc->ramp->timestep= buffer_get_float16(buffer, 1000, &ind);
         mc->ramp->RampStepLimit= buffer_get_float16(buffer, 1000, &ind);
 
-        mc->drv->csa_shunt.Ilsb[0] = buffer_get_float32_auto(buffer, &ind);
-        mc->drv->csa_shunt.Ilsb[1] = buffer_get_float32_auto(buffer, &ind);
-        mc->drv->csa_shunt.Ilsb[2] = buffer_get_float32_auto(buffer, &ind);
-        mc->drv->csa_shunt.Ilsb[3] = buffer_get_float32_auto(buffer, &ind);
+        mc->drv->csa_u.Ilsb[0] = buffer_get_float32_auto(buffer, &ind);
+        mc->drv->csa_u.Ilsb[1] = buffer_get_float32_auto(buffer, &ind);
+        mc->drv->csa_u.Ilsb[2] = buffer_get_float32_auto(buffer, &ind);
+        mc->drv->csa_u.Ilsb[3] = buffer_get_float32_auto(buffer, &ind);
 
-        mc->drv->csa_shunt.rawoffset = 	buffer_get_uint32(buffer, &ind);
-        mc->drv->csa_shunt.thresh = 	buffer_get_uint32(buffer, &ind);
+        mc->drv->csa_u.rawoffset = 	buffer_get_uint32(buffer, &ind);
+        mc->drv->csa_u.thresh = 	buffer_get_uint32(buffer, &ind);
 
         mc->drv->OLshuntvolts =  	buffer[ind++];
         mc->drv->modeSelect =  		buffer[ind++];
         mc->drv->opref =  		buffer[ind++];
         mc->drv->regAdress =  		buffer[ind++];
-        mc->drv->csa_shunt.csa_gain =  	buffer[ind++];
+        mc->drv->csa_u.csa_gain =  	buffer[ind++];
 
         return ind;
 
@@ -115,19 +122,19 @@ int confgen_multiplex_mcparams	(TD_MC_PARAMS *mc, uint8_t* buffer)
     buffer_append_float16(buffer, mc->ramp->timestep,1000, &ind);
     buffer_append_float16(buffer, mc->ramp->RampStepLimit,1000, &ind);
 
-    buffer_append_float32_auto(buffer, mc->drv->csa_shunt.Ilsb[0], &ind);
-    buffer_append_float32_auto(buffer, mc->drv->csa_shunt.Ilsb[1], &ind);
-    buffer_append_float32_auto(buffer, mc->drv->csa_shunt.Ilsb[2], &ind);
-    buffer_append_float32_auto(buffer, mc->drv->csa_shunt.Ilsb[3], &ind);
+    buffer_append_float32_auto(buffer, mc->drv->csa_u.Ilsb[0], &ind);
+    buffer_append_float32_auto(buffer, mc->drv->csa_u.Ilsb[1], &ind);
+    buffer_append_float32_auto(buffer, mc->drv->csa_u.Ilsb[2], &ind);
+    buffer_append_float32_auto(buffer, mc->drv->csa_u.Ilsb[3], &ind);
 
-    buffer_append_uint32(buffer, mc->drv->csa_shunt.rawoffset, &ind);
-    buffer_append_uint32(buffer, mc->drv->csa_shunt.thresh, &ind);
+    buffer_append_uint32(buffer, mc->drv->csa_u.rawoffset, &ind);
+    buffer_append_uint32(buffer, mc->drv->csa_u.thresh, &ind);
 
     buffer[ind++] = mc->drv->OLshuntvolts;
     buffer[ind++] = mc->drv->modeSelect;
     buffer[ind++] = mc->drv->opref;
     buffer[ind++] = mc->drv->regAdress;
-    buffer[ind++] = mc->drv->csa_shunt.csa_gain;
+    buffer[ind++] = mc->drv->csa_u.csa_gain;
 
     return ind;
     }
