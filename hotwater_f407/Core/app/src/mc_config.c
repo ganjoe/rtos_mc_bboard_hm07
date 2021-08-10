@@ -14,7 +14,7 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     // init zeitmessung
     mf_systick.timerspeed = 168000000;
 
-    termlog.ticks_update_terminal = 0;
+    termlog.ticks_update_terminal = 1000;
 
 /* parameter für shunt und spannungsteiler */
     drv.csa_u.Ilsb[drv_sgain_40] = 0.00290258;
@@ -53,12 +53,12 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     rampe.RampStepLimit = 0.01;
 
     adc_1_buff.channels = 4;
-    adc_1_buff.workbuffsize = 30;
-    adc_1_buff.filterdepht = 30;
+    adc_1_buff.workbuffsize = 3;
+    adc_1_buff.filterdepht = 3;
 
     adc_2_buff.channels = 4;
-    adc_2_buff.workbuffsize = 30;
-    adc_2_buff.filterdepht = 30;
+    adc_2_buff.workbuffsize = 3;
+    adc_2_buff.filterdepht = 3;
 
 
     return 1;
