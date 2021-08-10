@@ -35,6 +35,13 @@ void mc_shunt_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw)
 
     *result = shunt->lsb * val;
     }
+void mc_phase_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw)
+    {
+    float val;
+    val = (float) raw;
+
+    *result = shunt->lsb * val;
+    }
 
 
 uint32_t mc_adc_CircBuffDemultiplex(TD_MC_ADC_BUFF *adcbuff, uint32_t seqpos,uint32_t dmapos)

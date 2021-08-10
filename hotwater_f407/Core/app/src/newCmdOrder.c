@@ -226,8 +226,8 @@ void duty(int argc, const char **argv)
 	{
 	sscanf(argv[1], "%f", &f);
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] duty: ok", f);
-	mcbench.ramp->RampStepLimit = 1;
-	mcbench.ramp->Target = (f);
+	mcbench.rampduty->RampStepLimit = 1;
+	mcbench.rampduty->Target = (f);
 
 	}
     }
@@ -252,8 +252,8 @@ void ramp(int argc, const char **argv)
 	sscanf(argv[1], "%f", &f);
 	sscanf(argv[2], "%f", &g);
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] ramp: ok");
-	mcbench.ramp->Target = (f);
-	mcbench.ramp->gain = g;
+	mcbench.rampduty->Target = (f);
+	mcbench.rampduty->gain = g;
 	}
     else
 	{
@@ -353,18 +353,18 @@ void phasecal(int argc, const char **argv)
 	sscanf(argv[1], "%f", &cal);
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] phasecal: ok");
 	float backup_target, backup_gain;
-	backup_target = rampe.Target;
-	backup_gain = rampe.gain;
-	rampe.Target = 1;
-	rampe.gain = 10;
+	backup_target = rampduty.Target;
+	backup_gain = rampduty.gain;
+	rampduty.Target = 1;
+	rampduty.gain = 10;
 	osDelay(2000);
 	drv_calib(&drv.vdiv_u, cal, mcrt.adc_phase_u_bus);
-	rampe.Target = -1;
-	rampe.gain = 10;
+	rampduty.Target = -1;
+	rampduty.gain = 10;
 	osDelay(2000);
 	drv_calib(&drv.vdiv_v, cal, mcrt.adc_phase_v_bus);
-	rampe.Target = backup_target;
-	rampe.gain = backup_gain;
+	rampduty.Target = backup_target;
+	rampduty.gain = backup_gain;
 
 	}
     }
@@ -375,10 +375,10 @@ void csaoffset(int argc, const char**argv)
     float backup_target, backup_gain;
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] csaoffset: ok");
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] csaoffset: old offset: %d", drv.csa_u.rawoffset);
-	backup_target = rampe.Target;
-	backup_gain = rampe.gain;
-	rampe.Target = 0;
-	rampe.gain = 5;
+	backup_target = rampduty.Target;
+	backup_gain = rampduty.gain;
+	rampduty.Target = 0;
+	rampduty.gain = 5;
 	osDelay(500);
 	drv.csa_u.rawoffset = mcrt.adc_shunt_u_rise*256;
 	drv.csa_u.rawoffset += mcrt.adc_shunt_v_rise*256;
@@ -387,8 +387,8 @@ void csaoffset(int argc, const char**argv)
 	drv.csa_u.rawoffset /= 256;
 	drv.csa_u.rawoffset /= 4;
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] csaoffset: new offset: %d", drv.csa_u.rawoffset);
-	rampe.Target = backup_target;
-	rampe.gain = backup_gain;
+	rampduty.Target = backup_target;
+	rampduty.gain = backup_gain;
     }
 
 void phaseoffset(int argc, const char**argv)
@@ -397,10 +397,10 @@ void phaseoffset(int argc, const char**argv)
     float backup_target, backup_gain;
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] phaseoffset: ok");
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] phaseoffset: old offset: %d", drv.vdiv_u.rawoffset);
-	backup_target = rampe.Target;
-	backup_gain = rampe.gain;
-	rampe.Target = 0;
-	rampe.gain = 5;
+	backup_target = rampduty.Target;
+	backup_gain = rampduty.gain;
+	rampduty.Target = 0;
+	rampduty.gain = 5;
 	osDelay(500);
 
 	drv.vdiv_u.rawoffset = mcrt.adc_phase_u_bus*256;
@@ -409,8 +409,8 @@ void phaseoffset(int argc, const char**argv)
 	drv.vdiv_u.rawoffset /=2;
 
 	term_qPrintf(myTxQueueHandle, "\r[parseCmd] phaseoffset: new offset: %d", drv.vdiv_u.rawoffset);
-	rampe.Target = backup_target;
-	rampe.gain = backup_gain;
+	rampduty.Target = backup_target;
+	rampduty.gain = backup_gain;
     }
 
 /*-----------------------------------------------*/

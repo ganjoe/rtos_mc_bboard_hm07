@@ -31,4 +31,9 @@
 #define INC_MC_TASK_H_
 
 
+
+void McTaskInit();
+int dmadoneflag = 0;
+int initdoneflag = 0;
+
 #endif /* INC_MC_TASK_H_ */

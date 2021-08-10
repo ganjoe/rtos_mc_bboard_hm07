@@ -32,7 +32,7 @@
 #include "string.h"
 #include "utils.h"
 /*------------Motor Control-----------------*/
-
+//#include "mc_task.h"
 /*------------Propelli Base-----------------*/
 #include "newCmdOrder.h"
 #include "terminal.h"
@@ -46,6 +46,7 @@ typedef StaticQueue_t osStaticMessageQDef_t;
 typedef StaticSemaphore_t osStaticSemaphoreDef_t;
 /* USER CODE BEGIN PTD */
 extern void term_lol_sendQueue(osMessageQueueId_t myTxQueueHandle);
+extern void McTaskInit();
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -188,6 +189,14 @@ const osSemaphoreAttr_t myFlagNewString_attributes = {
   .cb_mem = &myFlagNewStringControlBlock,
   .cb_size = sizeof(myFlagNewStringControlBlock),
 };
+/* Definitions for myFlagNewDMA */
+osSemaphoreId_t myFlagNewDMAHandle;
+osStaticSemaphoreDef_t myFlagNewDMAControlBlock;
+const osSemaphoreAttr_t myFlagNewDMA_attributes = {
+  .name = "myFlagNewDMA",
+  .cb_mem = &myFlagNewDMAControlBlock,
+  .cb_size = sizeof(myFlagNewDMAControlBlock),
+};
 /* Definitions for myCountNewString */
 osSemaphoreId_t myCountNewStringHandle;
 osStaticSemaphoreDef_t myCountNewStringControlBlock;
@@ -316,6 +325,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of myFlagNewString */
   myFlagNewStringHandle = osSemaphoreNew(1, 1, &myFlagNewString_attributes);
 
+  /* creation of myFlagNewDMA */
+  myFlagNewDMAHandle = osSemaphoreNew(1, 1, &myFlagNewDMA_attributes);
+
   /* creation of myCountNewString */
   myCountNewStringHandle = osSemaphoreNew(16, 16, &myCountNewString_attributes);
 
@@ -392,33 +404,12 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
-
-    /* Infinite loop*/
-    for (;;)
-	{
-//	qprintf(myTxQueueHandle, "asdf");
+  /* Infinite loop */
+  for(;;)
+  {
 	osDelay(100);
 	 HAL_UART_Receive_DMA(&huart1, (uint8_t*) &readbyte, 1);
-/*
- *
-	int tdsize = sizeof(TD_LINEOBJ);
-	TD_LINEOBJ oneline;
-	TD_LINEOBJ loadline;
-	tdsize = sizeof(oneline);
-
-	term_makeLineObj(&oneline,"cmd","setdate 9 12 80",0,0,0,0);	//not used
-
-	term_lol_StorLineObj(myLineObjQueueHandle, &oneline);//xQueueSend(myLineObjQueueHandle, &oneline, 10);
-
-	term_lol_LoadLineObj(myLineObjQueueHandle, &loadline);//xQueueReceive(myLineObjQueueHandle, &loadline,  ( portTickType ) 10);
-
-	term_vprintLineObj(myTxQueueHandle, &loadline);
- */
-
-//
-
-
-	}
+  }
   /* USER CODE END StartDefaultTask */
 }
 
