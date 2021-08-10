@@ -1,5 +1,5 @@
 #MicroXplorer Configuration settings - do not modify
-ADC1.Channel-2\#ChannelRegularConversion=ADC_CHANNEL_0
+ADC1.Channel-2\#ChannelRegularConversion=ADC_CHANNEL_1
 ADC1.Channel-3\#ChannelRegularConversion=ADC_CHANNEL_2
 ADC1.ContinuousConvMode=ENABLE
 ADC1.DMAContinuousRequests=ENABLE
@@ -15,7 +15,7 @@ ADC1.Rank-3\#ChannelRegularConversion=2
 ADC1.SamplingTime-2\#ChannelRegularConversion=ADC_SAMPLETIME_3CYCLES
 ADC1.SamplingTime-3\#ChannelRegularConversion=ADC_SAMPLETIME_3CYCLES
 ADC1.master=1
-ADC2.Channel-1\#ChannelRegularConversion=ADC_CHANNEL_1
+ADC2.Channel-1\#ChannelRegularConversion=ADC_CHANNEL_0
 ADC2.Channel-2\#ChannelRegularConversion=ADC_CHANNEL_3
 ADC2.DMAContinuousRequests=ENABLE
 ADC2.EOCSelection=ADC_EOC_SEQ_CONV
@@ -409,9 +409,9 @@ RTC.WeekDay=RTC_WEEKDAY_SUNDAY
 RTC.Year=20
 SDIO.ClockDiv=0
 SDIO.IPParameters=ClockDiv
-SH.ADCx_IN0.0=ADC1_IN0,IN0
+SH.ADCx_IN0.0=ADC2_IN0,IN0
 SH.ADCx_IN0.ConfNb=1
-SH.ADCx_IN1.0=ADC2_IN1,IN1
+SH.ADCx_IN1.0=ADC1_IN1,IN1
 SH.ADCx_IN1.ConfNb=1
 SH.ADCx_IN2.0=ADC1_IN2,IN2
 SH.ADCx_IN2.ConfNb=1
