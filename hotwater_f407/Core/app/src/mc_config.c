@@ -22,8 +22,8 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     drv.csa_u.Ilsb[drv_sgain_10] = 0.002877372;
     drv.csa_u.Ilsb[drv_sgain_5] =  0.005754743;
 
-    drv.vdiv_u.lsb = 0.0328;
-    drv.vdiv_v.lsb = 0.0328;
+    drv.vdiv_u.lsb = 0.0371;
+    drv.vdiv_v.lsb = 0.0371;
     drv.vdiv_u.rawoffset = 50;
     drv.vdiv_v.rawoffset = 50;
 
@@ -46,19 +46,19 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     pwm.bits = 0xFFFF;
     pwm.freq = 40000;
 
-    rampe.gain = 1;
-    rampe.highlimit = 1;
-    rampe.lowlimit = -1.0;
-    rampe.timestep = 0.001;
-    rampe.RampStepLimit = 0.01;
+    rampduty.gain = 1;
+    rampduty.highlimit = 1;
+    rampduty.lowlimit = -1.0;
+    rampduty.timestep = 0.001;
+    rampduty.RampStepLimit = 0.01;
 
     adc_1_buff.channels = 4;
-    adc_1_buff.workbuffsize = 3;
-    adc_1_buff.filterdepht = 3;
+    adc_1_buff.workbuffsize = 30;
+    adc_1_buff.filterdepht = 30;
 
     adc_2_buff.channels = 4;
-    adc_2_buff.workbuffsize = 3;
-    adc_2_buff.filterdepht = 3;
+    adc_2_buff.workbuffsize = 30;
+    adc_2_buff.filterdepht = 30;
 
 
     return 1;
@@ -80,11 +80,11 @@ int confgen_demultiplex_mcparams(TD_MC_PARAMS *mc, uint8_t* buffer)
         mc->pwm->top = buffer_get_uint32(buffer, &ind);
         mc->pwm->duty = buffer_get_float16(buffer, 1000, &ind);
 
-	mc->ramp->gain =  buffer_get_float16(buffer, 1000, &ind);
-	mc->ramp->highlimit= buffer_get_float16(buffer, 1000, &ind);
-	mc->ramp->lowlimit= buffer_get_float16(buffer, 1000, &ind);
-	mc->ramp->timestep= buffer_get_float16(buffer, 1000, &ind);
-        mc->ramp->RampStepLimit= buffer_get_float16(buffer, 1000, &ind);
+	mc->rampduty->gain =  buffer_get_float16(buffer, 1000, &ind);
+	mc->rampduty->highlimit= buffer_get_float16(buffer, 1000, &ind);
+	mc->rampduty->lowlimit= buffer_get_float16(buffer, 1000, &ind);
+	mc->rampduty->timestep= buffer_get_float16(buffer, 1000, &ind);
+        mc->rampduty->RampStepLimit= buffer_get_float16(buffer, 1000, &ind);
 
         mc->drv->csa_u.Ilsb[0] = buffer_get_float32_auto(buffer, &ind);
         mc->drv->csa_u.Ilsb[1] = buffer_get_float32_auto(buffer, &ind);
@@ -103,6 +103,7 @@ int confgen_demultiplex_mcparams(TD_MC_PARAMS *mc, uint8_t* buffer)
         return ind;
 
     }
+
 int confgen_multiplex_mcparams	(TD_MC_PARAMS *mc, uint8_t* buffer)
 
     {
@@ -116,11 +117,11 @@ int confgen_multiplex_mcparams	(TD_MC_PARAMS *mc, uint8_t* buffer)
     buffer_append_uint32(buffer, mc->pwm->top, &ind);
     buffer_append_float16(buffer, mc->pwm->duty,1000, &ind);
 
-    buffer_append_float16(buffer, mc->ramp->gain,1000, &ind);
-    buffer_append_float16(buffer, mc->ramp->highlimit,1000, &ind);
-    buffer_append_float16(buffer, mc->ramp->lowlimit,1000, &ind);
-    buffer_append_float16(buffer, mc->ramp->timestep,1000, &ind);
-    buffer_append_float16(buffer, mc->ramp->RampStepLimit,1000, &ind);
+    buffer_append_float16(buffer, mc->rampduty->gain,1000, &ind);
+    buffer_append_float16(buffer, mc->rampduty->highlimit,1000, &ind);
+    buffer_append_float16(buffer, mc->rampduty->lowlimit,1000, &ind);
+    buffer_append_float16(buffer, mc->rampduty->timestep,1000, &ind);
+    buffer_append_float16(buffer, mc->rampduty->RampStepLimit,1000, &ind);
 
     buffer_append_float32_auto(buffer, mc->drv->csa_u.Ilsb[0], &ind);
     buffer_append_float32_auto(buffer, mc->drv->csa_u.Ilsb[1], &ind);

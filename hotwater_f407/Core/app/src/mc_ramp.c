@@ -36,6 +36,6 @@ void mc_ramp(TD_RAMP *ramp)
     }
 
 
-TD_RAMP rampe, rampe_led1;
+TD_RAMP rampduty, rampvolt;
 
 

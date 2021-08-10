@@ -29,7 +29,7 @@ typedef struct
 
 void mc_ramp		(TD_RAMP* ramp);
 
-extern TD_RAMP rampe;
+extern TD_RAMP rampduty;
 
 #endif /* INC_MC_RAMP_H_ */
 

@@ -48,7 +48,7 @@ typedef struct
     uint32_t		signature;
     TD_MC_PWM_PARAMS*	pwm;
     EN_MC_WORKBENCH	benchsetup;
-    TD_RAMP* 	 	ramp;
+    TD_RAMP* 	 	rampduty;
     TD_MC_LIVE*		mcrt;
     TD_CMD*		cmd;
     TD_MC_ADC_BUFF*	adcbuff;

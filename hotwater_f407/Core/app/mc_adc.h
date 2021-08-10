@@ -44,6 +44,7 @@ typedef struct
 
 
 void mc_shunt_si(TD_MC_DRV_CSA *shunt, float* result, uint32_t raw);
+void mc_phase_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw);
 
 void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff);
 
