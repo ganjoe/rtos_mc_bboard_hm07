@@ -55,7 +55,7 @@ void StartLogUartTask(void *argument)
 	    }
 	else
 	    {
-	    HAL_Delay(0x1000);
+	   // HAL_Delay(0x1000);
 	    }
 
 
