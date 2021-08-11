@@ -75,6 +75,7 @@ void StartMcTask(void *argument)
 	{
 	if (xSemaphoreTakeFromISR(myFlagNewDMAHandle,0xffff) == pdPASS)
 	    {
+
 	    switch (pwm.direction)
 		{
 		case cw_pwm:
