@@ -17,12 +17,14 @@
 	{
 	    cw_pwm = 1,
 	    ccw_pwm,
-
-	    cw_shaft,
-	    ccw_shaft,
 	    detect,
+	    brake_lowside,	//alle ls-mosfets aktiv
+	    brake_highside,
+	    brake_highz,	//keine ansteuerung
 	}
 	    EN_MC_MOTORSTATE;
+
+
 
 typedef struct
 {
@@ -62,7 +64,9 @@ EN_MC_MOTORSTATE mc_pwm_bcd_update	(TD_MC_PWM_PARAMS *pwm);
 
 void pwm_calcfreq(TD_MC_PWM_PARAMS *pwm);
 
-
+/* alle lowside ein (1) und alle highside Transistoren aus
+ * oder umgekehrt (0) */
+void mc_set_lowside(TD_MC_PWM_PARAMS *thispwm, EN_MC_MOTORSTATE state);
 
 extern TD_MC_PWM_PARAMS pwm, pwm_led1;
 

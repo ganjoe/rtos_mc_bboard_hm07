@@ -65,24 +65,24 @@ typedef enum
 
     typedef struct
     {
-        /* für bidirektionale messungen */
+        /* mittelpunktsspannung für bidirektionale messungen */
 	uint32_t rawoffset;
 
-        /* raw adc limit	*/
+	/* maximale spannung (z.b. busspannung bei startup, oder shuntstrom bei vollaussteuerung) */
+
+	uint32_t rawmax;
+
+        /* deadzone für uni (gegen gnd) oder bipolare messungung (mittelpunktsspannung)	*/
         uint32_t thresh;
 
-        /*	pu berechnung	*/
-        //float max, min;
-
         /*	lsbs für jede verstärkung	*/
-        double Ilsb[4];
+        float Ilsb[4];
 
-        /*	gewählter Ilsb	*/
-        double lsb;
+        /* gewählter Ilsb oder einziger lsb	*/
+        float lsb;
 
-        /*	verstärkungsfaktoren */
+        /*	verstärkungsfaktoren für drv83 */
         EN_DRV_MODE_SHNT csa_gain;
-
 
     }
     TD_MC_DRV_CSA;

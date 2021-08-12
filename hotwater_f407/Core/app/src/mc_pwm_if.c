@@ -49,10 +49,7 @@ EN_MC_MOTORSTATE mc_pwm_bcd_update(TD_MC_PWM_PARAMS *pwm)
 
 	if (pwm->duty == 0)
 	    {
-	    pwm->htim.Instance->CCR2 = 0x0;
-	    pwm->htim.Instance->CCR1 = 0x0;
-	    HAL_GPIO_WritePin(enable_v_GPIO_Port, enable_v_Pin, 0);
-	    HAL_GPIO_WritePin(enable_u_GPIO_Port, enable_u_Pin, 0);
+	    mc_set_lowside(pwm, brake_highz);
 	    }
 	return detect;
 
@@ -82,5 +79,31 @@ void pwm_init_timer_mc(TD_MC_PWM_PARAMS *pwm)
     HAL_TIM_PWM_Start_IT(&pwm->htim, TIM_CHANNEL_2);
 
     }
+
+void mc_set_lowside(TD_MC_PWM_PARAMS *thispwm, EN_MC_MOTORSTATE state)
+    {
+    switch (state)
+	{
+	case brake_lowside:
+	    thispwm->htim.Instance->CCR1 = 0x0;
+	    thispwm->htim.Instance->CCR2 = 0x0;
+	    HAL_GPIO_WritePin(enable_v_GPIO_Port, enable_u_Pin, 1);
+	    HAL_GPIO_WritePin(enable_v_GPIO_Port, enable_v_Pin, 1);
+	    break;
+	case brake_highside:
+	    thispwm->htim.Instance->CCR1 = 0xFFFF;
+	    thispwm->htim.Instance->CCR2 = 0xFFFF;
+	    HAL_GPIO_WritePin(enable_v_GPIO_Port, enable_u_Pin, 0);
+	    HAL_GPIO_WritePin(enable_v_GPIO_Port, enable_v_Pin, 0);
+	    break;
+	case brake_highz:
+	    thispwm->htim.Instance->CCR1 = 0x0;
+	    thispwm->htim.Instance->CCR2 = 0x0;
+	    HAL_GPIO_WritePin(enable_v_GPIO_Port, enable_u_Pin, 0);
+	    HAL_GPIO_WritePin(enable_v_GPIO_Port, enable_v_Pin, 0);
+	    break;
+	}
+    }
+
 
 TD_MC_PWM_PARAMS pwm;

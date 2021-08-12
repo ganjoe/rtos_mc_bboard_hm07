@@ -20,16 +20,16 @@
 #include "newCmdOrder.h"
 #include "mc_dlog.h"
 
+/* auswahl der sitzung, bestimmt welche init-werte geladen werden */
 typedef enum
-{
-
+    {
     bb_hm7_blower,
     bb_boardled,
-}
+    }
 	EN_MC_WORKBENCH;
 
 
-
+/* daten für debug-terminal oder display oder logdatein */
 typedef struct
     {
     uint32_t adc_shunt_u_rise, adc_shunt_u_fall;	// rohwerte, nach averaging und oversampling
@@ -40,15 +40,16 @@ typedef struct
     float curr_rise_si,curr_fall_si;
     float phase_rise_si, phase_fall_si;
 
-    float time_mcloop;
-
+    float time_mcloop;	///pause zwischen zwei mc-loop durchläufen
 
     }
     TD_MC_LIVE;
 
+/* struktur für übersichtliche darstellung in der debug-ansicht */
+
 typedef struct
     {
-    uint32_t		signature;
+    uint32_t		signature;	//vergleichscode für geladene konfig
     TD_MC_PWM_PARAMS	*pwm;
     EN_MC_WORKBENCH	benchsetup;
     TD_RAMP 	 	*rampduty;
@@ -60,8 +61,7 @@ typedef struct
     }
 	TD_MC_PARAMS;
 
-	void mc_init_BlowerPwm(TD_MC_PWM_PARAMS *pwm);
-	void mc_init_BlowerRamp(TD_RAMP* ramp);
+
 
 
 extern TD_MC_LIVE mcrt;

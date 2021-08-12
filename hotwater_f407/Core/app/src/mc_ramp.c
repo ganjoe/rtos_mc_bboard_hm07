@@ -11,7 +11,7 @@
 
 void mc_ramp(TD_RAMP *ramp, TD_TIMESTEP *time)
     {
-    /*  Ti - Style: TargetValue ist bei der EINGANG, Setpoint der AUSGANG
+    /*  Ti - Style: TargetValue ist der EINGANG, Setpoint der AUSGANG
      * Normalerweise meint beides das gleiche, aber wenn mehrere
      * blöcke hintereinander hängen, braucht man zwei namen 8) */
 
