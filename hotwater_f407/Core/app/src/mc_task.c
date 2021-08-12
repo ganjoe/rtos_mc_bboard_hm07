@@ -21,6 +21,7 @@ void McTask()
 	{
 	taskdoneflag = 1;
 	    HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
+	    mc_timediff(&mf_systick);
 	    switch (pwm.direction)
 		{
 		case cw_pwm:
@@ -52,7 +53,7 @@ void McTask()
 	    break;
 	    }
 
-	mc_timediff(&mf_systick);
+
 	mcbench.rampduty->timestep = mf_systick.timestep;
 	mc_ramp(mcbench.rampduty);
 	mcbench.pwm->duty = rampduty.Setpoint;
