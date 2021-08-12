@@ -53,7 +53,7 @@ typedef struct
     TD_CMD*		cmd;
     TD_MC_ADC_BUFF*	adcbuff;
     TD_DRV83*		drv;
-    TD_MODFLAG*		mf_systick;
+
     }
 	TD_MC_PARAMS;
 

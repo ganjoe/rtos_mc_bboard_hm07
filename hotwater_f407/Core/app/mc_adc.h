@@ -34,10 +34,10 @@ typedef enum
 typedef struct
         {
 	uint16_t channels;	//anzahl adc-channels pro sequenz
-        uint16_t workbuffsize;	// sequenzen * channel pro sequenz
+        uint16_t sampleNbr;	// sequenzen * channel pro sequenz
         uint32_t sequencecount;	// anzahl sequencen
         uint16_t* workbuff;	//ziel für dma-transfer
-        uint16_t filterdepht;	//anzahl sequencen a<us denen ein channel gedemuliplext wird
+        uint16_t filterNbr;	//anzahl sequencen a<us denen ein channel gedemuliplext wird
         uint16_t* filterbuff;	// demultiplexte werte aus workbuff
         }
     TD_MC_ADC_BUFF;

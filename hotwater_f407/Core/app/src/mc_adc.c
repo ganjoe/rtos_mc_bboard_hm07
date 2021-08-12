@@ -21,11 +21,11 @@ extern void vPortFree(void *pv);
 
 void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff)
     {
-    buff->workbuffsize = buff->workbuffsize * buff->channels;
+    buff->sampleNbr = buff->sampleNbr * buff->channels;
     vPortFree(buff->workbuff);
     vPortFree(buff->filterbuff);
-    buff->workbuff = (uint16_t*) pvPortMalloc(buff->workbuffsize * sizeof(uint16_t));
-    buff->filterbuff = (uint16_t*) pvPortMalloc(buff->filterdepht * sizeof(uint16_t));
+    buff->workbuff = (uint16_t*) pvPortMalloc(buff->sampleNbr * sizeof(uint16_t));
+    buff->filterbuff = (uint16_t*) pvPortMalloc(buff->filterNbr * sizeof(uint16_t));
     }
 
 void mc_shunt_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw)
@@ -49,7 +49,7 @@ uint32_t mc_adc_CircBuffDemultiplex(TD_MC_ADC_BUFF *adcbuff, uint32_t seqpos,uin
     //am besten mit exel-tabelle nachvollziehen
     int i = 0;
     int ir = 0;
-    int fd = adcbuff->filterdepht;
+    int fd = adcbuff->filterNbr;
 
     i = dmapos / adcbuff->channels;
     i *= adcbuff->channels;
@@ -64,7 +64,7 @@ uint32_t mc_adc_CircBuffDemultiplex(TD_MC_ADC_BUFF *adcbuff, uint32_t seqpos,uin
 	{
 	if (i < 0)
 	    {
-	    i += adcbuff->workbuffsize;
+	    i += adcbuff->sampleNbr;
 	    }
 	adcbuff->filterbuff[ir] = adcbuff->workbuff[i];
 	i -= adcbuff->channels;
@@ -80,11 +80,11 @@ uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff)
 uint64_t sum = 0;
 uint32_t var = 0;
 
-for (; var <= buff->filterdepht; var ++)
+for (; var <= buff->filterNbr; var ++)
     {
     sum += (uint16_t) buff->filterbuff[var];
     }
-sum /= buff->filterdepht;
+sum /= buff->filterNbr;
 
 return sum;
 

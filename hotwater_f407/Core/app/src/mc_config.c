@@ -12,7 +12,7 @@
 int confgen_setdefaults(TD_MC_PARAMS *mc)
     {
     // init zeitmessung
-    mf_systick.timerspeed = 168000000;
+
 
     termlog.ticks_update_terminal = 1000;
 
@@ -50,15 +50,15 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     rampduty.highlimit = 1;
     rampduty.lowlimit = -1.0;
     rampduty.timestep = 0.001;
-    rampduty.RampStepLimit = 0.01;
+    rampduty.RampStepLimit = 0.5;
 
     adc_1_buff.channels = 4;
-    adc_1_buff.workbuffsize = 400;
-    adc_1_buff.filterdepht = 400;
+    adc_1_buff.sampleNbr = 400;
+    adc_1_buff.filterNbr = 400;
 
     adc_2_buff.channels = 4;
-    adc_2_buff.workbuffsize = 400;
-    adc_2_buff.filterdepht = 400;
+    adc_2_buff.sampleNbr = 400;
+    adc_2_buff.filterNbr = 400;
 
 
     return 1;

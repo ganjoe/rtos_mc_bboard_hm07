@@ -25,42 +25,9 @@
 #include "stdarg.h"
 #include "stdlib.h"
 
+
 #include "utils.h"
-
-
-
-/*-------------params----------------*/
-
-
-
-/*----------appvars----------------*/
-
-typedef struct
-    {
-    int divisor;
-
-    uint32_t rampcounter, callcount;
-    uint32_t counter, ovf;
-    uint32_t oldtick, systick, newtick;
-    uint64_t duration, repeat, tickdiff;
-    uint32_t timerspeed;	// für timediff berechnung, VOR prescaler
-    int flag, flag_delay, flag_reset, init_done;
-    float timestep;
-    }
-    TD_MODFLAG;
-
-
-
-/*----------export----------------*/
-
-
-    void 	 modflag_ovf_callback();
-
-    void 	 mc_tickdiff(TD_MODFLAG *cnt);
-
-    void 	 mc_timediff(TD_MODFLAG *cnt);
-
-extern TD_MODFLAG mf_systick;
+#include "timestep.h"
 
 #endif /* APP_DATATYPES_H_ */
 

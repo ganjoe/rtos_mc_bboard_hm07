@@ -12,7 +12,7 @@
 #include "../mc_task.h"
 #include "fatfs.h"
 #include "tim.h"
-
+#include "../datatypes.h"
 
 extern osSemaphoreId_t myFlagNewDMAHandle;
 
@@ -21,7 +21,7 @@ void McTask()
 	{
 	taskdoneflag = 1;
 	    HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
-	    mc_timediff(&mf_systick);
+
 	    switch (pwm.direction)
 		{
 		case cw_pwm:
@@ -54,7 +54,7 @@ void McTask()
 	    }
 
 
-	mcbench.rampduty->timestep = mf_systick.timestep;
+	mcbench.rampduty->timestep = timestep_si(&mctime);
 	mc_ramp(mcbench.rampduty);
 	mcbench.pwm->duty = rampduty.Setpoint;
 	pwm.direction = mc_pwm_bcd_update(mcbench.pwm);
@@ -65,11 +65,13 @@ void McTask()
 
 void McTaskInit()
     {
+
+
     mcbench.benchsetup = bb_hm7_blower;
     mcbench.pwm = &pwm;
     mcbench.rampduty = &rampduty;
     mcbench.drv = &drv;
-    mcbench.mf_systick = &mf_systick;
+
     mcbench.adcbuff = &adc_1_buff;
 
     cmd_init_callbacks(&newcmd);
@@ -82,8 +84,8 @@ void McTaskInit()
     mc_adc_newBuffer(&adc_1_buff);
     mc_adc_newBuffer(&adc_2_buff);
 
-    HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_1_buff.workbuff,	    adc_1_buff.workbuffsize);
-    HAL_ADC_Start_DMA(&hadc2, (uint32_t*) adc_2_buff.workbuff,	    adc_2_buff.workbuffsize);
+    HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_1_buff.workbuff,	    adc_1_buff.sampleNbr);
+    HAL_ADC_Start_DMA(&hadc2, (uint32_t*) adc_2_buff.workbuff,	    adc_2_buff.sampleNbr);
     pwm_init_timer_mc(&pwm);	//stm32 hal init
 
         while (!dmadoneflag)
