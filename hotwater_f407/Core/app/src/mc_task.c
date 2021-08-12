@@ -16,7 +16,51 @@
 
 extern osSemaphoreId_t myFlagNewDMAHandle;
 
-void McTask();
+void McTask()
+    {
+	{
+	taskdoneflag = 1;
+	    HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
+	    switch (pwm.direction)
+		{
+		case cw_pwm:
+		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_SHUNTU_RISE,	hadc1.DMA_Handle->Instance->NDTR);
+		mcrt.adc_shunt_u_rise = mc_adc_avg(&adc_1_buff);
+		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_SHUNTU_FALL,	hadc1.DMA_Handle->Instance->NDTR);
+		mcrt.adc_shunt_u_fall = mc_adc_avg(&adc_1_buff);
+		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_BUSVOLT_U,	hadc1.DMA_Handle->Instance->NDTR);
+		mcrt.adc_phase_u_bus = mc_adc_avg(&adc_1_buff);
+		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_EMK_U,		hadc1.DMA_Handle->Instance->NDTR);
+		mcrt.adc_phase_u_emk = mc_adc_avg(&adc_1_buff);
+		mc_shunt_si(&drv.csa_u, &mcrt.MotCurrRiseSi, mcrt.adc_shunt_u_rise);
+		mc_shunt_si(&drv.vdiv_u, &mcrt.MotVoltBusSi, mcrt.adc_phase_u_bus);
+	    break;
+
+	    case ccw_pwm:
+		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_SHUNTV_RISE,	hadc2.DMA_Handle->Instance->NDTR);
+		mcrt.adc_shunt_v_rise = mc_adc_avg(&adc_2_buff);
+		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_SHUNTV_FALL,	hadc2.DMA_Handle->Instance->NDTR);
+		mcrt.adc_shunt_v_fall = mc_adc_avg(&adc_2_buff);
+		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_BUSVOLT_V,	hadc2.DMA_Handle->Instance->NDTR);
+		mcrt.adc_phase_v_bus = mc_adc_avg(&adc_2_buff);
+		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_EMK_V,	hadc2.DMA_Handle->Instance->NDTR);
+		mcrt.adc_phase_v_emk = mc_adc_avg(&adc_2_buff);
+
+		mc_shunt_si(&drv.csa_v, &mcrt.MotCurrRiseSi, mcrt.adc_shunt_v_rise);
+		mc_shunt_si(&drv.vdiv_v, &mcrt.MotVoltBusSi, mcrt.adc_phase_v_bus);
+
+	    break;
+	    }
+
+	mc_timediff(&mf_systick);
+	mcbench.rampduty->timestep = mf_systick.timestep;
+	mc_ramp(mcbench.rampduty);
+	mcbench.pwm->duty = rampduty.Setpoint;
+	pwm.direction = mc_pwm_bcd_update(mcbench.pwm);
+	}
+	HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
+	taskdoneflag = 0;
+    }
 
 void McTaskInit()
     {
@@ -73,53 +117,18 @@ void StartMcTask(void *argument)
 
     while (1)
 	{
-	if (xSemaphoreTakeFromISR(myFlagNewDMAHandle,0xffff) == pdPASS)
-	    {
-
-	    switch (pwm.direction)
-		{
-		case cw_pwm:
-		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_SHUNTU_RISE,	hadc1.DMA_Handle->Instance->NDTR);
-		mcrt.adc_shunt_u_rise = mc_adc_avg(&adc_1_buff);
-		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_SHUNTU_FALL,	hadc1.DMA_Handle->Instance->NDTR);
-		mcrt.adc_shunt_u_fall = mc_adc_avg(&adc_1_buff);
-		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_BUSVOLT_U,	hadc1.DMA_Handle->Instance->NDTR);
-		mcrt.adc_phase_u_bus = mc_adc_avg(&adc_1_buff);
-		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_EMK_U,		hadc1.DMA_Handle->Instance->NDTR);
-		mcrt.adc_phase_u_emk = mc_adc_avg(&adc_1_buff);
-		mc_shunt_si(&drv.csa_u, &mcrt.MotCurrRiseSi, mcrt.adc_shunt_u_rise);
-		mc_shunt_si(&drv.vdiv_u, &mcrt.MotVoltBusSi, mcrt.adc_phase_u_bus);
-	    break;
-
-	    case ccw_pwm:
-		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_SHUNTV_RISE,	hadc2.DMA_Handle->Instance->NDTR);
-		mcrt.adc_shunt_v_rise = mc_adc_avg(&adc_2_buff);
-		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_SHUNTV_FALL,	hadc2.DMA_Handle->Instance->NDTR);
-		mcrt.adc_shunt_v_fall = mc_adc_avg(&adc_2_buff);
-		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_BUSVOLT_V,	hadc2.DMA_Handle->Instance->NDTR);
-		mcrt.adc_phase_v_bus = mc_adc_avg(&adc_2_buff);
-		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_EMK_V,	hadc2.DMA_Handle->Instance->NDTR);
-		mcrt.adc_phase_v_emk = mc_adc_avg(&adc_2_buff);
-
-		mc_shunt_si(&drv.csa_v, &mcrt.MotCurrRiseSi, mcrt.adc_shunt_v_rise);
-		mc_shunt_si(&drv.vdiv_v, &mcrt.MotVoltBusSi, mcrt.adc_phase_v_bus);
-
-	    break;
-	    }
+	osDelay(1);
+	//if (xSemaphoreTakeFromISR(myFlagNewDMAHandle,0xffff) == pdPASS)
 	}
-	mc_timediff(&mf_systick);
-	mcbench.rampduty->timestep = mf_systick.timestep;
-	mc_ramp(mcbench.rampduty);
-	mcbench.pwm->duty = rampduty.Setpoint;
-	pwm.direction = mc_pwm_bcd_update(mcbench.pwm);
-	}
+
 
     }
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     {
     dmadoneflag = 1;
-    HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
-    xSemaphoreGiveFromISR(myFlagNewDMAHandle, 0);
+    if (!taskdoneflag)
+	McTask();
+   // xSemaphoreGiveFromISR(myFlagNewDMAHandle, 0);
 
     }
