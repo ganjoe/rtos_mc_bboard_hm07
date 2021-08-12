@@ -105,7 +105,7 @@ const osThreadAttr_t myLogUartTask_attributes = {
 };
 /* Definitions for myMcTask */
 osThreadId_t myMcTaskHandle;
-uint32_t myMcTaskBuffer[ 1024 ];
+uint32_t myMcTaskBuffer[ 512 ];
 osStaticThreadDef_t myMcTaskControlBlock;
 const osThreadAttr_t myMcTask_attributes = {
   .name = "myMcTask",
@@ -117,7 +117,7 @@ const osThreadAttr_t myMcTask_attributes = {
 };
 /* Definitions for myTxQueue */
 osMessageQueueId_t myTxQueueHandle;
-uint8_t myTxQueueBuffer[ 512 * sizeof( uint8_t ) ];
+uint8_t myTxQueueBuffer[ 1024 * sizeof( uint8_t ) ];
 osStaticMessageQDef_t myTxQueueControlBlock;
 const osMessageQueueAttr_t myTxQueue_attributes = {
   .name = "myTxQueue",
@@ -344,7 +344,7 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* creation of myTxQueue */
-  myTxQueueHandle = osMessageQueueNew (512, sizeof(uint8_t), &myTxQueue_attributes);
+  myTxQueueHandle = osMessageQueueNew (1024, sizeof(uint8_t), &myTxQueue_attributes);
 
   /* creation of myRxQueue */
   myRxQueueHandle = osMessageQueueNew (64, sizeof(uint8_t), &myRxQueue_attributes);

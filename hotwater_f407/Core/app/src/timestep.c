@@ -16,7 +16,8 @@ float timestep_si(TD_TIMESTEP* time)
     time->newtick = time->systick;
     time->tickdiff = time->newtick - time->oldtick;
     time->oldtick = time->newtick;
-    return (float) time->tickdiff / (float)HAL_TIMERSPEED * 2;
+    time->timestep = time->tickdiff / (float)HAL_TIMERSPEED * 2;
+    return  time->timestep;
     }
 
 

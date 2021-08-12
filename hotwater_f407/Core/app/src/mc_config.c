@@ -53,12 +53,12 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     rampduty.RampStepLimit = 0.5;
 
     adc_1_buff.channels = 4;
-    adc_1_buff.sampleNbr = 400;
-    adc_1_buff.filterNbr = 400;
+    adc_1_buff.sampleNbr = 30;
+    adc_1_buff.filterNbr = 30;
 
     adc_2_buff.channels = 4;
-    adc_2_buff.sampleNbr = 400;
-    adc_2_buff.filterNbr = 400;
+    adc_2_buff.sampleNbr = 30;
+    adc_2_buff.filterNbr = 30;
 
 
     return 1;
@@ -100,6 +100,18 @@ int confgen_demultiplex_mcparams(TD_MC_PARAMS *mc, uint8_t* buffer)
         mc->drv->regAdress =  		buffer[ind++];
         mc->drv->csa_u.csa_gain =  	buffer[ind++];
 
+        //12.08.21 nicht getestet
+        mc->adcbuff_1->channels  =buffer_get_uint16(buffer, &ind);
+        mc->adcbuff_1->sampleNbr =buffer_get_uint16(buffer, &ind);
+        mc->adcbuff_1->filterNbr =buffer_get_uint16(buffer, &ind);
+
+        mc->adcbuff_2->channels = buffer_get_uint16(buffer, &ind);
+        mc->adcbuff_2->sampleNbr= buffer_get_uint16(buffer, &ind);
+        mc->adcbuff_2->filterNbr= buffer_get_uint16(buffer, &ind);
+
+
+
+
         return ind;
 
     }
@@ -137,6 +149,15 @@ int confgen_multiplex_mcparams	(TD_MC_PARAMS *mc, uint8_t* buffer)
     buffer[ind++] = mc->drv->regAdress;
     buffer[ind++] = mc->drv->csa_u.csa_gain;
 
+    //12.08.21
+    buffer_append_uint16(buffer, mc->adcbuff_1->channels, &ind);
+    buffer_append_uint16(buffer, mc->adcbuff_1->sampleNbr, &ind);
+    buffer_append_uint16(buffer, mc->adcbuff_1->filterNbr, &ind);
+
+    buffer_append_uint16(buffer, mc->adcbuff_2->channels, &ind);
+    buffer_append_uint16(buffer, mc->adcbuff_2->sampleNbr, &ind);
+    buffer_append_uint16(buffer, mc->adcbuff_2->filterNbr, &ind);
+
     return ind;
     }
 
@@ -161,8 +182,4 @@ int confgen_loadSD	(uint8_t* buffer, const char* filename)
     return sd_readbuffer(filename, buffer, CONFGEN_BUFFERSIZE, 0);
     }
 
-void initMcTask()
-    {
 
-
-    }

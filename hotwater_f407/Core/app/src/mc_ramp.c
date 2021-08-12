@@ -6,17 +6,17 @@
  */
 
 #include "../mc_ramp.h"
-#include "../utils.h"
 
 
-void mc_ramp(TD_RAMP *ramp)
+
+void mc_ramp(TD_RAMP *ramp, TD_TIMESTEP *time)
     {
     /*  Ti - Style: TargetValue ist bei der EINGANG, Setpoint der AUSGANG
      * Normalerweise meint beides das gleiche, aber wenn mehrere
      * blöcke hintereinander hängen, braucht man zwei namen 8) */
 
 
-	ramp->nextInc =  ramp->timestep * ramp->gain;
+	ramp->nextInc =  time->timestep * ramp->gain;
 
 	utils_truncate_number(&ramp->nextInc, 1E-9, ramp->RampStepLimit);
 	utils_truncate_number(&ramp->Target, ramp->lowlimit, ramp->highlimit);

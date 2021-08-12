@@ -46,16 +46,16 @@ void StartLogUartTask(void *argument)
 	    dbase_Make(&termlogline, "ADCraw", 0, "EMK_V", "fall", 0, "%d",mcrt.adc_phase_v_emk);
 	    term_vprintLineObj(myTxQueueHandle, &termlogline);
 
-	    dbase_Make(&termlogline, "SI", 0, "Busvolt", "pwm", 0, "%f",mcrt.MotVoltBusSi);
+	    dbase_Make(&termlogline, "SI", 0, "Busvolt", "pwm", 0, "%f",mcrt.phase_rise_si);
 	    term_vprintLineObj(myTxQueueHandle, &termlogline);
 
-	    dbase_Make(&termlogline, "SI", 0, "Strom", "cw/ccw", 0, "%f",mcrt.MotCurrRiseSi);
+	    dbase_Make(&termlogline, "SI", 0, "Strom", "cw/ccw", 0, "%f",mcrt.curr_rise_si);
 	    term_vprintLineObj(myTxQueueHandle, &termlogline);
 
 	    }
 	else
 	    {
-	   // HAL_Delay(0x1000);
+	    HAL_Delay(0x1000);
 	    }
 
 

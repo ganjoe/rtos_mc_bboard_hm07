@@ -37,8 +37,11 @@ typedef struct
     uint32_t adc_phase_u_bus, adc_phase_v_bus;
     uint32_t adc_phase_u_emk, adc_phase_v_emk;
 
-    float MotCurrRiseSi,MotCurrFallSi;
-    float MotVoltBusSi, MotVoltEmkSi;
+    float curr_rise_si,curr_fall_si;
+    float phase_rise_si, phase_fall_si;
+
+    float time_mcloop;
+
 
     }
     TD_MC_LIVE;
@@ -46,13 +49,13 @@ typedef struct
 typedef struct
     {
     uint32_t		signature;
-    TD_MC_PWM_PARAMS*	pwm;
+    TD_MC_PWM_PARAMS	*pwm;
     EN_MC_WORKBENCH	benchsetup;
-    TD_RAMP* 	 	rampduty;
-    TD_MC_LIVE*		mcrt;
-    TD_CMD*		cmd;
-    TD_MC_ADC_BUFF*	adcbuff;
-    TD_DRV83*		drv;
+    TD_RAMP 	 	*rampduty;
+    TD_MC_LIVE		*mcrt;
+    TD_CMD		*cmd;
+    TD_MC_ADC_BUFF	*adcbuff_1, *adcbuff_2, *adcbuff_3;
+    TD_DRV83		*drv;
 
     }
 	TD_MC_PARAMS;

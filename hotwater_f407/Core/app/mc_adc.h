@@ -62,6 +62,6 @@ uint32_t mc_adc_CircBuffDemultiplex
 				    uint32_t dmapos //position des schreibcounters
 				    );
 
-extern TD_MC_ADC_BUFF adc_1_buff, adc_2_buff;
+extern TD_MC_ADC_BUFF adc_1_buff, adc_2_buff, adc_3_buff;
 
 #endif /* APP_MC_ADC_H_ */

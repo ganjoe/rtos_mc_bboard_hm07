@@ -18,6 +18,7 @@ extern osMessageQueueId_t myTxQueueHandle;
 
 
 #define HUART &huart1
+#define TX_BYTES_AT_ONCE 128
 
 void term_qPrintf(osMessageQueueId_t QueueHandle, char *fmt, ...);
 

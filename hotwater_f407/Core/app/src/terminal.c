@@ -8,6 +8,8 @@
  */
 #include "../terminal.h"
 
+
+
 /*--------freertos.c export---------*/
 extern osMessageQueueId_t myRxQueueHandle;
 
@@ -78,17 +80,18 @@ void term_vprintLineObj(osMessageQueueId_t QueueHandle, TD_LINEOBJ *line)
 
 void term_lol_sendQueue(osMessageQueueId_t QueueHandle)
     {
-    /*   UBaseType_t ItemsLeft = uxQueueMessagesWaiting(QueueHandle);
+      UBaseType_t ItemsLeft = uxQueueMessagesWaiting(QueueHandle);
      if (ItemsLeft)
      {
-     //limits the numbers of bytes to send
+	 // begrenzt anzahl zu sendener zeichen (und den dma-buffer)
      utils_truncate_number_int((int*) ItemsLeft, 0, TX_BYTES_AT_ONCE);
-     //
+
      uint8_t dmaBuff[ItemsLeft];
-     //copy bytes that are send at once to temp buffer
+
+     //bytes werden aus queque in dma-buffer geschrieben
      for (int var = 0; var < ItemsLeft; ++var)
      {
-     //should receive from front
+
      uint8_t lReceivedValue;
 
      xQueueReceive(QueueHandle, &lReceivedValue, 0);
@@ -97,14 +100,15 @@ void term_lol_sendQueue(osMessageQueueId_t QueueHandle)
      }
      //transmission time[s]: 10 bit / n baud
 
-     HAL_UART_Transmit_DMA(&huart1, dmaBuff, ItemsLeft);
+	 HAL_UART_Transmit_DMA(&huart1, dmaBuff, ItemsLeft);
 
      uint32_t transmission_time = 10 * ItemsLeft * 1000	/ huart1.Init.BaudRate;
 
-
+     //statt den transfer abzuwarten könnte auch ein callback flag gesetzt werden
+     osDelay(transmission_time + 1);
 
      }
-     */
+      /**/
     }
 
 /*___________________________________________________________*/
@@ -155,6 +159,9 @@ void StartTxTask(void *argument)
     {
     for (;;)
 	{
+	term_lol_sendQueue(myTxQueueHandle);
+	}
+	/*
 	osStatus val = 0;
 	val = osMessageQueueGet(myTxQueueHandle, &lReceivedValue, 0, 100);
 	if (val == osOK)
@@ -167,5 +174,11 @@ void StartTxTask(void *argument)
 
 	    }
 	}
+	*/
     }
 
+
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+    {
+
+    }

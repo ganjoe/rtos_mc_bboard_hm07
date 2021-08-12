@@ -10,6 +10,7 @@
 #define INC_MC_RAMP_H_
 
 #include "main.h"
+#include "datatypes.h"
 
 
 typedef struct
@@ -27,7 +28,7 @@ typedef struct
 	} TD_RAMP;
 
 
-void mc_ramp		(TD_RAMP* ramp);
+	void mc_ramp(TD_RAMP *ramp, TD_TIMESTEP *time);
 
 extern TD_RAMP rampduty;
 

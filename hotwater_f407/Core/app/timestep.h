@@ -22,6 +22,7 @@ typedef struct
     int divisor;
     uint32_t oldtick, systick, newtick, tickdiff;
     uint32_t timerspeed;	// für timediff berechnung, VOR prescaler
+    float timestep;
     }
     TD_TIMESTEP;
 

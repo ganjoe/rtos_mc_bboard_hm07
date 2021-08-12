@@ -77,7 +77,7 @@ uint32_t mc_adc_avg(TD_MC_ADC_BUFF *buff)
 {
 /* buffer muss initialisiert sein */
 
-uint64_t sum = 0;
+uint32_t sum = 0;
 uint32_t var = 0;
 
 for (; var <= buff->filterNbr; var ++)
@@ -90,4 +90,4 @@ return sum;
 
 }
 
-TD_MC_ADC_BUFF adc_1_buff, adc_2_buff;
+TD_MC_ADC_BUFF adc_1_buff, adc_2_buff, adc_3_buff;
