@@ -20,7 +20,7 @@
 #define TD_LINEOBJ_MAX_TIMESTRINGSIZE 18
 #define TD_LINEOBJ_MAX_FILENAMESIZE 8
 //array size for snprintf
-#define UART_PRINTBUFFER 	64
+#define UART_PRINTBUFFER 	128
 
 typedef struct
 {

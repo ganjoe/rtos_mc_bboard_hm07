@@ -413,6 +413,32 @@ void phaseoffset(int argc, const char**argv)
 	rampduty.gain = backup_gain;
     }
 
+void adcbuffer(int argc, const char***argv)
+    {
+    int sample = -1;
+    int filter = -1;
+
+        if (argc == 3)
+    	{
+    	sscanf(argv[1], "%d", &sample);
+    	sscanf(argv[2], "%d", &filter);
+    	utils_truncate_number_int(&sample, 1, 1024);
+    	utils_truncate_number_int(&filter, 0, sample);
+    	    {
+    	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] Adcbuffer: ok");
+    	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] current config:\r");
+    	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] adcbuff_1  %d channels,  buffersize: %d filterdepth: %d\r",mcbench.adcbuff_1->channels, mcbench.adcbuff_1->sampleNbr, mcbench.adcbuff_1->filterNbr );
+    	    term_qPrintf(myTxQueueHandle, "\r[parseCmd] adcbuff_2  %d channels,  buffersize: %d filterdepth: %d\r",mcbench.adcbuff_2->channels, mcbench.adcbuff_2->sampleNbr, mcbench.adcbuff_2->filterNbr );
+    	    mc_adc_restartBuffer(mcbench.adcbuff_1);
+    	mc_adc_restartBuffer(mcbench.adcbuff_2);
+    	    }
+    	}
+        else
+    	{
+    	term_qPrintf(myTxQueueHandle, "\r[parseCmd] Adcbuffer: Fehler Argument: sample(1:1024) filter(1:sample)");
+    	}
+    }
+
 /*-----------------------------------------------*/
 
 void StartCmdTask(void *argument)
@@ -458,6 +484,9 @@ void cmd_init_callbacks(TD_CMD *asdf)
     term_lol_setCallback(asdf, "csaoffset", "drv83 csa offset", "none",  csaoffset);
     term_lol_setCallback(asdf, "phasecal", "phase voltage calibration", "cal voltage(float)",  phasecal);
     term_lol_setCallback(asdf, "phaseoffset", "phase voltage offset", "none",  phaseoffset);
+    term_lol_setCallback(asdf, "adcbuffer", "sample filter", "uint",  adcbuffer);
+
+
     }
 void cmd_parse_lobj(TD_CMD *newcmd, TD_LINEOBJ *line)
     {

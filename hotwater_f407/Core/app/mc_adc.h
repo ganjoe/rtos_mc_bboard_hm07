@@ -22,14 +22,14 @@ typedef enum
     }
     EN_ADC_BCD_BUFFPOS_CW;
 
-    typedef enum
+typedef enum
 	{
         ADCBUFFPOS_SHUNTV_RISE,
         ADCBUFFPOS_BUSVOLT_V,
         ADCBUFFPOS_SHUNTV_FALL,
         ADCBUFFPOS_EMK_V,
 	}
-        EN_ADC_BCD_BUFFPOS_CCW;
+    EN_ADC_BCD_BUFFPOS_CCW;
 
 typedef struct
         {
@@ -44,7 +44,10 @@ typedef struct
 
 
 void mc_shunt_si(TD_MC_DRV_CSA *shunt, float* result, uint32_t raw);
+
 void mc_phase_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw);
+
+void mc_adc_restartBuffer(TD_MC_ADC_BUFF *adc_buff);
 
 void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff);
 

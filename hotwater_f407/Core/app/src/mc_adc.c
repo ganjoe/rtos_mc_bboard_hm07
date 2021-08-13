@@ -26,7 +26,16 @@ void mc_adc_newBuffer(TD_MC_ADC_BUFF *buff)
     vPortFree(buff->filterbuff);
     buff->workbuff = (uint16_t*) pvPortMalloc(buff->sampleNbr * sizeof(uint16_t));
     buff->filterbuff = (uint16_t*) pvPortMalloc(buff->filterNbr * sizeof(uint16_t));
+
     }
+
+void mc_adc_restartBuffer(TD_MC_ADC_BUFF *adc_buff)
+    {
+     //HAL_ADC_Stop_DMA(&adc_1_buff);
+    //HAL_ADC_Stop_DMA(&adc_2_buff);
+    mc_adc_newBuffer(adc_buff);
+    HAL_ADC_Start_DMA(&hadc1, (uint32_t*) adc_buff->workbuff,adc_buff->sampleNbr);
+      }
 
 void mc_shunt_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw)
     {
@@ -35,6 +44,7 @@ void mc_shunt_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw)
 
     *result = shunt->lsb * val;
     }
+
 void mc_phase_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw)
     {
     float val;
@@ -42,7 +52,6 @@ void mc_phase_si(TD_MC_DRV_CSA *shunt, float *result, uint32_t raw)
 
     *result = shunt->lsb * val;
     }
-
 
 uint32_t mc_adc_CircBuffDemultiplex(TD_MC_ADC_BUFF *adcbuff, uint32_t seqpos,uint32_t dmapos)
     {// 4 uhr morgens

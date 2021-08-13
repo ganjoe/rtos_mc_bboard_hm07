@@ -53,12 +53,12 @@ int confgen_setdefaults(TD_MC_PARAMS *mc)
     rampduty.RampStepLimit = 0.5;
 
     adc_1_buff.channels = 4;
-    adc_1_buff.sampleNbr = 30;
-    adc_1_buff.filterNbr = 30;
+    adc_1_buff.sampleNbr = 90;
+    adc_1_buff.filterNbr = 90;
 
     adc_2_buff.channels = 4;
-    adc_2_buff.sampleNbr = 30;
-    adc_2_buff.filterNbr = 30;
+    adc_2_buff.sampleNbr = 90;
+    adc_2_buff.filterNbr = 90;
 
 
     return 1;

@@ -70,6 +70,7 @@ void 	csacal(int argc, const char **argv);
 void 	csaoffset(int argc, const char**argv);
 void 	phaseoffset(int argc, const char**argv);
 void 	phasecal(int argc, const char**argv);
+void 	adcbuffer(int argc, const char***argv);
 
 extern TD_CMD newcmd;
 #endif /* APP_NEWCMDORDER_H_ */

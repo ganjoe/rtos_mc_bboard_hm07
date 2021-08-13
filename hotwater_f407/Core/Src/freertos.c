@@ -41,7 +41,6 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
-typedef StaticTask_t osStaticThreadDef_t;
 typedef StaticQueue_t osStaticMessageQDef_t;
 typedef StaticSemaphore_t osStaticSemaphoreDef_t;
 /* USER CODE BEGIN PTD */
@@ -68,52 +67,42 @@ osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityBelowNormal,
 };
 /* Definitions for myRxTask */
 osThreadId_t myRxTaskHandle;
 const osThreadAttr_t myRxTask_attributes = {
   .name = "myRxTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityBelowNormal,
 };
 /* Definitions for myTxTask */
 osThreadId_t myTxTaskHandle;
 const osThreadAttr_t myTxTask_attributes = {
   .name = "myTxTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .priority = (osPriority_t) osPriorityBelowNormal,
 };
 /* Definitions for myCmdTask */
 osThreadId_t myCmdTaskHandle;
 const osThreadAttr_t myCmdTask_attributes = {
   .name = "myCmdTask",
-  .stack_size = 512 * 4,
-  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal,
 };
 /* Definitions for myLogUartTask */
 osThreadId_t myLogUartTaskHandle;
-uint32_t myLogUartTaskBuffer[ 512 ];
-osStaticThreadDef_t myLogUartTaskControlBlock;
 const osThreadAttr_t myLogUartTask_attributes = {
   .name = "myLogUartTask",
-  .cb_mem = &myLogUartTaskControlBlock,
-  .cb_size = sizeof(myLogUartTaskControlBlock),
-  .stack_mem = &myLogUartTaskBuffer[0],
-  .stack_size = sizeof(myLogUartTaskBuffer),
-  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal,
 };
 /* Definitions for myMcTask */
 osThreadId_t myMcTaskHandle;
-uint32_t myMcTaskBuffer[ 512 ];
-osStaticThreadDef_t myMcTaskControlBlock;
 const osThreadAttr_t myMcTask_attributes = {
   .name = "myMcTask",
-  .cb_mem = &myMcTaskControlBlock,
-  .cb_size = sizeof(myMcTaskControlBlock),
-  .stack_mem = &myMcTaskBuffer[0],
-  .stack_size = sizeof(myMcTaskBuffer),
-  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal,
 };
 /* Definitions for myTxQueue */
 osMessageQueueId_t myTxQueueHandle;
