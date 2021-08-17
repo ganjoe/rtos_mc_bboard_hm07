@@ -67,42 +67,42 @@ osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myRxTask */
 osThreadId_t myRxTaskHandle;
 const osThreadAttr_t myRxTask_attributes = {
   .name = "myRxTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myTxTask */
 osThreadId_t myTxTaskHandle;
 const osThreadAttr_t myTxTask_attributes = {
   .name = "myTxTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myCmdTask */
 osThreadId_t myCmdTaskHandle;
 const osThreadAttr_t myCmdTask_attributes = {
   .name = "myCmdTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myLogUartTask */
 osThreadId_t myLogUartTaskHandle;
 const osThreadAttr_t myLogUartTask_attributes = {
   .name = "myLogUartTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myMcTask */
 osThreadId_t myMcTaskHandle;
 const osThreadAttr_t myMcTask_attributes = {
   .name = "myMcTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
+  .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myTxQueue */
 osMessageQueueId_t myTxQueueHandle;
@@ -170,6 +170,11 @@ const osMessageQueueAttr_t mySDwriteBufferLineObjQueue_attributes = {
   .mq_mem = &mySDwriteBufferLineObjQueueBuffer,
   .mq_size = sizeof(mySDwriteBufferLineObjQueueBuffer)
 };
+/* Definitions for myTimer01 */
+osTimerId_t myTimer01Handle;
+const osTimerAttr_t myTimer01_attributes = {
+  .name = "myTimer01"
+};
 /* Definitions for myFlagNewString */
 osSemaphoreId_t myFlagNewStringHandle;
 osStaticSemaphoreDef_t myFlagNewStringControlBlock;
@@ -214,6 +219,7 @@ extern void StartTxTask(void *argument);
 extern void StartCmdTask(void *argument);
 extern void StartLogUartTask(void *argument);
 extern void StartMcTask(void *argument);
+void Callback01(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -327,7 +333,12 @@ void MX_FREERTOS_Init(void) {
     /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
 
+  /* Create the timer(s) */
+  /* creation of myTimer01 */
+  myTimer01Handle = osTimerNew(Callback01, osTimerPeriodic, NULL, &myTimer01_attributes);
+
   /* USER CODE BEGIN RTOS_TIMERS */
+ // osTimerStart(myTimer01Handle, 200);
     /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
@@ -394,12 +405,21 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
+
   for(;;)
   {
 	osDelay(100);
 	 HAL_UART_Receive_DMA(&huart1, (uint8_t*) &readbyte, 1);
   }
   /* USER CODE END StartDefaultTask */
+}
+
+/* Callback01 function */
+void Callback01(void *argument)
+{
+  /* USER CODE BEGIN Callback01 */
+	McTask();
+  /* USER CODE END Callback01 */
 }
 
 /* Private application code --------------------------------------------------*/

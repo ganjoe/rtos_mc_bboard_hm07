@@ -14,6 +14,7 @@
 #include "../datatypes.h"
 
 extern osSemaphoreId_t myFlagNewDMAHandle;
+extern osTimerId_t myTimer01Handle;
 
 int dmadoneflag = 0;
 int taskdoneflag = 0;
@@ -28,67 +29,9 @@ void StartMcTask(void *argument)
 
     while (1)
 	{
-	if (xSemaphoreTakeFromISR(myFlagNewDMAHandle,0) == pdPASS)
-	    {
-	    taskdoneflag = 1;
-	    HAL_GPIO_WritePin(test_GPIO_Port, test_Pin, 1);
-
-	    switch (pwm.direction)
-		{
-	    case cw_pwm:
-		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_SHUNTU_RISE,
-			hadc1.DMA_Handle->Instance->NDTR);
-		mcrt.adc_shunt_u_rise = mc_adc_avg(&adc_1_buff);
-
-		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_SHUNTU_FALL,
-			hadc1.DMA_Handle->Instance->NDTR);
-		mcrt.adc_shunt_u_fall = mc_adc_avg(&adc_1_buff);
-
-		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_BUSVOLT_U,
-			hadc1.DMA_Handle->Instance->NDTR);
-		mcrt.adc_phase_u_bus = mc_adc_avg(&adc_1_buff);
-		mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_EMK_U,
-			hadc1.DMA_Handle->Instance->NDTR);
-		mcrt.adc_phase_u_emk = mc_adc_avg(&adc_1_buff);
-		mc_shunt_si(&drv.csa_u, &mcrt.curr_rise_si,
-			mcrt.adc_shunt_u_rise);
-		mc_shunt_si(&drv.vdiv_u, &mcrt.phase_rise_si,
-			mcrt.adc_phase_u_bus);
-		break;
-
-	    case ccw_pwm:
-		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_SHUNTV_RISE,
-			hadc2.DMA_Handle->Instance->NDTR);
-		mcrt.adc_shunt_v_rise = mc_adc_avg(&adc_2_buff);
-		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_SHUNTV_FALL,
-			hadc2.DMA_Handle->Instance->NDTR);
-		mcrt.adc_shunt_v_fall = mc_adc_avg(&adc_2_buff);
-		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_BUSVOLT_V,
-			hadc2.DMA_Handle->Instance->NDTR);
-		mcrt.adc_phase_v_bus = mc_adc_avg(&adc_2_buff);
-		mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_EMK_V,
-			hadc2.DMA_Handle->Instance->NDTR);
-		mcrt.adc_phase_v_emk = mc_adc_avg(&adc_2_buff);
-
-		mc_shunt_si(&drv.csa_v, &mcrt.curr_rise_si,
-			mcrt.adc_shunt_v_rise);
-		mc_shunt_si(&drv.vdiv_v, &mcrt.phase_rise_si,
-			mcrt.adc_phase_v_bus);
-
-		break;
-		}
-
-	    mcrt.time_mcloop = timestep_si(&mctime);
-
-	    mc_ramp(mcbench.rampduty, &mctime);
-
-	    mcbench.pwm->duty = rampduty.Setpoint;
-
-	    pwm.direction = mc_pwm_bcd_update(mcbench.pwm);
-	    }
-	HAL_GPIO_WritePin(test_GPIO_Port, test_Pin, 0);
-	taskdoneflag = 0;
 	}
+	//if (xSemaphoreTakeFromISR(myFlagNewDMAHandle,0) == pdPASS)
+
 
     }
 void McTaskInit()
@@ -164,12 +107,73 @@ void McTaskInit()
 
     mc_set_lowside(mcbench.pwm, brake_highz);
     initdoneflag = 1;
+    osTimerStart(myTimer01Handle, 200);
     }
 
 void McTask()
     {
 
+    taskdoneflag = 1;
+    HAL_GPIO_WritePin(test_GPIO_Port, test_Pin, 1);
+
+    switch (pwm.direction)
+	{
+    case cw_pwm:
+	mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_SHUNTU_RISE,
+		hadc1.DMA_Handle->Instance->NDTR);
+	mcrt.adc_shunt_u_rise = mc_adc_avg(&adc_1_buff);
+
+	mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_SHUNTU_FALL,
+		hadc1.DMA_Handle->Instance->NDTR);
+	mcrt.adc_shunt_u_fall = mc_adc_avg(&adc_1_buff);
+
+	mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_BUSVOLT_U,
+		hadc1.DMA_Handle->Instance->NDTR);
+	mcrt.adc_phase_u_bus = mc_adc_avg(&adc_1_buff);
+	mc_adc_CircBuffDemultiplex(&adc_1_buff, ADCBUFFPOS_EMK_U,
+		hadc1.DMA_Handle->Instance->NDTR);
+	mcrt.adc_phase_u_emk = mc_adc_avg(&adc_1_buff);
+	mc_shunt_si(&drv.csa_u, &mcrt.curr_rise_si,
+		mcrt.adc_shunt_u_rise);
+	mc_shunt_si(&drv.vdiv_u, &mcrt.phase_rise_si,
+		mcrt.adc_phase_u_bus);
+	break;
+
+    case ccw_pwm:
+	mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_SHUNTV_RISE,
+		hadc2.DMA_Handle->Instance->NDTR);
+	mcrt.adc_shunt_v_rise = mc_adc_avg(&adc_2_buff);
+	mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_SHUNTV_FALL,
+		hadc2.DMA_Handle->Instance->NDTR);
+	mcrt.adc_shunt_v_fall = mc_adc_avg(&adc_2_buff);
+	mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_BUSVOLT_V,
+		hadc2.DMA_Handle->Instance->NDTR);
+	mcrt.adc_phase_v_bus = mc_adc_avg(&adc_2_buff);
+	mc_adc_CircBuffDemultiplex(&adc_2_buff, ADCBUFFPOS_EMK_V,
+		hadc2.DMA_Handle->Instance->NDTR);
+	mcrt.adc_phase_v_emk = mc_adc_avg(&adc_2_buff);
+
+	mc_shunt_si(&drv.csa_v, &mcrt.curr_rise_si,
+		mcrt.adc_shunt_v_rise);
+	mc_shunt_si(&drv.vdiv_v, &mcrt.phase_rise_si,
+		mcrt.adc_phase_v_bus);
+
+	break;
+	}
+
+    mcrt.time_mcloop = timestep_si(&mctime);
+
+    mc_ramp(mcbench.rampduty, &mctime);
+
+    mcbench.pwm->duty = rampduty.Setpoint;
+
+    pwm.direction = mc_pwm_bcd_update(mcbench.pwm);
+    HAL_GPIO_WritePin(test_GPIO_Port, test_Pin, 0);
+    taskdoneflag = 0;
     }
+
+
+
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
     {
