@@ -44,6 +44,7 @@
 typedef StaticTask_t osStaticThreadDef_t;
 typedef StaticQueue_t osStaticMessageQDef_t;
 typedef StaticSemaphore_t osStaticSemaphoreDef_t;
+typedef StaticEventGroup_t osStaticEventGroupDef_t;
 /* USER CODE BEGIN PTD */
 extern void term_lol_sendQueue(osMessageQueueId_t myTxQueueHandle);
 extern void McTaskInit();
@@ -101,18 +102,6 @@ const osThreadAttr_t myLogUartTask_attributes = {
   .cb_size = sizeof(myLogUartTaskControlBlock),
   .stack_mem = &myLogUartTaskBuffer[0],
   .stack_size = sizeof(myLogUartTaskBuffer),
-  .priority = (osPriority_t) osPriorityLow,
-};
-/* Definitions for myMcTask */
-osThreadId_t myMcTaskHandle;
-uint32_t myMcTaskBuffer[ 512 ];
-osStaticThreadDef_t myMcTaskControlBlock;
-const osThreadAttr_t myMcTask_attributes = {
-  .name = "myMcTask",
-  .cb_mem = &myMcTaskControlBlock,
-  .cb_size = sizeof(myMcTaskControlBlock),
-  .stack_mem = &myMcTaskBuffer[0],
-  .stack_size = sizeof(myMcTaskBuffer),
   .priority = (osPriority_t) osPriorityLow,
 };
 /* Definitions for myTxQueue */
@@ -213,6 +202,14 @@ const osSemaphoreAttr_t myCountNewCmd_attributes = {
   .cb_mem = &myCountNewCmdControlBlock,
   .cb_size = sizeof(myCountNewCmdControlBlock),
 };
+/* Definitions for myEventMCtask */
+osEventFlagsId_t myEventMCtaskHandle;
+osStaticEventGroupDef_t myEventMCtaskControlBlock;
+const osEventFlagsAttr_t myEventMCtask_attributes = {
+  .name = "myEventMCtask",
+  .cb_mem = &myEventMCtaskControlBlock,
+  .cb_size = sizeof(myEventMCtaskControlBlock),
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -224,7 +221,6 @@ extern void StartRxTask(void *argument);
 extern void StartTxTask(void *argument);
 extern void StartCmdTask(void *argument);
 extern void StartLogUartTask(void *argument);
-extern void StartMcTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -381,12 +377,13 @@ void MX_FREERTOS_Init(void) {
   /* creation of myLogUartTask */
   myLogUartTaskHandle = osThreadNew(StartLogUartTask, NULL, &myLogUartTask_attributes);
 
-  /* creation of myMcTask */
-  myMcTaskHandle = osThreadNew(StartMcTask, NULL, &myMcTask_attributes);
-
   /* USER CODE BEGIN RTOS_THREADS */
     /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
+
+  /* Create the event(s) */
+  /* creation of myEventMCtask */
+  myEventMCtaskHandle = osEventFlagsNew(&myEventMCtask_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
     /* add events, ... */
@@ -405,10 +402,12 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
+    McTaskInit();
+    HAL_UART_Receive_DMA(&huart1, (uint8_t*) &readbyte, 1);
   for(;;)
   {
-	osDelay(100);
-	 HAL_UART_Receive_DMA(&huart1, (uint8_t*) &readbyte, 1);
+
+
   }
   /* USER CODE END StartDefaultTask */
 }
