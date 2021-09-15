@@ -43,6 +43,7 @@
 /* Private typedef -----------------------------------------------------------*/
 typedef StaticTask_t osStaticThreadDef_t;
 typedef StaticQueue_t osStaticMessageQDef_t;
+typedef StaticTimer_t osStaticTimerDef_t;
 typedef StaticSemaphore_t osStaticSemaphoreDef_t;
 typedef StaticEventGroup_t osStaticEventGroupDef_t;
 /* USER CODE BEGIN PTD */
@@ -170,6 +171,14 @@ const osMessageQueueAttr_t mySDwriteBufferLineObjQueue_attributes = {
   .mq_mem = &mySDwriteBufferLineObjQueueBuffer,
   .mq_size = sizeof(mySDwriteBufferLineObjQueueBuffer)
 };
+/* Definitions for myTimerMCtask */
+osTimerId_t myTimerMCtaskHandle;
+osStaticTimerDef_t myTimerMCtaskControlBlock;
+const osTimerAttr_t myTimerMCtask_attributes = {
+  .name = "myTimerMCtask",
+  .cb_mem = &myTimerMCtaskControlBlock,
+  .cb_size = sizeof(myTimerMCtaskControlBlock),
+};
 /* Definitions for myFlagNewString */
 osSemaphoreId_t myFlagNewStringHandle;
 osStaticSemaphoreDef_t myFlagNewStringControlBlock;
@@ -210,6 +219,14 @@ const osEventFlagsAttr_t myEventMCtask_attributes = {
   .cb_mem = &myEventMCtaskControlBlock,
   .cb_size = sizeof(myEventMCtaskControlBlock),
 };
+/* Definitions for myEventTerminal */
+osEventFlagsId_t myEventTerminalHandle;
+osStaticEventGroupDef_t myEventTerminalControlBlock;
+const osEventFlagsAttr_t myEventTerminal_attributes = {
+  .name = "myEventTerminal",
+  .cb_mem = &myEventTerminalControlBlock,
+  .cb_size = sizeof(myEventTerminalControlBlock),
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -221,6 +238,7 @@ extern void StartRxTask(void *argument);
 extern void StartTxTask(void *argument);
 extern void StartCmdTask(void *argument);
 extern void StartLogUartTask(void *argument);
+void test(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -334,8 +352,14 @@ void MX_FREERTOS_Init(void) {
     /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
 
+  /* Create the timer(s) */
+  /* creation of myTimerMCtask */
+  myTimerMCtaskHandle = osTimerNew(test, osTimerPeriodic, NULL, &myTimerMCtask_attributes);
+
   /* USER CODE BEGIN RTOS_TIMERS */
+  xTimerStart(myTimerMCtaskHandle,10);
     /* start timers, add new ones, ... */
+
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the queue(s) */
@@ -385,6 +409,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of myEventMCtask */
   myEventMCtaskHandle = osEventFlagsNew(&myEventMCtask_attributes);
 
+  /* creation of myEventTerminal */
+  myEventTerminalHandle = osEventFlagsNew(&myEventTerminal_attributes);
+
   /* USER CODE BEGIN RTOS_EVENTS */
     /* add events, ... */
   /* USER CODE END RTOS_EVENTS */
@@ -410,6 +437,14 @@ void StartDefaultTask(void *argument)
 
   }
   /* USER CODE END StartDefaultTask */
+}
+
+/* test function */
+void test(void *argument)
+{
+  /* USER CODE BEGIN test */
+
+  /* USER CODE END test */
 }
 
 /* Private application code --------------------------------------------------*/

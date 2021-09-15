@@ -31,7 +31,7 @@
 #define INC_MC_TASK_H_
 
 
-
+void McTask();
 void McTaskInit();
 
 

@@ -33,8 +33,9 @@
 extern osEventFlagsId_t myEventMCtaskHandle;
 extern osSemaphoreId_t myFlagNewDMAHandle;
 extern osEventFlagsId_t myEventMCtaskHandle;
+extern osTimerId_t myTimerMCtaskHandle;
 
-#define EventBit_InitDone 1<<0
+#define EventBit_MCTaskInitDone 1<<0
 #define EventBit_MCTaskDone 1<<1
 
 #endif /* APP_DATATYPES_H_ */

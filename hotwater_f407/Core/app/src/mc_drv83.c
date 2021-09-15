@@ -209,7 +209,7 @@ float drv_calib(TD_MC_DRV_CSA *select, float calcurrent, int16_t rawcurrent)
 
 void drv_en_drv(int enable)
     {
-    //term_qPrintf(&myTxQueueHandle, "\r[drv_en_drv]");
+    //erm_qPrintf(&myTxQueueHandle, "\r[drv_en_drv]");
     if (enable)
 	{
 	HAL_GPIO_WritePin(drv_en_GPIO_Port, drv_en_Pin, 1);

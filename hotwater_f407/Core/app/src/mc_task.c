@@ -46,7 +46,8 @@ void McTaskInit()
 
     mc_set_lowside(mcbench.pwm, brake_highz);
 
-    xEventGroupSetBits(myEventMCtaskHandle, EventBit_InitDone);
+    xEventGroupSetBits(myEventMCtaskHandle, EventBit_MCTaskInitDone);
+
 
     }
 
