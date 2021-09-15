@@ -17,6 +17,7 @@ const uint8_t* readbyte;
 extern osMessageQueueId_t myTxQueueHandle;
 
 
+
 #define HUART &huart1
 #define TX_BYTES_AT_ONCE 128
 

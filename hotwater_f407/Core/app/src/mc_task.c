@@ -14,11 +14,7 @@
 #include "tim.h"
 #include "../datatypes.h"
 
-extern osSemaphoreId_t myFlagNewDMAHandle;
 
-int dmadoneflag = 0;
-int taskdoneflag = 0;
-int initdoneflag = 0;
 
 
 void McTaskInit()
@@ -49,13 +45,15 @@ void McTaskInit()
     pwm_init_timer_mc(&pwm);	//stm32 hal init
 
     mc_set_lowside(mcbench.pwm, brake_highz);
-    initdoneflag = 1;
+
+    xEventGroupSetBits(myEventMCtaskHandle, EventBit_InitDone);
+
     }
 
 
 void McTask()
     {
-	taskdoneflag = 1;
+
 	    	    HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
 
 	    	    switch (pwm.direction)
@@ -99,7 +97,8 @@ void McTask()
 	    	pwm.direction = mc_pwm_bcd_update(mcbench.pwm);
 
 	    	HAL_GPIO_TogglePin(test_GPIO_Port, test_Pin);
-	    	taskdoneflag = 0;
+
+	    	xEventGroupSetBits(myEventMCtaskHandle, EventBit_MCTaskDone);
 
     }
 

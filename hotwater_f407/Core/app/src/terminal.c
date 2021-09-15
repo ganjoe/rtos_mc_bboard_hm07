@@ -159,6 +159,7 @@ void StartTxTask(void *argument)
     {
     for (;;)
 	{
+	xEventGroupWaitBits(myEventMCtaskHandle, EventBit_MCTaskDone, 1, 0, 5000 / portTICK_PERIOD_MS);
 	term_lol_sendQueue(myTxQueueHandle);
 	}
 	/*
